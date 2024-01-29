@@ -17,11 +17,14 @@ const config = {
         "2xl": "1400px",
       },
     },
+
     extend: {
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        'ai-button-blue':'#0330AE',
+        'ai-button-white':'#DFE6F9',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
