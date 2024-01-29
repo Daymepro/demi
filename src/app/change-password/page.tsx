@@ -1,8 +1,6 @@
 'use client'
 import { LoadingSpinner } from "@/components/loadingSpinner";
-import PageLoader from "@/components/pageLoader";
 import { apiService } from "@/utils/apiService";
-import { ArrowBigLeft, ArrowLeft, LockKeyhole, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
