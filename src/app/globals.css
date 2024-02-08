@@ -1,9 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
 
+@import url("https://use.typekit.net/ryp6nqb.css");
 
+@font-face {
+  font-family: fontsans;
+  src: url('/neue-montreal/neuemontreal-regular.otf');
+}
+@font-face {
+  font-family: fontbold;
+  src: url('/neue-montreal/neuemontreal-medium.otf');
+  font-weight: 500;
+}
+@font-face {
+  font-family: fontbold;
+  src: url('/neue-montreal/neuemontreal-light.otf');
+  font-weight: 200;
+}
+@font-face {
+  font-family: fontbold;
+  src: url('/neue-montreal/neuemontreal-bold.otf');
+  font-weight: bold;
+}
+* {
+  font-family: "aileron", sans-serif;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;
