@@ -25,6 +25,8 @@ const config = {
         ring: "hsl(var(--ring))",
         'ai-button-blue':'#0330AE',
         'ai-button-white':'#DFE6F9',
+        
+        'main-blue':'#0030AD',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {

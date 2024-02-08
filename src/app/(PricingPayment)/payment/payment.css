@@ -1,0 +1,35 @@
+.toggle-checkbox {
+    display: block !important;
+    position: relative ;
+    appearance: none;
+    width: 35px;
+    height: 17px;
+    background: rgb(225, 232, 250);
+    border-radius: 50px;
+    /* box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); */
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .toggle-checkbox:checked {
+    background: #7da6ff;
+  }
+  
+  .toggle-checkbox::after {
+    position: absolute;
+    content: "";
+    width: 19px;
+    height: 17px;
+    top: 0px;
+    left: 0;
+    background: rgba(0, 48, 173, 1);
+    border-radius: 37px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    /* transform: scale(1.1); */
+    transition: 0.2s;
+  }
+  
+  .toggle-checkbox:checked:after {
+    left: 50%;
+  }
+  

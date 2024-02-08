@@ -12,7 +12,7 @@ function SectionOne() {
     backgroundRepeat: "no-repeat",
   };
   return (
-    <div className="flex flex-col h-11/12 lg:min-h-[900px] lg:flex-row items-center lg:pt-0 pt-[72px]">
+    <div className="xl:px-[140px] md:px-10 px-5 flex flex-col h-11/12 lg:min-h-[900px] lg:flex-row items-center lg:pt-0 pt-[72px]">
       <div className="flex-1 flex flex-col gap-6 h-full justify-between lg:pt-0 md:pt-20 py-4 max-h-[500px]">
         <div className="">
           <div className=" text-center lg:text-left">
