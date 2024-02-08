@@ -20,7 +20,7 @@ const page = () => {
           ...base,
           // height: 38,
           minHeight: 38,
-          fontSize: ".80rem",
+          fontSize: "1rem",
           boxShadow: "none",
           outline: 'none',
       

@@ -1,5 +1,5 @@
 'use client'
-import { ArrowLeft, MapPinIcon, Search } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -17,7 +17,6 @@ const page = () => {
     <div className=" text-center">
     <p className=" text-[#000103] font-bold text-[31px] leading-tight ">What business would you like to start  with ?</p>
     <p className=' text-[#8F8F8F] text-sm'>Here are some suggestions</p>
-
     </div>
     <div className=' flex items-center gap-1 self-start'>
     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="21" viewBox="0 0 13 21" fill="none">
@@ -28,7 +27,7 @@ const page = () => {
 </span>
     </div>
     <div className=" flex flex-wrap gap-[6px] w-full text-[#8f8f8f]">
-   {bizName.map((d,i) => <div className=' cursor-pointer px-6 w-fit py-2  rounded-full border border-[rgba(0,1,3,0.19)] text-[#000103] text-[13px] font-semibold'>
+   {bizName.map((d,i) => <div key={i} onClick={() => setBusiness(d)} className={`cursor-pointer px-6 w-fit py-2  rounded-full border ${business === d ? 'border-[#0030AD] text-[#0030AD]' : 'border-[rgba(0,1,3,0.19)] text-[#000103'}  ] text-[13px] font-semibold`}>
     {d}
    </div>)}
     </div>

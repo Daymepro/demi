@@ -27,7 +27,7 @@ const [location, setLocation] = useState('')
        
     </form>
     <div className="flex gap-1">
-        <p className=" text-[#8F8F8F] text-sm">Website language English,</p><Link href={'/signin'} className="text-[#0030AD] font-bold text-sm underline">Change</Link>
+        <p className=" text-[#8F8F8F] text-sm">Website language English,</p><Link href={'/onboarding/language'} className="text-[#0030AD] font-bold text-sm underline">Change</Link>
 
         </div>
   </div>

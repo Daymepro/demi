@@ -7,6 +7,10 @@ import React, { useState } from 'react'
 const page = () => {
     const [business, setBusiness] = useState('')
     const bizName = ['Business Consultant', 'Make-up artist', 'Coffee Shop', 'Grant Writing', 'Landscaping', 'Church', 'Fashion', 'cloth & Accessories', 'Agency']
+
+    const handleSelected = (biz: string) => {
+      setBusiness(biz)
+    }
   return (
     <div className=" z-30 md:px-[50px] px-4  py-[40px] max-w-[560px] w-full  text-white bg-white flex items-center flex-col rounded-lg gap-7 border-white border">
         <Link href={'/onboarding/industry'} className=' flex items-center gap-1 text-[#0030AD] self-start' >
@@ -28,7 +32,7 @@ const page = () => {
 </span>
     </div>
     <div className=" flex flex-wrap gap-[6px] w-full text-[#8f8f8f]">
-   {bizName.map((d,i) => <div className=' cursor-pointer px-6 w-fit py-2  rounded-full border border-[rgba(0,1,3,0.19)] text-[#000103] text-[13px] font-semibold'>
+   {bizName.map((d,i) => <div key={i} onClick={() => handleSelected(d)} className={` cursor-pointer px-6 w-fit py-2  rounded-full border ${business ===d ? 'border-[#0030AD] text-[#0030AD] ' : 'border-[rgba(0,1,3,0.19)] text-[#000103]'}  text-[13px] font-semibold`}>
     {d}
    </div>)}
     </div>

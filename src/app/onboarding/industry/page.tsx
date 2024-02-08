@@ -8,7 +8,6 @@ const page = () => {
   const [industry, setIndustry] = useState('')
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIndustry(e.target.value)
-
   }
  
   return (
@@ -28,7 +27,7 @@ const page = () => {
        
     </form>
     <div className="flex gap-1">
-        <p className=" text-[#8F8F8F] text-sm">Not sure ?</p><Link href={'/signin'} className="text-[#0030AD] font-bold text-sm underline">See some suggestions</Link>
+        <p className=" text-[#8F8F8F] text-sm">Not sure ?</p><Link href={'/onboarding/business-suggestions'} className="text-[#0030AD] font-bold text-sm underline">See some suggestions</Link>
 
         </div>
   </div>
