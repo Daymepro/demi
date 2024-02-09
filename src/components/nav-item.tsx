@@ -22,7 +22,6 @@ const NavItem:React.FC<navItem> = ({label, content}) => {
         return null
     }
     const pathName = usePathname()
-    console.log(pathName)
     
     return (
     <div className='group relative  '>

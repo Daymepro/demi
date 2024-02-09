@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 
 const SectionThree = () => {
   const style = {
@@ -24,7 +25,7 @@ const SectionThree = () => {
         </div>
         <div style={style2} className='absolute top-48 max-w-[1100px] h-5/6 w-11/12'></div>
         <div>
-        
+       
         </div>
     </div>
   )

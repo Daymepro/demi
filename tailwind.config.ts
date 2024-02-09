@@ -30,6 +30,7 @@ const config = {
         },
         'ai-button-blue': "#0330AE",
         'ai-button-white': "#DFE6F9",
+        'main-blue': "#0030AD",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
