@@ -17,22 +17,19 @@ const config = {
         "2xl": "1400px",
       },
     },
-
     extend: {
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        'ai-button-blue':'#0330AE',
-        'ai-button-white':'#DFE6F9',
-        
-        'main-blue':'#0030AD',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
+        'ai-button-blue': "#0330AE",
+        'ai-button-white': "#DFE6F9",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
