@@ -23,9 +23,8 @@
   src: url('/neue-montreal/neuemontreal-bold.otf');
   font-weight: bold;
 }
-* {
-  font-family: "aileron", sans-serif;
-}
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
