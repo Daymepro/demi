@@ -2,9 +2,11 @@
 import { Search } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 const page = () => {
+  const router = useRouter()
   const [industry, setIndustry] = useState('')
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIndustry(e.target.value)
@@ -23,7 +25,7 @@ const page = () => {
           <Search className=' w-4 h-4' />
             <input onChange={handleChange} value={industry} type="text" className=" border-none outline-none shadow-none w-full h-full" placeholder="Coaching, Photography, Landscaping" />
         </div>
-        <button className={` ${industry.length > 1 ? 'bg-[#0030AD] text-white' : 'bg-[#D5D9EA] text-[rgba(0,1,3,0.39)]'}  rounded-[8px] py-3 font-bold `}>{industry.length < 1 ? 'Get started' : 'Next'}</button>
+        <button onClick={(e) =>{e.preventDefault(); router.push('/onboarding/location')}} className={` ${industry.length > 1 ? 'bg-[#0030AD] text-white' : 'bg-[#D5D9EA] text-[rgba(0,1,3,0.39)]'}  rounded-[8px] py-3 font-bold `}>{industry.length < 1 ? 'Get started' : 'Next'}</button>
        
     </form>
     <div className="flex gap-1">
