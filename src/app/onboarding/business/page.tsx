@@ -2,10 +2,13 @@
 import { ArrowLeft, MapPinIcon, Search } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 const page = () => {
+    const router = useRouter()
     const [business, setBusiness] = useState('')
+    
   return (
     <div className=" z-30 md:px-[70px] px-4  py-[50px] max-w-[560px] w-full  text-white bg-white flex items-center flex-col rounded-lg gap-7 border-white border">
         <Link href={'/onboarding/location'} className=' flex items-center gap-1 text-[#0030AD] self-start' >
@@ -23,9 +26,9 @@ const page = () => {
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
   <path d="M8 4.00005V0.800049H0V15.2H16V4.00005H8ZM3.2 13.6H1.6V12H3.2V13.6ZM3.2 10.4H1.6V8.80005H3.2V10.4ZM3.2 7.20005H1.6V5.60005H3.2V7.20005ZM3.2 4.00005H1.6V2.40005H3.2V4.00005ZM6.4 13.6H4.8V12H6.4V13.6ZM6.4 10.4H4.8V8.80005H6.4V10.4ZM6.4 7.20005H4.8V5.60005H6.4V7.20005ZM6.4 4.00005H4.8V2.40005H6.4V4.00005ZM14.4 13.6H8V12H9.6V10.4H8V8.80005H9.6V7.20005H8V5.60005H14.4V13.6ZM12.8 7.20005H11.2V8.80005H12.8V7.20005ZM12.8 10.4H11.2V12H12.8V10.4Z" fill="#8F8F8F"/>
 </svg>
-            <input type="text" className=" border-none outline-none shadow-none w-full h-full" placeholder="Enter your business name" />
+            <input onChange={(e) => setBusiness(e.target.value)} value={business} type="text" className=" border-none outline-none shadow-none w-full h-full" placeholder="Enter your business name" />
         </div>
-        <button disabled={business.length < 1} className={` ${business.length > 1 ? 'bg-[#0030AD] text-white' : 'bg-[#D5D9EA] text-[rgba(0,1,3,0.39)] dis'}  rounded-[8px] py-3 font-bold `}>Generate website</button>
+        <button onClick={(e) =>{e.preventDefault(); router.push('/pricing')}} disabled={business.length < 1} className={` ${business.length > 1 ? 'bg-[#0030AD] text-white' : 'bg-[#D5D9EA] text-[rgba(0,1,3,0.39)] dis'}  rounded-[8px] py-3 font-bold `}>Generate website</button>
        
     </form>
     <div className="flex gap-1">
