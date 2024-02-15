@@ -28,6 +28,14 @@ const nav: Nav = {
         path: "/sdlsld/website/domain",
       },
       {
+        name: "customer",
+        path: "/sdlsld/website/customer",
+      },
+      {
+        name: "contact",
+        path: "/sdlsld/website/contact",
+      },
+      {
         name: "settings",
         path: "/sdlks/website/settings",
       },

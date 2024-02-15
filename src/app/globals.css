@@ -25,6 +25,15 @@
 }
 
 
+.remove-scrollbar {
+  -ms-overflow-style: none;
+  
+  scrollbar-width: none;
+}
+.remove-scrollbar::-webkit-scrollbar { 
+  display: none;  
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = 'https://pickerworkers.azurewebsites.net';
+export const BASE_URL = 'https://pickerworkers.azurewebsites.net';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

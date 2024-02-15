@@ -10,6 +10,7 @@ import {
 import { EyeIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
 import Link from "next/link";
 import React from "react";
+import { useAuth } from "@/context/UserContext";
 
 const analytics = [
   {
@@ -40,6 +41,9 @@ const analyticsTwo = [
   },
 ]
 const Analytics = () => {
+  // const {user} = useAuth()
+  // console.log(user)
+
   return (
     <main className="overflow-scroll h-full pb-[70px] max-h-screen ">
       <div className=" flex justify-between">

@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import localFont from 'next/font/local'
 import {Inter} from 'next/font/google'
+import UserContext from "@/context/UserContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -77,16 +78,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${aileron.className} ${inter.variable}`}>
       
-      <body className=" overflow-y-hidden">
+      <body className=" h-screen overflow-y-hidden">
       <ThemeProvider
       attribute="class"
       defaultTheme="theme"
       enableSystem
-      disableTransitionOnChange
-
+      disableTransitionOnChange={false}
       
       >
+        <UserContext>
         {children}
+
+        </UserContext>
         </ThemeProvider>
         </body>
 

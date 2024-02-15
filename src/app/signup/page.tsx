@@ -66,9 +66,9 @@ const page = () => {
         <div className="absolute max-w-[863px] w-full h-[410px] bg-[#5F8CFF] blur-3xl">
 
         </div>
-        <Link href={'/'} className="">
+        {/* <Link href={'/'} className="">
           <button className=" border border-white rounded-[8px] px-6 py-2 text-sm bg-transparent flex items-center gap-2 text-white"><ArrowLeft className=" w-4 h-4" /> <span>back</span></button>
-        </Link>
+        </Link> */}
       <div className=" z-10 md:px-[70px] px-4  py-[50px] max-w-[560px] w-full  text-white bg-white flex items-center flex-col rounded-lg gap-7 border-white border">
         <Image src={"/icon.svg"} alt="icon" width={100} height={100} />
         <button className=" justify-center rounded-md border py-3 w-full border-[#d6d6d6] flex gap-[7px] items-center text-[#000103] font-bold text-sm">
