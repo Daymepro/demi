@@ -4,8 +4,10 @@ import SectionTwo from './components/SectionTwo'
 import SectionThree from './components/SectionThree'
 import SectionFour from './components/SectionFour'
 import SectionFive from './components/SectionFive'
-import SectionSeven from './components/SectionSeven'
 import SectionSix from './components/SectionSix'
+import SectionSeven from './components/SectionSeven'
+import SectionEight from './components/SectionEight'
+import SectionNine from './components/SectionNine'
 
 function page() {
   return (
@@ -17,6 +19,8 @@ function page() {
         <SectionFive/>
         <SectionSix/>
         <SectionSeven/>
+        <SectionEight />
+        <SectionNine />
     </div>
   )
 }
