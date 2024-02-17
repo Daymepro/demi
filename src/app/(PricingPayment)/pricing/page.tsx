@@ -6,7 +6,7 @@ import React from 'react'
 function page() {
     
   return (
-    <div  className=' py-24 flex flex-col overflow-x-hidden'>
+    <div  className=' pt-24 pb-[120px] flex flex-col overflow-x-hidden h-screen overflow-y-scroll '>
         <div className='flex flex-col xl:px-[140px] md:px-10 px-5 text-center  items-center justify-center '>
             <span className='text-xl text-[rgba(0,1,3,0.60)]'>About AI Web Hero</span>
             <h1 className='text-5xl my-4 font-bold'>Subscription plan crafted for you!</h1>

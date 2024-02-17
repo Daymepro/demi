@@ -62,7 +62,7 @@ const DashboardSidebar = () => {
                 )}
               </Link>
               <Link
-                href={"/jhsds/website"}
+                href={"/jhsds/website/preview"}
                 className={`${
                   pathSplit === "website"
                     ? " text-[#000103]  bg-[#f3f4f6] rounded-sm "

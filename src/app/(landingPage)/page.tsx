@@ -11,7 +11,7 @@ import SectionNine from './components/SectionNine'
 
 function page() {
   return (
-    <div className='h-full'>
+    <div className='h-screen remove-scrollbar overflow-y-scroll'>
         <SectionOne/>
         <SectionTwo/>
         <SectionThree/>

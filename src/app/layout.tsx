@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import localFont from 'next/font/local'
 import {Inter} from 'next/font/google'
 import UserContext from "@/context/UserContext";
@@ -11,11 +10,13 @@ export const metadata: Metadata = {
 };
 
 const inter = Inter({
-  display: "swap",
+  display: 'auto',
   subsets: ["latin", "cyrillic-ext", "vietnamese", "latin-ext"],
   variable: "--font-inter",
   weight: "variable",
 });
+
+
 const aileron = localFont({
   src: [
     {
@@ -69,7 +70,6 @@ const neue = localFont({
     },
   ]
 })
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,19 +78,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${aileron.className} ${inter.variable}`}>
       
-      <body className=" h-screen overflow-y-hidden">
-      <ThemeProvider
-      attribute="class"
-      defaultTheme="theme"
-      enableSystem
-      disableTransitionOnChange={false}
-      
-      >
+      <body className=" h-screen font-sans overflow-y-hidden">
+ 
         <UserContext>
         {children}
 
         </UserContext>
-        </ThemeProvider>
         </body>
 
       
