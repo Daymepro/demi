@@ -135,7 +135,7 @@ const toggleExpanded = (index: number) => {
   <AlertDialogContent>
     <AlertDialogHeader>
       <AlertDialogTitle>Custom domain is not included in your plan</AlertDialogTitle>
-      <AlertDialogDescription>
+      <AlertDialogDescription suppressHydrationWarning>
        <div className=' w-full rounded-[8px] bg-[#F9FAFB] px-3 py-4'>
        Upgrade to get a free custom domain.
        </div>

@@ -1,4 +1,5 @@
-import React from "react";
+"use client"
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -28,9 +29,39 @@ import {
     PaginationNext,
     PaginationPrevious,
   } from "@/components/ui/pagination"
+import axios from "axios";
+import { useAuth } from "@/context/UserContext";
+import { apiService } from "@/utils/apiService";
+import clsx from "clsx";
   
 
-const Customer = () => {
+
+export type Customer = {
+  "organizationId": string,
+  "id": number,
+  "companyName": string,
+  "website": string,
+  "category": string,
+  "relationshipManager": string
+}
+const Customer = async () => {
+  const {token} = useAuth()
+  const [customers, setCustomers] = useState<Customer[]>([])
+  useEffect(() => {
+      const getCustomers = async () => {
+          try {
+              const resp = await apiService.get('/api/Customer/GetAllCustomers', {'Authorization' : `Bearer ${token}`})
+              if(resp.succeeded === true) {
+
+                  setCustomers(resp.customers)
+              }
+          } catch (error) {
+              
+          }
+      }
+      getCustomers()
+  }, [])
+  
   return (
     <main className=" flex gap-10  h-full max-h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
@@ -113,9 +144,8 @@ const Customer = () => {
           </div>
         </div>
       </div>
-      <div className=" bg-white max-w-[1107px] w-full rounded-lg">
-        <Table className=" w-[70%]">
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+      <div className=" bg-white border overflow-hidden max-w-[1107px] w-full rounded-lg">
+        <Table className=" ">
           <TableHeader className=" bg-[rgb(250,251,251)]">
             <TableRow>
               <TableHead className=" bg-transparent">Company name</TableHead>
@@ -125,37 +155,26 @@ const Customer = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow className=" border-b border-b-[rgb(234,236,240)] py-4">
-              <TableCell className="font-medium text-sm text-[#101828]">
-                INV001
+              {customers.map((customer, index) => {
+                return  <TableRow key={customer.id} className= {clsx(' border-b border-b-[rgb(234,236,240)] py-4')}>
+                   <TableCell className="text-sm text-[#42526D]">
+                {customer.organizationId}
               </TableCell>
-              <TableCell>
+                 <TableCell>
                 <div className="bg-[#ECFDF3] rounded-[16px] w-fit  px-2 py-2 text-xs font-medium ">
-                  famout.aiwebhero
+                  {customer.website}
                 </div>
               </TableCell>
               <TableCell className="text-sm text-[#42526D]">
-                Portfolio
+                {customer.category}
               </TableCell>
               <TableCell className=" text-sm text-[#42526D]">
-                John Doe
+                {customer.relationshipManager}
               </TableCell>
-            </TableRow>
-            <TableRow className=" border-b border-b-[rgb(234,236,240)] py-4">
-              <TableCell className="font-medium text-sm text-[#101828]">Johnson & Co</TableCell>
-                <TableCell>
-              <div className="bg-[#ECFDF3] rounded-[16px] w-fit  px-2 py-2 text-xs font-medium ">
-                famout.aiwebhero
-              </div>{" "}
+              </TableRow>
+              })}
 
-                </TableCell>
-              <TableCell className="text-sm text-[#42526D]">
-                Portfolio
-              </TableCell>
-              <TableCell className=" text-sm text-[#42526D]">
-                John Doe
-              </TableCell>
-            </TableRow>
+       
           </TableBody>
         </Table>
         <Pagination className=" px-4 pb-7 pt-2">

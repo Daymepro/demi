@@ -196,7 +196,7 @@ function page() {
                         <div>
                             <div className='flex gap-4'>
                                 <img src="/images/cvv-info-icon.svg" alt="" />
-                                <span className='text-[rgba(40,41,47,0.6)] text-sm'>Credit Card Payment may tke up tp 24h to be processed</span>
+                                <span className='text-[rgba(40,41,47,0.6)] text-sm'>Credit Card Payment may take up tp 24h to be processed</span>
                             </div>
                             <FormField
                             control={cardForm.control}
@@ -206,7 +206,7 @@ function page() {
                                 
                                 <FormItem className=' '>
                                     <FormControl className=''>
-                                        <input  type="checkbox"  id="" className='payment-checkbox mr-4' {...field}/>    
+                                        {/* <input type="checkbox"  id="" className='payment-checkbox mr-4' {...field}/>  */}
                                     </FormControl>
                                     <FormLabel className='text-sm'>Save my payment details for future purchase</FormLabel>
 
@@ -234,7 +234,7 @@ function page() {
                                             <input type="checkbox"/>
                                             <span className="checkmark"></span>
                                             </div> */}
-                                        <input type="checkbox" className='toggle-checkbox ' {...field} />
+                                        {/* <input type="checkbox" className='toggle-checkbox ' {...field} /> */}
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

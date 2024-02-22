@@ -70,6 +70,10 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        'automation-zoom-in': {
+          '0%': { transform: 'translateY(-30px) scale(0.2)' },
+          '100%': { transform: 'transform: translateY(0px) scale(1)' },
+        },
       },
       fontFamily: {
         sans: ['var(--font-inter)']
@@ -77,6 +81,7 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        'automation-zoom-in': 'automation-zoom-in 0.5s',
       },
     },
   },

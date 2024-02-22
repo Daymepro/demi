@@ -20,7 +20,7 @@ type DashboardTopBarProps = {
 }
 const DashboardTopBar = (props: DashboardTopBarProps) => {
   const pathname = usePathname()
-  const pathSplit = pathname.split('/')[3]
+  const pathSplit = pathname.split('/')[2]
   return (
     <>
     <div className=' flex z-20  border-b h-[55px] items-center pr-4'>
@@ -28,7 +28,7 @@ const DashboardTopBar = (props: DashboardTopBarProps) => {
 
       <div className='flex  h-[70%] self-end max-w-[446px] w-full items-center justify-between'>
 
-        {props.pathIdentity.paths.map((path) =>    <Link key={path.path}  href={path.path} className={` h-full ${pathSplit === path.path.split('/')[3] ? ' border-b-4 border-b-[#000103]' : ''}  text-[12px] text-[#abac9d] font-bold`}>
+        {props.pathIdentity.paths.map((path) =>    <Link key={path.path}  href={path.path} className={` h-full ${pathSplit === path.path.split('/')[2] ? ' border-b-4 border-b-[#000103]' : ''}  text-[12px] text-[#abac9d] font-bold`}>
         {path.name}
       </Link> )}
       </div>

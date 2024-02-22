@@ -13,7 +13,7 @@ function page() {
             <span className='text-xl text-[rgba(0,1,3,0.60)]'>Kindly choose your plane to get started with AI Web Hero today !</span>
             <div className='mt-8 flex items-center justify-center gap-3'>
                 <span className='text-xl text-[rgba(0,1,3,0.60)]'>Wanna give it a try!</span>
-                <span><Button variant={"custom"} className='bg-[rgba(0,48,173,0.04)] text-ai-button-blue underline'>7 days of free trial</Button></span>
+                <span><Button asChild variant={"custom"} className='bg-[rgba(0,48,173,0.04)] text-ai-button-blue underline'>7 days of free trial</Button></span>
             </div>
         </div>
         <div className='w-full xl:px-[140px] md:px-10 px-5 mt-[70px] '>
@@ -44,7 +44,7 @@ function page() {
                     </ul>
                 </div>
                 <div className='card-footer mt-6'>
-                    <Button className='w-full font-bold text bg-white text-ai-button-blue' variant={"custom"}>Choose Plan</Button>
+                    <Button asChild className='w-full font-bold text bg-white text-ai-button-blue' variant={"custom"}>Choose Plan</Button>
                 </div>
             </div>
             <div className='card max-w-[400px] text-[#000103] flex-1 gap-x-5 bg-[#F4F4F5] flex flex-col px-4 py-12 rounded-lg '>
@@ -73,7 +73,7 @@ function page() {
                     </ul>
                 </div>
                 <div className='card-footer mt-6'>
-                    <Button className='w-full font-bold text bg-ai-button-blue text-white' variant={"custom"}>Choose Plan</Button>
+                    <Button asChild className='w-full font-bold text bg-ai-button-blue text-white' variant={"custom"}>Choose Plan</Button>
                 </div>
             </div>
                 <div className='card max-w-[400px] text-[#000103] flex-1 gap-x-5 bg-[#F4F4F5] flex flex-col px-4 py-12 rounded-lg '>

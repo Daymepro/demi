@@ -6,9 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/UserContext";
 
 const page = () => {
   const route = useRouter()
+  const {initializeUser } = useAuth()
   const [formInputs, setFormInputs] = useState({
     firstName: "",
     lastName: '',
@@ -36,7 +38,8 @@ const page = () => {
     if(resp.succeeded === false) {
       setError(resp.responseMessage)
     } else {
-      route.push('/onboarding/industry')
+      initializeUser(resp, () =>route.push('/onboarding/industry') )
+      
     }
     setLoading(false)
    } catch (error) {

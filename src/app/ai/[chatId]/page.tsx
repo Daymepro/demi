@@ -36,13 +36,6 @@ const AiChat = () => {
   };
   const resp = true;
   return (
-    <ThemeProvider
-    attribute="class"
-    defaultTheme="theme"
-    enableSystem
-    disableTransitionOnChange={false}
-    
-    >
     <main className=" bg-white h-screen flex  py-2 dark:bg-[rgb(30,30,30)]">
       <AiSideBar />
       <div className=" flex flex-col w-full justify-between py-12 px-[158px]  items-center">
@@ -405,7 +398,6 @@ const AiChat = () => {
         </div>
       </div>
     </main>
-    </ThemeProvider>
   );
 };
 

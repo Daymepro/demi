@@ -15,14 +15,14 @@ interface navItem {
 
 const NavItem:React.FC<navItem> = ({label, content}) => {
     const [isMounted, setIsMounted] = useState(false);
+    const pathName = usePathname()
+    
     useEffect(() => {
         setIsMounted(true);
     }, [])
     if (!isMounted) {
         return null
     }
-    const pathName = usePathname()
-    
     return (
     <div className='group relative  '>
         <button className=' '>{label} <img className=' inline' src="/images/vuesax-bold-vuesax-bold-arrow-left.svg" alt="drop-down" /></button>

@@ -3,6 +3,10 @@ import "./globals.css";
 import localFont from 'next/font/local'
 import {Inter} from 'next/font/google'
 import UserContext from "@/context/UserContext";
+import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
+import { Toaster as SonnarToaster } from "@/components/ui/sonner";
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -77,12 +81,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${aileron.className} ${inter.variable}`}>
-      
-      <body className=" h-screen font-sans overflow-y-hidden">
+
+
+      <body className="  h-screen font-sans overflow-y-hidden">
  
         <UserContext>
         {children}
-
+        <SonnarToaster />
         </UserContext>
         </body>
 

@@ -62,7 +62,7 @@ const DashboardSidebar = () => {
                 )}
               </Link>
               <Link
-                href={"/jhsds/website/preview"}
+                href={"/website/preview"}
                 className={`${
                   pathSplit === "website"
                     ? " text-[#000103]  bg-[#f3f4f6] rounded-sm "
@@ -106,7 +106,7 @@ const DashboardSidebar = () => {
                   </span>
                 )}
               </Link>
-              <Link
+              {/* <Link
                 href={"/"}
                 className={`${
                   pathSplit === "home"
@@ -120,7 +120,7 @@ const DashboardSidebar = () => {
                     Website
                   </span>
                 )}
-              </Link>
+              </Link> */}
             </div>
             <div className=" grow"></div>
             <div className=" relative ">

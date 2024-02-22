@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { Axios, AxiosHeaders } from "axios";
 
 export const BASE_URL = 'https://pickerworkers.azurewebsites.net';
 

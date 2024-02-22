@@ -28,7 +28,7 @@ const Signin = () => {
       } else if(resp.succeeded === true) {
         initializeUser(resp, () => {
 
-          return router.push(`/ksjs/website/analytics`);
+          return router.push(`/website`);
         } 
           )
       }
