@@ -7,10 +7,12 @@ const layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[2];
   const excludedLayouts = ['business-suggestions', 'language', 'name-suggestions']
+const {user} = useAuth()
 
-
+  if(!user) {
+    redirect('/signin')
+  }
   return (
-    <UserContext>
 
     <div style={{
       backgroundImage: "url('/grid.svg')",
@@ -119,7 +121,6 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 </div>
         </div>
     </div>
-    </UserContext>
 
   );
 };

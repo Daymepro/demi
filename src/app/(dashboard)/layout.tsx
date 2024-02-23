@@ -86,12 +86,14 @@ const nav: Nav = {
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
 
-
+const {user} = useAuth()
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[1];
   const findPath = nav[pathSplit];
+  if(!user) {
+    redirect('/signin')
+  }
   return (
-    <UserContext>
     <div className=" flex relative bg-[#F9FAFB] font-sans">
       <div className=" sticky z-20 bg-white h-screen left-0">
         <DashboardSidebar />
@@ -107,7 +109,6 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
         </div>
       </div>
     </div>
-    </UserContext>
   );
 };
 

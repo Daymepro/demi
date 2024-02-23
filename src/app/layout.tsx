@@ -84,9 +84,12 @@ export default function RootLayout({
 
 
       <body className="  h-screen font-sans overflow-y-hidden">
- 
+ <UserContext>
+
         {children}
         <SonnarToaster />
+
+ </UserContext>
         </body>
 
       

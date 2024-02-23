@@ -18,7 +18,7 @@ const page = () => {
     setIndustry(e.target.value)
   }
 
-
+console.log(token)
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
