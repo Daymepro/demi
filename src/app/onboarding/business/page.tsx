@@ -74,6 +74,7 @@ const page = () => {
             placeholder="Enter your business name"
           />
         </div>
+        
         {error && <p className=" text-xs font-bold text-red-600">{error}</p> }
         <button
           onClick={handleSubmit}

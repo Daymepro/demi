@@ -2,6 +2,7 @@
 import { getUser } from '@/utils/getUser';
 import { jwtDecode } from 'jwt-decode';
 import { User } from 'lucide-react';
+import { redirect } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { createContext } from 'react';
 
@@ -19,12 +20,11 @@ interface AuthContextProps {
       callback: () => void
     ) => void;
     // removeUser: () => void;
-    // reloadContext: () => void;
     // isLoading: boolean;
     // isReady: boolean;
     // isLoaded: boolean;
     // logout: () => void;
-    userJWT: userJWT
+    userJWT: userJWT | null
   }
   
 export interface User {
@@ -36,11 +36,14 @@ export const AuthContext = createContext<AuthContextProps | undefined>(
     undefined
   );
 const UserContext = ({children}: {children: React.ReactNode}) => {
-    const [user, setUser] = useState<User | null>(JSON.parse(localStorage.getItem('user') as string) as unknown as User || null);
-    const [token, setToken] = useState<string>(JSON.parse(localStorage.getItem('token') as string) as string );
-    const [userJWT, setUserJWT] = useState<userJWT>(JSON.parse(localStorage.getItem('userJWT') as string) as unknown as userJWT );
+
+
+    const [user, setUser] = useState<User | null>( null);
+    const [token, setToken] = useState<string>('' );
+    const [userJWT, setUserJWT] = useState<userJWT | null>( null);
 
   const [error, setError] = useState<string | null>(null);
+
 
   const getUser = async (token: string) => {
     const user = jwtDecode(token) as userJWT;
@@ -49,15 +52,23 @@ const UserContext = ({children}: {children: React.ReactNode}) => {
 
 
   }
+  useEffect(() => {
+setUser(JSON.parse(localStorage.getItem('user') as string) as unknown as User)
+setToken(JSON.parse(localStorage.getItem('token') as string) as string)
+setUserJWT(JSON.parse(localStorage.getItem('userJWT') as string) as unknown as userJWT )
+  }, [])
 
   function calculateTimeRemaining() {
     const now = Math.floor(Date.now() / 1000);
+    if(userJWT)
     return Math.max(0, userJWT.exp - now); 
 }
 useEffect(() => {
   const remainingTime = calculateTimeRemaining();
+  if(remainingTime)
   setTimeout(() => setUser(null), remainingTime * 1000);
 }, [])
+
 
   const initializeUser = async (
     userData: User,

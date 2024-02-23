@@ -1,12 +1,17 @@
 "use client";
+import UserContext, { useAuth } from "@/context/UserContext";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import React from "react";
 const layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[2];
   const excludedLayouts = ['business-suggestions', 'language', 'name-suggestions']
+
+
   return (
+    <UserContext>
+
     <div style={{
       backgroundImage: "url('/grid.svg')",
       backgroundPosition: "bottom",
@@ -114,6 +119,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 </div>
         </div>
     </div>
+    </UserContext>
+
   );
 };
 

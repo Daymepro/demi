@@ -11,10 +11,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRightCircleIcon, ChevronRightIcon } from "lucide-react";
+import UserImage from "./userIcon";
 
 const DashboardSidebar = () => {
   const pathname = usePathname();
-  const pathSplit = pathname.split("/")[2];
+  const pathSplit = pathname.split("/")[1];
   const [expand, setExpand] = useState(false);
 
   const handleExpand = () => {
@@ -33,7 +34,7 @@ const DashboardSidebar = () => {
             <div className=" flex justify-between">
             <div  className=" flex items-center gap-2">
               <div className=" rounded-full  h-[30px] w-[30px] object-contain">
-              <img src="/displaypic.png" alt="" />
+              <UserImage />
 
               </div>
             {expand &&  <span className=" text-[#000103] font-bold text-[20px]">Sonio</span>}
@@ -45,7 +46,7 @@ const DashboardSidebar = () => {
             </div>}
             </div>
           
-            <div className={`flex mt-[49px]  flex-col gap-6 `}>
+            <div className={`flex mt-[49px]  flex-col gap-1 `}>
               <Link
                 href={"/"}
                 className={`${
@@ -132,7 +133,7 @@ const DashboardSidebar = () => {
                   <ChevronRightIcon
                     className={`${
                       expand ? "rotate-180" : "rotate-0"
-                    } transition-rotate ease-in-out transform text-[0030AD] w-4 h-4 `}
+                    } transition-rotate ease-in-out transform text-[0030AD] text-ai-button-blue w-4 h-4 `}
                   />
                 }
               </div>

@@ -34,7 +34,8 @@ const Signin = () => {
       }
       setLoading(false);
     } catch (error: any) {
-      setError(error.response.data.title);
+      console.log(error)
+      // setError(error.response.data.title);
     } finally {
       setLoading(false);
     }
@@ -46,6 +47,7 @@ const Signin = () => {
       [name]: value,
     }));
   };
+
   return (
     <div
       style={{

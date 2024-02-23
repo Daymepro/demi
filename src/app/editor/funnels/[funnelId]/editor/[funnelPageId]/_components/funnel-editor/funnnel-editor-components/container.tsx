@@ -184,7 +184,7 @@ const Container = ({ element }: Props) => {
   return (
     <div
       style={styles}
-      className={clsx("relative p-4 transition-all group", {
+      className={clsx("relative p-4 transition-all remove-scrollbar group", {
         "max-w-full w-full": type === "container" || type === "2Col",
         "h-fit": type === "container",
         "h-full border": type === "__body",

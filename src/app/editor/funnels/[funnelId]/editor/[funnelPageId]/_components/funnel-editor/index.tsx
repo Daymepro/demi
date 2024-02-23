@@ -26,9 +26,6 @@ const FunnelEditor = ({ funnelPageId, liveMode }: Props) => {
 useEffect(() => {
   const fetchData = async () => {
   try {
-    const response = await fetch('http://localhost:3000/api/getData')
-  if(!response) return
-  const data = await response.json()
   dispatch({
     type: 'LOAD_DATA',
     payload: {
@@ -188,7 +185,7 @@ const handleOnPreview = () => {
   })
 }
 
-  return <div suppressHydrationWarning className={clsx(' use-automation-zoom  h-full overflow-scroll mr-[385px] bg-background transition-all rounded-md', {
+  return <div className={clsx(' use-automation-zoom  h-full overflow-scroll remove-scrollbar mr-[385px] bg-background transition-all rounded-md', {
     ' !p-0 !mr-0': state.editor.previewMode === true || state.editor.liveMode === true,
     " !w-[850px]" : state.editor.device === 'Tablet',
     " !w-[420px]" : state.editor.device === 'Mobile',

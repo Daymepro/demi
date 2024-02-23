@@ -1,11 +1,9 @@
-import { useAuth } from '@/context/UserContext'
-import { redirect } from 'next/navigation'
+import UserContext from '@/context/UserContext'
 import React from 'react'
 
 const layout = ({children} : {children: React.ReactNode}) => {
-
   return (
-    <div >{children}</div>
+    <UserContext>{children}</UserContext>
   )
 }
 

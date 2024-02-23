@@ -1,7 +1,7 @@
 "use client";
 import DashboardSidebar from "@/components/dashboardSidebar";
 import DashboardTopBar, { PathDetails } from "@/components/dashboardTopBar";
-import { useAuth } from "@/context/UserContext";
+import UserContext, { useAuth } from "@/context/UserContext";
 import { redirect, usePathname } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -37,9 +37,18 @@ const nav: Nav = {
         path: "/website/contact",
       },
       {
+        name: "project",
+        path: "/website/project",
+      },
+      {
+        name: "project-stakeholders",
+        path: "/website/project-stakeholder",
+      },
+      {
         name: "settings",
         path: "/website/settings",
       },
+
     ],
   },
   "content-generator": {
@@ -76,14 +85,13 @@ const nav: Nav = {
 };
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
-  const {user} = useAuth()
 
 
-if(!user) redirect('/signin')
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[1];
   const findPath = nav[pathSplit];
   return (
+    <UserContext>
     <div className=" flex relative bg-[#F9FAFB] font-sans">
       <div className=" sticky z-20 bg-white h-screen left-0">
         <DashboardSidebar />
@@ -99,6 +107,7 @@ if(!user) redirect('/signin')
         </div>
       </div>
     </div>
+    </UserContext>
   );
 };
 
