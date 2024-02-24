@@ -2,16 +2,20 @@
 import UserContext, { useAuth } from "@/context/UserContext";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 const layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[2];
   const excludedLayouts = ['business-suggestions', 'language', 'name-suggestions']
 const {user} = useAuth()
 
+
+useEffect(() => {
   if(!user) {
     redirect('/signin')
   }
+
+},[])
   return (
 
     <div style={{

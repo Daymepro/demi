@@ -1,7 +1,16 @@
+'use client'
 import { ThemeProvider } from '@/components/theme-provider'
-import React from 'react'
+import { useAuth } from '@/context/UserContext'
+import { redirect } from 'next/navigation'
+import React, { useEffect } from 'react'
 
 const layout = ({children} : {children : React.ReactNode}) => {
+  const {user} = useAuth()
+  useEffect(() => {
+    if(!user) {
+      redirect('/signin')
+    }
+  }, [])
   return (
     <ThemeProvider  attribute="class"
     defaultTheme="theme"

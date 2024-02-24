@@ -83,7 +83,7 @@ export default function RootLayout({
     <html lang="en" className={`${aileron.className} ${inter.variable}`}>
 
 
-      <body className="  h-screen font-sans overflow-y-hidden">
+      <body className="  h-screen font-sans ">
  <UserContext>
 
         {children}

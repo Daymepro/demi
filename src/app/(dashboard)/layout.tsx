@@ -90,11 +90,23 @@ const {user} = useAuth()
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[1];
   const findPath = nav[pathSplit];
-  if(!user) {
-    redirect('/signin')
-  }
+  useEffect(() => {
+    if(!user) {
+      redirect('/signin')
+    }
+
+  }, [])
+  useEffect(() => {
+    const original = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = 'hidden'
+    } 
+
+  }, [])
   return (
-    <div className=" flex relative bg-[#F9FAFB] font-sans">
+    <div className=" flex relative overflow-hidden bg-[#F9FAFB] font-sans">
       <div className=" sticky z-20 bg-white h-screen left-0">
         <DashboardSidebar />
       </div>
