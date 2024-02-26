@@ -1,10 +1,10 @@
 import React from 'react'
-import NavBar from '../crm/_components/nav'
 import NameHero from './_components/name-hero'
 import SectionTwo from './_components/sectionTwo'
 import SectionEight from '../(landingPage)/components/SectionEight'
 import SectionNine from '../(landingPage)/components/SectionNine'
 import Footer from '../(PricingPayment)/components/Footer'
+import NavBar from '../web-builder/_components/nav'
 
 const page = () => {
   return (
