@@ -61,7 +61,10 @@ function NavBar() {
               label="Product"
               content={[
                 { name: "Pricing", href: "/pricing" },
-                { name: "Payment", href: "/payment" },
+                { name: "AI Web Builder", href: "/web-builder" },
+                { name: "Content Creation", href: "/content-builder" },
+                 { name: "CRM", href: "/name-generator" },
+
               ]}
             />
           </div>

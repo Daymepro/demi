@@ -55,9 +55,9 @@ function NavBar(props?: Props) {
     <>
       <div className={clsx("xl:px-[140px] md:px-10 px-5 sticky top-0 flex md:backdrop-blur-sm bg-tranparent  justify-between items-center  py-[30px]", {
       })} >
-
+<div className="flex gap-6 items-center">
           <Link className=" " href="/">
-            <div className="  text-sm font-semibold mr-4">
+          <div className=" nav-icon text-sm font-semibold mr-4">
               {
               
               props?.type === 'white' ? <img src="/images/logoaiwebherobleuts.svg" alt="nav logo" /> : <img src="/iconwhite.svg" alt="nav logo" />
@@ -70,10 +70,16 @@ function NavBar(props?: Props) {
             "text-black": props?.type === 'white',
             "text-white": props?.type === 'dark'
           })}>
-          <span>
-              Product{" "}
+          <NavItem
+              label="Product"
+              content={[
+                { name: "Pricing", href: "/pricing" },
+                { name: "AI Web Builder", href: "/web-builder" },
+                { name: "Content Creation", href: "/content-builder" },
+                 { name: "CRM", href: "/name-generator" },
 
-            </span>
+              ]}
+            />
              <ChevronDown className=" w-4 h-4" />
           </div>
           <div className={clsx("  flex-row gap-2 flex items-center", {
@@ -98,6 +104,7 @@ function NavBar(props?: Props) {
 
           </div>
           </div>
+          </div>
          
         <div className=" hidden lg:block">
           <Link href="/signin">
@@ -114,6 +121,7 @@ function NavBar(props?: Props) {
           })}>
             Build your site
           </Link>
+        
         </div>
         <Sheet>
   <SheetTrigger className="lg:hidden">
