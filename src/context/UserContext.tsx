@@ -66,9 +66,14 @@ useEffect(() => {
   const remainingTime = calculateTimeRemaining();
   console.log(remainingTime)
   if(remainingTime)
-  setTimeout(() => setUser(null), remainingTime * 1000);
+  setTimeout(() => logout(), remainingTime * 1000);
 }, [])
 
+const logout =() => {
+  setUser(null)
+  setToken('')
+  setUserJWT(null)
+}
   const initializeUser = async (
     userData: User,
     callback: () => void

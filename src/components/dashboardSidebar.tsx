@@ -93,6 +93,21 @@ const DashboardSidebar = () => {
                 )}
               </Link>
               <Link
+                href={"/ksjds/content-generator"}
+                className={`${
+                  pathSplit === "content-generator"
+                    ? "text-[#000103] bg-[#f3f4f6]  rounded-sm "
+                    : "text-[rgb(0,1,3,0.35)]"
+                } flex items-center gap-2 px-3 py-3  `}
+              >
+                <BellAlertIcon className=" w-5 h-5 " />
+                {expand && (
+                  <span className=" font-medium font-sans text-[13px]">
+                    project
+                  </span>
+                )}
+              </Link>
+              <Link
                 href={"/"}
                 className={`${
                   pathSplit === "home"

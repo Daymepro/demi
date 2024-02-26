@@ -1,11 +1,11 @@
 import React from 'react'
-import NavBar from '../crm/_components/nav'
 import Hero from './_components/sectionOne'
 import Why from './_components/why'
 import Weeks from './_components/weeks'
 import Professional from './_components/professional'
 import SectionNine from '../(landingPage)/components/SectionNine'
 import Footer from '../(PricingPayment)/components/Footer'
+import NavBar from '../web-builder/_components/nav'
 
 const page = () => {
   return (

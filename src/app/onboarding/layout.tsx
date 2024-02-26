@@ -17,7 +17,6 @@ useEffect(() => {
   }
 
 },[])
-console.log(user)
   return (
 
     <div style={{
@@ -26,8 +25,7 @@ console.log(user)
       backgroundRepeat: "no-repeat",
     }} className=" bg-[#0030AD] w-full relative min-h-[100vh] flex flex-col gap-4 justify-center items-center">
      {excludedLayouts.includes(pathSplit) ? null : <div className=" flex items-center z-30  justify-between gap-3">
-        <Link
-          href="/onboarding/industry"
+        <div
           className=" flex text-white gap-3 items-center"
         >
           <div className=" flex items-center gap-[2px]">
@@ -55,9 +53,8 @@ console.log(user)
               <div className=" w-[18px] bg-white h-[2px] opacity-[0.4]"></div>
             )}
           </div>
-        </Link>
-        <Link
-          href="/onboarding/location"
+        </div>
+        <div
           className=" flex text-white gap-3 items-center"
         >
           <div className=" flex items-center gap-[2px]">
@@ -85,10 +82,9 @@ console.log(user)
        {pathSplit === 'business' &&   <div className=" w-[18px] bg-white h-[2px] opacity-[0.4]"></div>}
 
           </div>
-        </Link>
+        </div>
 
-        <Link
-          href="/onboarding/business"
+        <div
           className=" flex text-white gap-3 items-center"
         >
           <div className=" flex items-center gap-[2px]">
@@ -115,7 +111,7 @@ console.log(user)
           {pathSplit === "business" && (
             <span className=" text-sm font-bold">Biz.name</span>
           )}
-        </Link>
+        </div>
       </div>}
       <div className=" flex relative items-center">
       <div className="absolute max-w-[863px] w-full h-[410px] bg-[#5F8CFF] blur-3xl">

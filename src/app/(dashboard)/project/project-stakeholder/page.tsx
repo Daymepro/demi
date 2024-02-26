@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
-import { ListFilter, ListFilterIcon, SearchIcon } from "lucide-react";
+import { ListFilter, ListFilterIcon, PlusIcon, SearchIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -31,7 +31,17 @@ import {
   } from "@/components/ui/pagination"
 import { apiService } from "@/utils/apiService";
 import { useAuth } from "@/context/UserContext";
-  
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { LoadingSpinner } from "@/components/loadingSpinner";
+
 
 
 type Contact = {
@@ -47,7 +57,17 @@ const ProjectStakeholders = () => {
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const {token } = useAuth()
-
+  const [inputs, setInputs] = useState({
+    description: "",
+    assignedTo: "",
+    projectName: "",
+    blockers: '',
+    dateCreated: new Date(),
+    dueDate: new Date(),
+  });
+  const handleChange = (name: string, value: string | Date) => {
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
   useEffect(() => {
     const fetchStakeholders = async () => {
       try {
@@ -64,6 +84,20 @@ const ProjectStakeholders = () => {
     }
     fetchStakeholders()
   }, [ token])
+  const handleSubmitProject = async () => {
+    setLoading(true);
+    try {
+      const resp = await apiService.post("/api/Project/CreateProject", inputs, {
+        Authorization: `Bearer ${token}`,
+      });
+      console.log(resp);
+      if (resp.succeeded === true) {
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
@@ -77,10 +111,65 @@ const ProjectStakeholders = () => {
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select>
-        <div className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
+        <Dialog>
+  <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">     <span className=" font-bold text-sm">Add stakeholder</span>
+          <PlusIcon className=" w-4 h-4 text-white" /></DialogTrigger>
+  <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+            <p>Project</p>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">
+                Project Name
+              </p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("projectName", e.target.value)}
+                placeholder="Project name"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Project Description</p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("description", e.target.value)}
+                placeholder="Description"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Blockers</p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("blockers", e.target.value)}
+                placeholder="Blockers"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+
+            <div className=" w-full">
+              <button
+                onClick={handleSubmitProject}
+                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+              >
+                {loading ? (
+                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                ) : (
+                  "Create"
+                )}
+              </button>
+            </div>
+            <div className=" w-full">
+              <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
+                Cancel
+              </DialogClose>
+            </div>
+  </DialogContent>
+</Dialog>
+
+        {/* <div className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
           <span className=" font-bold text-sm">Edit website</span>
           <PaintBrushIcon className=" w-4 h-4 text-white" />
-        </div>
+        </div> */}
       </div>
       <div className=" border h-[62px] max-w-[1107px] flex items-center justify-between border-[rgb(239,241,244)] rounded-[8px] p-2 ">
         <div className=" w-1/2 flex h-full items-center max-w-[435px]  bg-white rounded-[8px]">
@@ -186,29 +275,7 @@ const ProjectStakeholders = () => {
     <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationPrevious href="#" />
     </PaginationItem>
-    <div className=" flex text-sm font-medium items-center gap-2">
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">1</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">2</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">3</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className="text-[#667085]">
-      <PaginationEllipsis />
-    </PaginationItem>
-    <PaginationItem>
-      <PaginationLink className=" text-[#667085]" href="#">4</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">5</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">6</PaginationLink>
-    </PaginationItem>
-    </div>
+ 
     
     <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationNext href="#" />

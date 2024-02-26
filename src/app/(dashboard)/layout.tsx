@@ -76,6 +76,23 @@ const nav: Nav = {
       },
     ],
   },
+  "project": {
+    pathname: "Project",
+    paths: [
+      {
+        name: "project",
+        path: "/project/project",
+      },
+      {
+        name: "stakeholders",
+        path: "/project/project-stakeholder",
+      },
+      {
+        name: "task",
+        path: "/project/task",
+      },
+    ],
+  },
   "settings": {
     pathname: "Settings",
     paths: [

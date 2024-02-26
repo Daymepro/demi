@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
-import { ListFilter, ListFilterIcon, SearchIcon } from "lucide-react";
+import { CalendarIcon, ListFilter, ListFilterIcon, PlusIcon, SearchIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -32,7 +32,15 @@ import {
 import { apiService } from "@/utils/apiService";
 import { useAuth } from "@/context/UserContext";
 import clsx from "clsx";
-  
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { LoadingSpinner } from "@/components/loadingSpinner";
 
 
 type Contact = {
@@ -46,10 +54,49 @@ type Contact = {
 }
 const Project = () => {
   const [projects, setProjects] = useState<Contact[]>([])
+  const [openModal, setOpenModal] = useState(false);
 
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const {token } = useAuth()
+  const [inputs, setInputs] = useState({
+    description: "",
+    assignedTo: "",
+    projectName: "",
+    blockers: '',
+    dateCreated: new Date(),
+    dueDate: new Date(),
+  });
+  const disabledBeforeDate = new Date();
+
+  const disabledDays = { before: disabledBeforeDate, after: inputs.dueDate };
+
+  const handleStartDateChange = (date: Date) => {
+    setInputs((prev) => ({
+      ...prev,
+      dateCreated: date,
+    }));
+    if (date > inputs.dueDate) {
+      setInputs((prev) => ({
+        ...prev,
+        dueDate: date,
+      }));
+    }
+  };
+
+
+  const handleEndDateChange = (date: Date) => {
+    if (date >= inputs.dateCreated) {
+      setInputs((prev) => ({
+        ...prev,
+        dueDate: date,
+      }));
+    }
+  };
+
+  const handleChange = (name: string, value: string | Date) => {
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -66,8 +113,137 @@ const Project = () => {
     }
     fetchProjects()
   }, [ token])
+    const handleSubmitProject = async () => {
+    setLoading(true);
+    try {
+      const resp = await apiService.post("/api/Project/CreateProject", inputs, {
+        Authorization: `Bearer ${token}`,
+      });
+      console.log(resp);
+      if (resp.succeeded === true) {
+        setOpenModal(false);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
+            {openModal && (
+        <div className=" flex items-center fixed w-screen top-0 right-0 left-0 bottom-0 h-screen justify-center z-50 bg-[rgba(0,0,0,0.6)]">
+          <div className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+            <p>Project</p>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">
+                Project Name
+              </p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("projectName", e.target.value)}
+                placeholder="Project name"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Project Description</p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("description", e.target.value)}
+                placeholder="Description"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Blockers</p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("blockers", e.target.value)}
+                placeholder="Blockers"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Start Date</p>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={clsx(
+                      " w-full justify-start bg-[#F3F4F6] text-[#B3B3B6]  text-left font-normal",
+                      !inputs.dateCreated && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {inputs.dateCreated ? (
+                      format(inputs.dateCreated, "PPP")
+                    ) : (
+                      <span>dd/mm/yyyy</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    className=" "
+                    disabled={disabledDays}
+                    selected={inputs.dateCreated as unknown as Date}
+                    onSelect={(d) => handleStartDateChange(d as Date)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">End Date</p>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={clsx(
+                      " w-full justify-start bg-[#F3F4F6] text-[#B3B3B6]  text-left font-normal",
+                      !inputs.dueDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {inputs.dueDate ? (
+                      format(inputs.dueDate, "PPP")
+                    ) : (
+                      <span>dd/mm/yyyy</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={inputs.dueDate as unknown as Date}
+                    disabled={disabledDays}
+                    onSelect={(d) => handleEndDateChange(d as Date)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className=" w-full">
+              <button
+                onClick={handleSubmitProject}
+                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+              >
+                {loading ? (
+                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                ) : (
+                  "Create"
+                )}
+              </button>
+            </div>
+            <div onClick={() => setOpenModal(false)} className=" w-full">
+              <button className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className=" flex justify-between">
         <Select>
           <SelectTrigger className="w-[180px]">
@@ -79,9 +255,9 @@ const Project = () => {
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select>
-        <div className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
-          <span className=" font-bold text-sm">Edit website</span>
-          <PaintBrushIcon className=" w-4 h-4 text-white" />
+        <div onClick={() => setOpenModal(true)} className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
+          <span className=" font-bold text-sm">Create Project</span>
+          <PlusIcon className=" w-4 h-4 text-white" />
         </div>
       </div>
       <div className=" border h-[62px] max-w-[1107px] flex items-center justify-between border-[rgb(239,241,244)] rounded-[8px] p-2 ">
@@ -202,7 +378,7 @@ const Project = () => {
     <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationPrevious href="#" />
     </PaginationItem>
-    <div className=" flex text-sm font-medium items-center gap-2">
+    {/* <div className=" flex text-sm font-medium items-center gap-2">
     <PaginationItem className=" text-[#667085]">
       <PaginationLink href="#">1</PaginationLink>
     </PaginationItem>
@@ -224,7 +400,7 @@ const Project = () => {
     <PaginationItem className=" text-[#667085]">
       <PaginationLink href="#">6</PaginationLink>
     </PaginationItem>
-    </div>
+    </div> */}
     
     <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationNext href="#" />

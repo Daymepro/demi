@@ -40,7 +40,6 @@ const page = () => {
           setError("unable to generate name please tell us more about your business")
         }
         setLoading(false);
-        console.log(resp.names)
       }
     } catch (error) {
       console.log(error);
@@ -48,11 +47,11 @@ const page = () => {
       setLoading(false)
     }
   };
-  const handleSelected = async () => {
+  const handleSelected = async (name: string) => {
     try {
       const resp = await apiService.post(
         "/api/Business/BusinessName",
-        { value: industry },
+        { value: name },
         { 'Authorization': `Bearer ${token}` }
       );
       // setNames(resp.names[0].split('/n'))
@@ -94,7 +93,7 @@ const page = () => {
         </div>
         <div className=" flex flex-wrap gap-[6px] w-full text-[#8f8f8f]">
    {error ? <p className=' font-bold text-red-600 text-xs'>{error}</p> : names.map((d: string,i) => {
-   return <div key={i} onClick={() => {}} className={` cursor-pointer px-6 w-fit py-2  rounded-full border border-[rgba(0,1,3,0.19)] text-[#000103]  text-[13px] font-semibold`}>
+   return <div key={i} onClick={() => handleSelected(d)} className={` cursor-pointer px-6 w-fit py-2  rounded-full border border-[rgba(0,1,3,0.19)] text-[#000103]  text-[13px] font-semibold`}>
     {d.split(' ')[1]}
    </div>})
    }

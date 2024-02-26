@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 const SectionNine = () => {
   return (
-    <div className=' overflow-x-hidden'>
+    <div className=' overflow-hidden'>
     <motion.div
     initial={{opacity: 0,  x: 200 }}
           viewport={{ once: true }}
@@ -40,7 +40,7 @@ const SectionNine = () => {
 
             <h1 className='text-4xl font-bold text-white text-center'>Try AIWeb Hero for free today</h1>
             <span className='md:text-[20px] text-base text-center text-white '>AI Web Hero's mission is to make website creation more accessible than ever, thanks to artificial intelligence. Become the hero of your own website with AIWebHero!</span>
-            <Link href={'/onboarding/industry'}  className='mt-6 mb-3 md:mb-0  flex  bg-white text-black items-center justify-center mx-auto md:mx-0 gap-2'>
+            <Link href={'/onboarding/industry'}  className='mt-6 mb-3 md:mb-0 px-4  flex rounded-[8px] py-3  bg-white text-black items-center justify-center mx-auto md:mx-0 gap-2'>
                <Zap fill='black' height={'20px'} width={'14px'}/> Generate your website
             </Link>
         </motion.div>
