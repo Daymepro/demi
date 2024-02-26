@@ -86,11 +86,12 @@ const nav: Nav = {
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
 
-const {user} = useAuth()
+const {user, isLoaded} = useAuth()
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[1];
   const findPath = nav[pathSplit];
   useEffect(() => {
+    if(!isLoaded) return
     if(!user) {
       redirect('/signin')
     }
@@ -101,7 +102,7 @@ const {user} = useAuth()
     document.body.style.overflow = 'hidden'
 
     return () => {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = original
     } 
 
   }, [])

@@ -22,7 +22,7 @@ interface AuthContextProps {
     // removeUser: () => void;
     // isLoading: boolean;
     // isReady: boolean;
-    // isLoaded: boolean;
+    isLoaded: boolean;
     // logout: () => void;
     userJWT: userJWT | null
   }
@@ -57,7 +57,6 @@ setUser(JSON.parse(localStorage.getItem('user') as string) as unknown as User)
 setToken(JSON.parse(localStorage.getItem('token') as string) as string)
 setUserJWT(JSON.parse(localStorage.getItem('userJWT') as string) as unknown as userJWT )
   }, [])
-
   function calculateTimeRemaining() {
     const now = Math.floor(Date.now() / 1000);
     if(userJWT)
@@ -65,10 +64,10 @@ setUserJWT(JSON.parse(localStorage.getItem('userJWT') as string) as unknown as u
 }
 useEffect(() => {
   const remainingTime = calculateTimeRemaining();
+  console.log(remainingTime)
   if(remainingTime)
   setTimeout(() => setUser(null), remainingTime * 1000);
 }, [])
-
 
   const initializeUser = async (
     userData: User,
@@ -90,7 +89,8 @@ useEffect(() => {
         token,
         initializeUser,
         error,
-        userJWT
+        userJWT,
+        isLoaded: !!(user || token)
       };
       return (
         <AuthContext.Provider value={authContextValue}>

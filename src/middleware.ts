@@ -6,6 +6,7 @@ export function middleware(request: NextRequest) {
   const searchParams = url.searchParams.toString();
   let hostname = request.headers;
 
+
   const pathWithSearchParams = `${url.pathname}${
     searchParams.length > 0 ? `${searchParams}` : ""
   }`;

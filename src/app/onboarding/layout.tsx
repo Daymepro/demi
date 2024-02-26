@@ -7,15 +7,17 @@ const layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[2];
   const excludedLayouts = ['business-suggestions', 'language', 'name-suggestions']
-const {user} = useAuth()
+const {user, isLoaded} = useAuth()
 
 
 useEffect(() => {
+  if(!isLoaded) return
   if(!user) {
     redirect('/signin')
   }
 
 },[])
+console.log(user)
   return (
 
     <div style={{

@@ -5,8 +5,9 @@ import { redirect } from 'next/navigation'
 import React, { useEffect } from 'react'
 
 const layout = ({children} : {children : React.ReactNode}) => {
-  const {user} = useAuth()
+  const {user, isLoaded} = useAuth()
   useEffect(() => {
+    if(!isLoaded) return
     if(!user) {
       redirect('/signin')
     }
