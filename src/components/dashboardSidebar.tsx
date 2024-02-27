@@ -2,8 +2,12 @@
 import {
   BellAlertIcon,
   ChevronDownIcon,
+  DocumentTextIcon,
   HomeIcon,
+  PhoneIcon,
   RectangleGroupIcon,
+  TicketIcon,
+  UserGroupIcon,
   UserIcon,
   WalletIcon,
 } from "@heroicons/react/16/solid";
@@ -73,12 +77,42 @@ const DashboardSidebar = () => {
                 <RectangleGroupIcon className="h-5 w-5 " />
                 {expand && (
                   <span className=" font-medium font-sans text-[13px]">
+                    Customer
+                  </span>
+                )}
+              </Link>
+              <Link
+                href={"/customer/customer"}
+                className={`${
+                  pathSplit === "customer"
+                    ? " text-[#000103]  bg-[#f3f4f6] rounded-sm "
+                    : " text-[rgb(0,1,3,0.35)] "
+                } flex items-center gap-2 px-3 py-3 `}
+              >
+                <UserGroupIcon className="h-5 w-5 " />
+                {expand && (
+                  <span className=" font-medium font-sans text-[13px]">
                     Website
                   </span>
                 )}
               </Link>
               <Link
-                href={"/ksjds/content-generator"}
+                href={"/project/project"}
+                className={`${
+                  pathSplit === "project"
+                    ? "text-[#000103] bg-[#f3f4f6]  rounded-sm "
+                    : "text-[rgb(0,1,3,0.35)]"
+                } flex items-center gap-2 px-3 py-3  `}
+              >
+                <DocumentTextIcon className=" w-5 h-5 " />
+                {expand && (
+                  <span className=" font-medium font-sans text-[13px]">
+                    Project
+                  </span>
+                )}
+              </Link>
+              <Link
+                href={"/content-generator"}
                 className={`${
                   pathSplit === "content-generator"
                     ? "text-[#000103] bg-[#f3f4f6]  rounded-sm "
@@ -89,21 +123,6 @@ const DashboardSidebar = () => {
                 {expand && (
                   <span className=" font-medium font-sans text-[13px]">
                     Content Generator
-                  </span>
-                )}
-              </Link>
-              <Link
-                href={"/ksjds/content-generator"}
-                className={`${
-                  pathSplit === "content-generator"
-                    ? "text-[#000103] bg-[#f3f4f6]  rounded-sm "
-                    : "text-[rgb(0,1,3,0.35)]"
-                } flex items-center gap-2 px-3 py-3  `}
-              >
-                <BellAlertIcon className=" w-5 h-5 " />
-                {expand && (
-                  <span className=" font-medium font-sans text-[13px]">
-                    project
                   </span>
                 )}
               </Link>
@@ -119,6 +138,51 @@ const DashboardSidebar = () => {
                 {expand && (
                   <span className=" font-medium font-sans text-[13px]">
                     Business Name Generator
+                  </span>
+                )}
+              </Link>
+              <Link
+                href={"/document"}
+                className={`${
+                  pathSplit === "document"
+                    ? "text-[#000103]  bg-[#f3f4f6]  rounded-sm"
+                    : "text-[rgb(0,1,3,0.35)]"
+                }  flex items-center gap-2 px-3 py-3  `}
+              >
+                <DocumentTextIcon className=" w-5 h-5 " />
+                {expand && (
+                  <span className=" font-medium font-sans text-[13px]">
+                    Document
+                  </span>
+                )}
+              </Link>
+              <Link
+                href={"/communication"}
+                className={`${
+                  pathSplit === "communication"
+                    ? "text-[#000103]  bg-[#f3f4f6]  rounded-sm"
+                    : "text-[rgb(0,1,3,0.35)]"
+                }  flex items-center gap-2 px-3 py-3  `}
+              >
+                <PhoneIcon className=" w-5 h-5 " />
+                {expand && (
+                  <span className=" font-medium font-sans text-[13px]">
+                    Communication
+                  </span>
+                )}
+              </Link>
+              <Link
+                href={"/support"}
+                className={`${
+                  pathSplit === "support"
+                    ? "text-[#000103]  bg-[#f3f4f6]  rounded-sm"
+                    : "text-[rgb(0,1,3,0.35)]"
+                }  flex items-center gap-2 px-3 py-3  `}
+              >
+                <TicketIcon className=" w-5 h-5 " />
+                {expand && (
+                  <span className=" font-medium font-sans text-[13px]">
+                    Support ticket
                   </span>
                 )}
               </Link>
@@ -139,10 +203,10 @@ const DashboardSidebar = () => {
               </Link> */}
             </div>
             <div className=" grow"></div>
-            <div className=" relative ">
+            <div className=" absolute right-[-15px] top-[50%] bottom-[50%] ">
               <div
                 onClick={handleExpand}
-                className="absolute right-[-27px]  w-[30px] h-[30px] flex items-center justify-center cursor-pointer bg-white rounded-full"
+                className="  w-[30px] h-[30px] flex items-center justify-center cursor-pointer bg-white rounded-full"
               >
                 {
                   <ChevronRightIcon

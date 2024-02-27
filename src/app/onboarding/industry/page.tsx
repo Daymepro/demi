@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { useAuth } from '@/context/UserContext'
 import { LoadingSpinner } from '@/components/loadingSpinner'
-const page = () => {
+const Industry = () => {
   const router = useRouter()
   const {token} = useAuth()
   const [loading, setLoading] = useState(false);
@@ -113,4 +113,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Industry

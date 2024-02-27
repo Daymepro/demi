@@ -43,36 +43,37 @@ import {
 import { LoadingSpinner } from "@/components/loadingSpinner";
 
 
-
-type Contact = {
-    "organizationId": string,
-    "id": number,
-    "userId": string,
-    "role": string,
-    "projectId": number
+type Opportunity = {
+  "companyName": string,
+  "customer": string,
+"description": string,
+"organizationId": string,
+action: string,
+stage: string,
+amount: string
 }
-const ProjectStakeholders = () => {
-  const [projectStakeholders, setProjectStakeholders] = useState<Contact[]>([])
-
+const Opportunity = () => {
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([])
+  const [params, setParams] = useState({
+    total: 0
+  })
   const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
   const [search, setSearch] = useState('')
   const {token } = useAuth()
-  const [inputs, setInputs] = useState({
-    description: "",
-    assignedTo: "",
-    projectName: "",
-    blockers: '',
-  });
-  const handleChange = (name: string, value: string | Date) => {
+  const [inputs, setInputs] = useState<Opportunity>({} as Opportunity);
+
+  
+  const handleChange = (name: string, value: string) => {
     setInputs((values) => ({ ...values, [name]: value }));
   };
   useEffect(() => {
-    const fetchStakeholders = async () => {
+    const fetchOpportunities = async () => {
       try {
-        const response = await apiService.get(`/api/ProjectStakeHolders/GetAllProjectStakeHolders`, {'Authorization' : `Bearer ${token}`})
+        const response = await apiService.get(`api/Opportunity/GetAllOpportunities?search=''&page=1&pageSize=10`, {'Authorization' : `Bearer ${token}`})
         console.log(response)
         if(response.succeeded !== false) {
-            setProjectStakeholders(response.stakeholders)
+          setOpportunities(response.opportunities)
         } else {
           console.log(response.responseMessage)
         }
@@ -80,12 +81,12 @@ const ProjectStakeholders = () => {
         console.log(error)
       }
     }
-    fetchStakeholders()
-  }, [ token])
-  const handleSubmitProject = async () => {
+    fetchOpportunities()
+  }, [search, currentPage, token])
+  const handleSubmit = async () => {
     setLoading(true);
     try {
-      const resp = await apiService.post("/api/Project/CreateProject", inputs, {
+      const resp = await apiService.post("/api/Opportunity/CreateOpportunity", inputs, {
         Authorization: `Bearer ${token}`,
       });
       console.log(resp);
@@ -99,7 +100,10 @@ const ProjectStakeholders = () => {
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
-        <Select>
+        <div className=" grow">
+
+        </div>
+        {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Last 15 days" />
           </SelectTrigger>
@@ -108,66 +112,85 @@ const ProjectStakeholders = () => {
             <SelectItem value="dark">Dark</SelectItem>
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
         <Dialog>
-  <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">     <span className=" font-bold text-sm">Add stakeholder</span>
-          <PlusIcon className=" w-4 h-4 text-white" /></DialogTrigger>
-  <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
-            <p>Project</p>
-            <div className=" w-full ">
-              <p className=" text-[13px] mb-2 text-[#677189]">
-                Project Name
-              </p>
-              <input
-                type="text"
-                onChange={(e) => handleChange("projectName", e.target.value)}
-                placeholder="Project name"
-                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
-              />
-            </div>
-            <div className=" w-full ">
-              <p className=" text-[13px] mb-2 text-[#677189]">Project Description</p>
-              <input
-                type="text"
-                onChange={(e) => handleChange("description", e.target.value)}
-                placeholder="Description"
-                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-              />
-            </div>
-            <div className=" w-full ">
-              <p className=" text-[13px] mb-2 text-[#677189]">Blockers</p>
-              <input
-                type="text"
-                onChange={(e) => handleChange("blockers", e.target.value)}
-                placeholder="Blockers"
-                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-              />
-            </div>
+          <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
+            {" "}
+            <span className=" font-bold text-sm">Create opportunity</span>
+            <PlusIcon className=" w-4 h-4 text-white" />
+          </DialogTrigger>
+            <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+              <p>Opportunity</p>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
+                <input
+                  type="text"
+                  value={inputs.companyName}
+                  onChange={(e) => handleChange("opportunity", e.target.value)}
+                  placeholder="Company name"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+                />
+              </div>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">Description</p>
+                <input
+                  type="text"
+                  value={inputs.description}
+                  onChange={(e) => handleChange("description", e.target.value)}
+                  placeholder="Description"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                />
+              </div>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">
+                  Action
+                </p>
+                <input
+                  type="text"
+                  value={inputs.action}
+                  onChange={(e) =>
+                    handleChange("email", e.target.value)
+                  }
+                  placeholder="Action"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                />
+              </div>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">
+                  Amount
+                </p>
+                <input
+                  type="text"
+                  value={inputs.amount}
+                  onChange={(e) =>
+                    handleChange("customer", e.target.value)
+                  }
+                  placeholder="Customer"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                />
+              </div>
 
-            <div className=" w-full">
-              <button
-                onClick={handleSubmitProject}
-                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
-              >
-                {loading ? (
-                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                ) : (
-                  "Create"
-                )}
-              </button>
-            </div>
-            <div className=" w-full">
-              <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
-                Cancel
-              </DialogClose>
-            </div>
-  </DialogContent>
-</Dialog>
 
-        {/* <div className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
-          <span className=" font-bold text-sm">Edit website</span>
-          <PaintBrushIcon className=" w-4 h-4 text-white" />
-        </div> */}
+
+              <div className=" w-full">
+                <button
+                  onClick={handleSubmit}
+                  className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+                >
+                  {loading ? (
+                    <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                  ) : (
+                    "Add Opportunity"
+                  )}
+                </button>
+              </div>
+              <div className=" w-full">
+                <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
+                  Cancel
+                </DialogClose>
+              </div>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className=" border h-[62px] max-w-[1107px] flex items-center justify-between border-[rgb(239,241,244)] rounded-[8px] p-2 ">
         <div className=" w-1/2 flex h-full items-center max-w-[435px]  bg-white rounded-[8px]">
@@ -240,29 +263,34 @@ const ProjectStakeholders = () => {
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className=" bg-[rgb(250,251,251)]">
             <TableRow>
-              <TableHead className=" bg-transparent">Username</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Projects</TableHead>
+              <TableHead className=" bg-transparent">Company Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Action</TableHead>
+              <TableHead >Amount</TableHead>
+              <TableHead >Stage</TableHead>
 
 
             </TableRow>
           </TableHeader>
           <TableBody>
 
-              {projectStakeholders.map((project) => {
-                return <TableRow key={project.id} className=" border-b border-b-[rgb(234,236,240)] py-4">
+              {opportunities.map((opportunity, id) => {
+                return <TableRow key={id} className=" border-b border-b-[rgb(234,236,240)] py-4">
                      <TableCell className="font-medium text-sm text-[#101828]">
-                {project.userId}
-              </TableCell>
-    
-              <TableCell className="text-sm text-[#42526D]">
-                
-                <div className="bg-[#ECFDF3] rounded-[16px] w-fit  px-2 py-2 text-xs font-medium ">
-                  {project.role}
-                </div>
+                {opportunity.companyName}
               </TableCell>
               <TableCell>
-                {project.projectId}
+                {opportunity.description}
+              </TableCell>
+
+              <TableCell>
+                {opportunity.action}
+              </TableCell>
+              <TableCell>
+                {opportunity.amount}
+              </TableCell>
+              <TableCell>
+                {opportunity.stage}
               </TableCell>
                 </TableRow>
               })}
@@ -286,4 +314,4 @@ const ProjectStakeholders = () => {
   );
 };
 
-export default ProjectStakeholders;
+export default Opportunity;

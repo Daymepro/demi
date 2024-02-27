@@ -10,34 +10,20 @@ import {  useAuth } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 
 const Signin = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [formInputs, setFormInputs] = useState({
     password: "",
     email: "",
   });
   const router = useRouter()
-  const {initializeUser} = useAuth()
+  const {login, loading, error} = useAuth()
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setLoading(true);
     try {
-      const resp = await apiService.post(`/api/Auth/Signin`, formInputs);
-      if (resp.succeeded === false) {
-        setError(resp.responseMessage);
-      } else if(resp.succeeded === true) {
-        initializeUser(resp, () => {
-
-          return router.push(`/website`);
-        } 
-          )
-      }
-      setLoading(false);
+      login(formInputs.email, formInputs.password, () => router.push('/website'))
     } catch (error: any) {
       console.log(error)
       // setError(error.response.data.title);
     } finally {
-      setLoading(false);
     }
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

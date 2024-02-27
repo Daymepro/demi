@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
-import { ListFilter, ListFilterIcon, SearchIcon } from "lucide-react";
+import { ListFilter, ListFilterIcon, PlusIcon, SearchIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -31,21 +31,29 @@ import {
   } from "@/components/ui/pagination"
 import { apiService } from "@/utils/apiService";
 import { useAuth } from "@/context/UserContext";
-  
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { LoadingSpinner } from "@/components/loadingSpinner";
 
 
-type Contact = {
-  "organizationId": string,
-  "id": number,
-  "firstName": string,
-  "lastName": string,
-  "email": string,
-  "mobileNumber": string,
+type Invoice = {
+  "companyName": string,
   "customer": string,
-  "customerId": number
+"description": string,
+"organizationId": string,
+action: string,
+stage: string,
+amount: string
 }
-const Contact = () => {
-  const [contacts, setContacts] = useState<Contact[]>([])
+const Invoice = () => {
+  const [invoice, setInvoice] = useState<Invoice[]>([])
   const [params, setParams] = useState({
     total: 0
   })
@@ -53,14 +61,19 @@ const Contact = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [search, setSearch] = useState('')
   const {token } = useAuth()
+  const [inputs, setInputs] = useState<Invoice>({} as Invoice);
 
+  
+  const handleChange = (name: string, value: string) => {
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
   useEffect(() => {
-    const fetchContacts = async () => {
+    const fetchinvoice = async () => {
       try {
-        const response = await apiService.get(`/api/Contact/GetAllContacts?${search}&page=${currentPage}&pageSize=10`, {'Authorization' : `Bearer ${token}`})
+        const response = await apiService.get(`/api/Invoice/GetAllinvoice?search=&page=1&pageSize=10`, {'Authorization' : `Bearer ${token}`})
         console.log(response)
         if(response.succeeded !== false) {
-          setContacts(response.contacts)
+          setInvoice(response.invoice)
         } else {
           console.log(response.responseMessage)
         }
@@ -68,12 +81,29 @@ const Contact = () => {
         console.log(error)
       }
     }
-    fetchContacts()
+    fetchinvoice()
   }, [search, currentPage, token])
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const resp = await apiService.post("/api/Invoice/CreateInvoice", inputs, {
+        Authorization: `Bearer ${token}`,
+      });
+      console.log(resp);
+      if (resp.succeeded === true) {
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
-        <Select>
+        <div className=" grow">
+
+        </div>
+        {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Last 15 days" />
           </SelectTrigger>
@@ -82,11 +112,85 @@ const Contact = () => {
             <SelectItem value="dark">Dark</SelectItem>
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
-        </Select>
-        <div className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
-          <span className=" font-bold text-sm">Edit website</span>
-          <PaintBrushIcon className=" w-4 h-4 text-white" />
-        </div>
+        </Select> */}
+        <Dialog>
+          <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
+            {" "}
+            <span className=" font-bold text-sm">Create Invoice</span>
+            <PlusIcon className=" w-4 h-4 text-white" />
+          </DialogTrigger>
+            <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+              <p>Invoice</p>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
+                <input
+                  type="text"
+                  value={inputs.companyName}
+                  onChange={(e) => handleChange("Invoice", e.target.value)}
+                  placeholder="Company name"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+                />
+              </div>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">Description</p>
+                <input
+                  type="text"
+                  value={inputs.description}
+                  onChange={(e) => handleChange("description", e.target.value)}
+                  placeholder="Description"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                />
+              </div>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">
+                  Action
+                </p>
+                <input
+                  type="text"
+                  value={inputs.action}
+                  onChange={(e) =>
+                    handleChange("email", e.target.value)
+                  }
+                  placeholder="Action"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                />
+              </div>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">
+                  Amount
+                </p>
+                <input
+                  type="text"
+                  value={inputs.amount}
+                  onChange={(e) =>
+                    handleChange("customer", e.target.value)
+                  }
+                  placeholder="Customer"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                />
+              </div>
+
+
+
+              <div className=" w-full">
+                <button
+                  onClick={handleSubmit}
+                  className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+                >
+                  {loading ? (
+                    <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                  ) : (
+                    "Add Invoice"
+                  )}
+                </button>
+              </div>
+              <div className=" w-full">
+                <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
+                  Cancel
+                </DialogClose>
+              </div>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className=" border h-[62px] max-w-[1107px] flex items-center justify-between border-[rgb(239,241,244)] rounded-[8px] p-2 ">
         <div className=" w-1/2 flex h-full items-center max-w-[435px]  bg-white rounded-[8px]">
@@ -94,7 +198,7 @@ const Contact = () => {
           <input
             type="text"
             className=" shadow-none outline-none w-full h-full bg-transparent"
-            placeholder="Search for Customer"
+            placeholder="Search invoice"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
@@ -159,35 +263,34 @@ const Contact = () => {
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader className=" bg-[rgb(250,251,251)]">
             <TableRow>
-              <TableHead className=" bg-transparent">First name</TableHead>
-              <TableHead>Last Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead >Phone Number</TableHead>
-              <TableHead >Customer</TableHead>
+              <TableHead className=" bg-transparent">Company Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Action</TableHead>
+              <TableHead >Amount</TableHead>
+              <TableHead >Stage</TableHead>
+
 
             </TableRow>
           </TableHeader>
           <TableBody>
 
-              {contacts.map((contact) => {
-                return <TableRow key={contact.id} className=" border-b border-b-[rgb(234,236,240)] py-4">
+              {invoice.map((Invoice, id) => {
+                return <TableRow key={id} className=" border-b border-b-[rgb(234,236,240)] py-4">
                      <TableCell className="font-medium text-sm text-[#101828]">
-                {contact.firstName}
+                {Invoice.companyName}
               </TableCell>
               <TableCell>
-                {contact.lastName}
+                {Invoice.description}
               </TableCell>
-              <TableCell className="text-sm text-[#42526D]">
-                
-                <div className="bg-[#ECFDF3] rounded-[16px] w-fit  px-2 py-2 text-xs font-medium ">
-                  {contact.email}
-                </div>
+
+              <TableCell>
+                {Invoice.action}
               </TableCell>
               <TableCell>
-                {contact.mobileNumber}
+                {Invoice.amount}
               </TableCell>
               <TableCell>
-                {contact.customer}
+                {Invoice.stage}
               </TableCell>
                 </TableRow>
               })}
@@ -198,29 +301,7 @@ const Contact = () => {
     <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationPrevious href="#" />
     </PaginationItem>
-    <div className=" flex text-sm font-medium items-center gap-2">
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">1</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">2</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">3</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className="text-[#667085]">
-      <PaginationEllipsis />
-    </PaginationItem>
-    <PaginationItem>
-      <PaginationLink className=" text-[#667085]" href="#">4</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">5</PaginationLink>
-    </PaginationItem>
-    <PaginationItem className=" text-[#667085]">
-      <PaginationLink href="#">6</PaginationLink>
-    </PaginationItem>
-    </div>
+ 
     
     <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationNext href="#" />
@@ -233,4 +314,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default Invoice;

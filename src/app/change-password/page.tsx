@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 
-const page = () => {
+const ChangePassword = () => {
   const [password, setPassword] = useState({
     oldPassword: '',
     newPassword: ''
@@ -77,4 +77,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ChangePassword;

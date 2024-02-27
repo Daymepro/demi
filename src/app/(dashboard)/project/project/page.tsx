@@ -103,7 +103,7 @@ const Project = () => {
       try {
         const response = await apiService.get(`/api/Project/GetAllProjects`, {'Authorization' : `Bearer ${token}`})
         if(response.succeeded !== false) {
-            setProjects(response.contacts)
+            setProjects(response.projects)
         } else {
           console.log(response.responseMessage)
         }

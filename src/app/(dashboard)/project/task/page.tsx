@@ -68,7 +68,7 @@ type Contact = {
   isCompleted: boolean;
   propjectId: number;
 };
-const tasks = () => {
+const Tasks = () => {
   const [tasks, setTasks] = useState<Contact[]>([]);
   const [date, setDate] = React.useState<Date>();
   const [loading, setLoading] = useState(false);
@@ -123,7 +123,7 @@ const tasks = () => {
         );
         console.log(response);
         if (response.succeeded !== false) {
-          setTasks(response.contacts);
+          setTasks(response.tasks);
         } else {
           console.log(response.responseMessage);
         }
@@ -408,4 +408,4 @@ const tasks = () => {
   );
 };
 
-export default tasks;
+export default Tasks;

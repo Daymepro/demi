@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-const page = () => {
+const Location = () => {
 const [location, setLocation] = useState('')
 const router = useRouter()
 const {token} = useAuth()
@@ -66,4 +66,4 @@ const handleSubmit = async (e: any) => {
   )
 }
 
-export default page
+export default Location

@@ -1,6 +1,7 @@
 "use client";
 import DashboardSidebar from "@/components/dashboardSidebar";
 import DashboardTopBar, { PathDetails } from "@/components/dashboardTopBar";
+import ProtectedRoute from "@/components/protectedRoute";
 import UserContext, { useAuth } from "@/context/UserContext";
 import { redirect, usePathname } from "next/navigation";
 import React, { useEffect } from "react";
@@ -27,22 +28,6 @@ const nav: Nav = {
       {
         name: "domain",
         path: "/website/domain",
-      },
-      {
-        name: "customer",
-        path: "/website/customer",
-      },
-      {
-        name: "contact",
-        path: "/website/contact",
-      },
-      {
-        name: "project",
-        path: "/website/project",
-      },
-      {
-        name: "project-stakeholders",
-        path: "/website/project-stakeholder",
       },
       {
         name: "settings",
@@ -93,6 +78,50 @@ const nav: Nav = {
       },
     ],
   },
+  "customer": {
+    pathname: "Customer",
+    paths: [
+      {
+        name: "customer",
+        path: "/customer/customer",
+      },
+      {
+        name: "contact",
+        path: "/customer/contact",
+      },
+      {
+        name: "lead",
+        path: "/customer/lead",
+      },
+      {
+        name: "opportunity",
+        path: "/customer/opportunity",
+      },
+      {
+        name: "invoice",
+        path: "/customer/invoice",
+      },
+
+    ],
+  },
+  "document": {
+    pathname: "Document",
+    paths: [
+
+    ],
+  },
+  "communication": {
+    pathname: "Communication",
+    paths: [
+
+    ],
+  },
+  "support": {
+    pathname: "Support Ticket",
+    paths: [
+
+    ],
+  },
   "settings": {
     pathname: "Settings",
     paths: [
@@ -107,23 +136,18 @@ const {user, isLoaded} = useAuth()
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[1];
   const findPath = nav[pathSplit];
-  useEffect(() => {
-    if(!isLoaded) return
-    if(!user) {
-      redirect('/signin')
-    }
 
-  }, [])
   useEffect(() => {
     const original = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-
+console.log(original)
     return () => {
       document.body.style.overflow = original
     } 
 
   }, [])
   return (
+    <ProtectedRoute>
     <div className=" flex relative overflow-hidden bg-[#F9FAFB] font-sans">
       <div className=" sticky z-20 bg-white h-screen left-0">
         <DashboardSidebar />
@@ -139,6 +163,7 @@ const {user, isLoaded} = useAuth()
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

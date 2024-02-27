@@ -3,7 +3,7 @@ import UserContext, { useAuth } from "@/context/UserContext";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import React, { useEffect } from "react";
-const layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[2];
   const excludedLayouts = ['business-suggestions', 'language', 'name-suggestions']
@@ -127,4 +127,4 @@ useEffect(() => {
   );
 };
 
-export default layout;
+export default Layout;

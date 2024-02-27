@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const page = () => {
+const Business = () => {
   const { token } = useAuth();
   const router = useRouter();
   const [business, setBusiness] = useState("");
@@ -101,4 +101,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Business;

@@ -8,9 +8,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/UserContext";
 
-const page = () => {
+const SignUp = () => {
   const route = useRouter()
-  const {initializeUser } = useAuth()
+  // const {initializeUser } = useAuth()
   const [formInputs, setFormInputs] = useState({
     firstName: "",
     lastName: '',
@@ -38,7 +38,7 @@ const page = () => {
     if(resp.succeeded === false) {
       setError(resp.responseMessage)
     } else {
-      initializeUser(resp, () =>route.push('/onboarding/industry') )
+      // initializeUser(resp, () =>route.push('/onboarding/industry') )
       
     }
     setLoading(false)
@@ -147,4 +147,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SignUp;
