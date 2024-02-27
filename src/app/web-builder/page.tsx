@@ -14,7 +14,9 @@ import { Separator } from '@/components/ui/separator'
 const page = () => {
   return (
     <div className=' flex flex-col bg-[rgb(30,30,30)] overflow-x-hidden'>
-        <NavBar type='dark' />
+        
+        <NavBar type='dark' 
+            />
 
         <SectionOne />
         <SectionTwo />
