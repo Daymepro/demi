@@ -44,7 +44,7 @@ import { LoadingSpinner } from "@/components/loadingSpinner";
 
 
 
-type Contact = {
+type Stakeholder = {
     "organizationId": string,
     "id": number,
     "userId": string,
@@ -52,16 +52,17 @@ type Contact = {
     "projectId": number
 }
 const ProjectStakeholders = () => {
-  const [projectStakeholders, setProjectStakeholders] = useState<Contact[]>([])
+  const [projectStakeholders, setProjectStakeholders] = useState<Stakeholder[]>([])
 
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const {token } = useAuth()
-  const [inputs, setInputs] = useState({
-    description: "",
-    assignedTo: "",
-    projectName: "",
-    blockers: '',
+  const [inputs, setInputs] = useState<Stakeholder>({
+    organizationId: "",
+    userId: "",
+    role: "",
+    projectId: 0,
+    id: 0
   });
   const handleChange = (name: string, value: string | Date) => {
     setInputs((values) => ({ ...values, [name]: value }));
@@ -85,7 +86,7 @@ const ProjectStakeholders = () => {
   const handleSubmitProject = async () => {
     setLoading(true);
     try {
-      const resp = await apiService.post("/api/Project/CreateProject", inputs, {
+      const resp = await apiService.post("/api/ProjectStakeHolders/AddProjectStakeHolder", inputs, {
         Authorization: `Bearer ${token}`,
       });
       console.log(resp);
@@ -99,7 +100,8 @@ const ProjectStakeholders = () => {
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
-        <Select>
+        <div className=" grow"></div>
+        {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Last 15 days" />
           </SelectTrigger>
@@ -108,7 +110,7 @@ const ProjectStakeholders = () => {
             <SelectItem value="dark">Dark</SelectItem>
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
         <Dialog>
   <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">     <span className=" font-bold text-sm">Add stakeholder</span>
           <PlusIcon className=" w-4 h-4 text-white" /></DialogTrigger>
@@ -138,8 +140,8 @@ const ProjectStakeholders = () => {
               <p className=" text-[13px] mb-2 text-[#677189]">Blockers</p>
               <input
                 type="text"
-                onChange={(e) => handleChange("blockers", e.target.value)}
-                placeholder="Blockers"
+                onChange={(e) => handleChange("projectId", e.target.value)}
+                placeholder="project id"
                 className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
               />
             </div>
@@ -175,7 +177,7 @@ const ProjectStakeholders = () => {
           <input
             type="text"
             className=" shadow-none outline-none w-full h-full bg-transparent"
-            placeholder="Search for Customer"
+            placeholder="Search for stakeholders"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
           />

@@ -12,7 +12,7 @@ import {
   import TwoColumnsPlaceholder from './two-columns-placeholder'
   import LinkPlaceholder from './link-placeholder'
   import ContactFormComponentPlaceholder from './contact-form-placeholder'
-  import CheckoutPlaceholder from './checkout-placeholder'
+import ImagePlaceholder from './image-placeholder'
   
   type Props = {}
   
@@ -47,12 +47,18 @@ import {
         id: 'video',
         group: 'elements',
       },
-    //   {
-    //     Component: <ContactFormComponentPlaceholder />,
-    //     label: 'Contact',
-    //     id: 'contactForm',
-    //     group: 'elements',
-    //   },
+      {
+        Component: <ImagePlaceholder />,
+        label: 'image',
+        id: 'image',
+        group: 'elements',
+      },
+      {
+        Component: <ContactFormComponentPlaceholder />,
+        label: 'Contact',
+        id: 'contactForm',
+        group: 'elements',
+      },
     //   {
     //     Component: <CheckoutPlaceholder />,
     //     label: 'Checkout',

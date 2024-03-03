@@ -1,4 +1,5 @@
 "use client";
+import ProtectedRoute from "@/components/protectedRoute";
 import UserContext, { useAuth } from "@/context/UserContext";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
@@ -18,6 +19,7 @@ useEffect(() => {
 
 },[])
   return (
+<ProtectedRoute>
 
     <div style={{
       backgroundImage: "url('/grid.svg')",
@@ -123,6 +125,7 @@ useEffect(() => {
 </div>
         </div>
     </div>
+</ProtectedRoute>
 
   );
 };

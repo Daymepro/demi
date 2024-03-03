@@ -1,9 +1,11 @@
+"use client"
 import EditorProvider from '@/providers/editor-provider'
 import { redirect } from 'next/navigation'
 import React from 'react'
 import FunnelEditorNavigation from './_components/funnel-editor-navigation'
 import FunnelEditorSidebar from './_components/funnel-editor-sidebar'
 import FunnelEditor from './_components/funnel-editor'
+import ProtectedRoute from '@/components/protectedRoute'
 
 
 type props = {
@@ -29,6 +31,7 @@ const Page = async(props: props) => {
 
   return (
     <div className=' fixed top-0 bottom-0 left-0 right-0 z-[20] overflow-hidden'>
+        <ProtectedRoute>
         <EditorProvider  pageDetails={funnelPageDetails} funnelId={props.params.funnelPageId}>
            <FunnelEditorNavigation funnelId={props.params.funnelPageId} funnelPageDetails={funnelPageDetails} />
 <div className=' h-full flex justify-center'>
@@ -36,6 +39,7 @@ const Page = async(props: props) => {
 </div>
            <FunnelEditorSidebar />
         </EditorProvider>
+        </ProtectedRoute>
     </div>
   )
 }

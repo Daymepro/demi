@@ -132,7 +132,6 @@ const nav: Nav = {
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
 
-const {user, isLoaded} = useAuth()
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[1];
   const findPath = nav[pathSplit];
@@ -140,7 +139,6 @@ const {user, isLoaded} = useAuth()
   useEffect(() => {
     const original = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-console.log(original)
     return () => {
       document.body.style.overflow = original
     } 

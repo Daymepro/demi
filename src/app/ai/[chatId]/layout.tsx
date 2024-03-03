@@ -1,4 +1,5 @@
 'use client'
+import ProtectedRoute from '@/components/protectedRoute'
 import { ThemeProvider } from '@/components/theme-provider'
 import { useAuth } from '@/context/UserContext'
 import { redirect } from 'next/navigation'
@@ -13,12 +14,16 @@ const Layout = ({children} : {children : React.ReactNode}) => {
     }
   }, [])
   return (
+    <ProtectedRoute>
+
     <ThemeProvider  attribute="class"
     defaultTheme="theme"
     enableSystem
     disableTransitionOnChange={false}>
         {children}
     </ThemeProvider>
+
+    </ProtectedRoute>
   )
 }
 

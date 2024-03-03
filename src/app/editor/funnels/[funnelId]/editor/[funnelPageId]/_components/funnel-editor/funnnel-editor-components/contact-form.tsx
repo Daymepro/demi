@@ -1,25 +1,35 @@
 'use client'
+import ContactForm from '@/components/forms/contactform'
 import { Badge } from '@/components/ui/badge'
+import { toast } from '@/components/ui/use-toast'
 import { EditorBtns } from '@/lib/contants'
+import {
+  getFunnel,
+} from '@/lib/queries'
+
+import { ContactUserFormSchema } from '@/lib/types'
 import { EditorElement, useEditor } from '@/providers/editor-provider'
 import clsx from 'clsx'
 import { Trash } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+
 import React from 'react'
+import { z } from 'zod'
 
 type Props = {
   element: EditorElement
 }
 
-const ImageComponent = (props: Props) => {
-  const { dispatch, state } = useEditor()
-  const styles = props.element.styles
+const ContactFormComponent = (props: Props) => {
+  const { dispatch, state, funnelId, pageDetails } = useEditor()
+  const router = useRouter()
 
   const handleDragStart = (e: React.DragEvent, type: EditorBtns) => {
     if (type === null) return
     e.dataTransfer.setData('componentType', type)
   }
 
-  const handleOnClick = (e: React.MouseEvent) => {
+  const handleOnClickBody = (e: React.MouseEvent) => {
     e.stopPropagation()
     dispatch({
       type: 'CHANGE_CLICKED_ELEMENT',
@@ -29,6 +39,23 @@ const ImageComponent = (props: Props) => {
     })
   }
 
+  const styles = props.element.styles
+
+  const goToNextPage = async () => {
+    if (!state.editor.liveMode) return
+    const funnelPages = await getFunnel(funnelId)
+    // if (!funnelPages || !pageDetails) return
+    // if (funnelPages.FunnelPages.length > pageDetails.order + 1) {
+    //   const nextPage = funnelPages.FunnelPages.find(
+    //     (page) => page.order === pageDetails.order + 1
+    //   )
+    //   if (!nextPage) return
+    //   router.replace(
+    //     `${process.env.NEXT_PUBLIC_SCHEME}${funnelPages.subDomainName}.${process.env.NEXT_PUBLIC_DOMAIN}/${nextPage.pathName}`
+    //   )
+    // }
+  }
+
   const handleDeleteElement = () => {
     dispatch({
       type: 'DELETE_ELEMENT',
@@ -36,17 +63,36 @@ const ImageComponent = (props: Props) => {
     })
   }
 
+  const onFormSubmit = async (
+    values: z.infer<typeof ContactUserFormSchema>
+  ) => {
+    if (!state.editor.liveMode) return
+
+    try {
+  
+      //WIP Call trigger endpoint
+      await goToNextPage()
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed',
+        description: 'Could not save your information',
+      })
+    }
+  }
+
   return (
     <div
       style={styles}
       draggable
-      onDragStart={(e) => handleDragStart(e, 'image')}
-      onClick={handleOnClick}
+      onDragStart={(e) => handleDragStart(e, 'contactForm')}
+      onClick={handleOnClickBody}
       className={clsx(
         'p-[2px] w-full m-[5px] relative text-[16px] transition-all flex items-center justify-center',
         {
           '!border-blue-500':
             state.editor.selectedElement.id === props.element.id,
+
           '!border-solid': state.editor.selectedElement.id === props.element.id,
           'border-dashed border-[1px] border-slate-300': !state.editor.liveMode,
         }
@@ -58,16 +104,11 @@ const ImageComponent = (props: Props) => {
             {state.editor.selectedElement.name}
           </Badge>
         )}
-
-      {!Array.isArray(props.element.content) && (
-        <img
-          width={props.element.styles.width || '560'}
-          height={props.element.styles.height || '315'}
-          src={props.element.content.src}
-
-        />
-      )}
-
+      <ContactForm
+        subTitle="Contact Us"
+        title=""
+        apiCall={onFormSubmit}
+      />
       {state.editor.selectedElement.id === props.element.id &&
         !state.editor.liveMode && (
           <div className="absolute bg-primary px-2.5 py-1 text-xs font-bold  -top-[25px] -right-[1px] rounded-none rounded-t-lg !text-white">
@@ -82,4 +123,4 @@ const ImageComponent = (props: Props) => {
   )
 }
 
-export default ImageComponent
+export default ContactFormComponent

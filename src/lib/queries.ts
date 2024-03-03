@@ -70,3 +70,18 @@ export const getMedia = async (subaccountId: string) => {
   // })
   // return mediafiles
 }
+
+export const getFunnel = async (funnelId: string) => {
+  // const funnel = await db.funnel.findUnique({
+  //   where: { id: funnelId },
+  //   include: {
+  //     FunnelPages: {
+  //       orderBy: {
+  //         order: 'asc',
+  //       },
+  //     },
+  //   },
+  // })
+
+  // return funnel
+}

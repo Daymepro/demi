@@ -5,6 +5,7 @@ import Container from './container'
 import LinkComponent from './link-component'
 import VideoComponent from './video-component'
 import ImageComponent from './img-component'
+import ContactFormComponent from './contact-form'
 
 type Props = {
     element: EditorElement
@@ -21,8 +22,8 @@ const recursive = (props: Props) => {
         return <Container element={element} />
     case 'video':
       return <VideoComponent element={element} />
-    // case 'contactForm':
-    //   return <ContactFormComponent element={element} />
+    case 'contactForm':
+      return <ContactFormComponent element={element} />
     // case 'paymentForm':
     //   return <Checkout element={element} />
     case '2Col':

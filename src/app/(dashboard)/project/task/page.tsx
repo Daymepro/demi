@@ -71,7 +71,7 @@ type Contact = {
 const Tasks = () => {
   const [tasks, setTasks] = useState<Contact[]>([]);
   const [date, setDate] = React.useState<Date>();
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
   const [search, setSearch] = useState("");
   const { token } = useAuth();
   const [page, setPage] = useState(1);
@@ -84,7 +84,7 @@ const Tasks = () => {
     dueDate: new Date(),
   });
   const disabledBeforeDate = new Date();
-
+const {loading} = useAuth()
   const disabledDays = { before: disabledBeforeDate, after: inputs.dueDate };
 
   const handleStartDateChange = (date: Date) => {
@@ -118,7 +118,7 @@ const Tasks = () => {
     const fetchTasks = async () => {
       try {
         const response = await apiService.get(
-          `/api/Task/GetAllTasks?page=${page}&pageSize=${pageSize}&searchTerm=${search}`,
+          `/api/Task/GetAllTasks`,
           { Authorization: `Bearer ${token}` }
         );
         console.log(response);
@@ -131,7 +131,10 @@ const Tasks = () => {
         console.log(error);
       }
     };
-    fetchTasks();
+    if(loading === false) {
+
+      fetchTasks();
+    }
   }, [token, search, page, pageSize]);
   const handlePageNavigation = (directon: "next" | "previous") => {
     if (directon === "next") {
@@ -141,7 +144,7 @@ const Tasks = () => {
     }
   };
   const handleSubmitTask = async () => {
-    setLoading(true);
+    setisLoading(true);
     try {
       const resp = await apiService.post("/api/Task/CreateTask", inputs, {
         Authorization: `Bearer ${token}`,
@@ -150,9 +153,9 @@ const Tasks = () => {
       if (resp.succeeded === true) {
         setOpenModal(false);
       }
-      setLoading(false);
+      setisLoading(false);
     } catch (error) {
-      setLoading(false);
+      setisLoading(false);
     }
   };
   return (
@@ -247,7 +250,7 @@ const Tasks = () => {
                 onClick={handleSubmitTask}
                 className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
               >
-                {loading ? (
+                {isLoading ? (
                   <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
                 ) : (
                   "Create"

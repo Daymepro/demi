@@ -41,13 +41,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { LoadingSpinner } from "@/components/loadingSpinner";
+import { toast } from "sonner";
 
 
 type Document = {
 
 "fileName": string,
 "documentType": string,
-"file": string
+"file": File
 }
 const Document = () => {
   const [documents, setdocuments] = useState<Document[]>([])
@@ -59,9 +60,9 @@ const Document = () => {
   const [search, setSearch] = useState('')
   const {token } = useAuth()
   const [inputs, setInputs] = useState<Document>({} as Document);
-
+const [open, setOpen] = useState(false)
   
-  const handleChange = (name: string, value: string) => {
+  const handleChange = (name: string, value: string | File | null) => {
     setInputs((values) => ({ ...values, [name]: value }));
   };
   useEffect(() => {
@@ -83,21 +84,41 @@ const Document = () => {
   const handleSubmit = async () => {
     setLoading(true);
     const formData = new FormData();
-    formData.append("file", inputs.file);
-    formData.append("documentType", inputs.documentType);
-    formData.append("fileName", inputs.fileName);
-    try {
-      const resp = await apiService.post("/api/Document/UploadDocument", formData, {
-        Authorization: `Bearer ${token}`,
-      });
-      console.log(resp);
-      if (resp.succeeded === true) {
+  
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(inputs.file);
+    fileReader.onload = async function () {
+      const result = fileReader.result;
+      if (typeof result === 'string') {
+        const base64String = result.split(',')[1];
+        
+        // Append base64 string to FormData
+        console.log(base64String)
+  
+        try {
+          const resp = await apiService.post("/api/Document/UploadDocument", {file: base64String, documentType: inputs.documentType, fileName: inputs.fileName}, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log(resp);
+          if (resp.succeeded === true) {
+            setOpen(false)
+            // Do something if the upload succeeded
+          }
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+        }
+      } else {
+        // Handle error or unexpected result
+        console.error("Unexpected result type:", typeof result);
+        setLoading(false);
       }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
+    };
   };
+  
+  
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
@@ -114,7 +135,7 @@ const Document = () => {
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select> */}
-        <Dialog>
+        <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
           <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
             {" "}
             <span className=" font-bold text-sm">Add Document</span>
@@ -149,9 +170,9 @@ const Document = () => {
                 <input
                   type="file"
                   accept=".pdf"
-                  value={inputs.file}
+                  // value={inputs.file}
                   onChange={(e) =>
-                    handleChange("file", e.target.value)
+                    handleChange("file", !e.target.files ? null : e.target.files[0])
                   }
                   placeholder="file"
                   className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
@@ -275,7 +296,7 @@ const Document = () => {
                     <DocumentTextIcon className=" w-4 h-4 text-ai-button-blue" />
                     <span>Download file as pdf</span>
                 </div>
-                {document.file}
+                {/* {document.file} */}
               </TableCell>
 
                 </TableRow>

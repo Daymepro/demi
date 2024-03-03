@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
-import { ListFilter, ListFilterIcon, PlusIcon, SearchIcon } from "lucide-react";
+import { ChevronsUpDown, ListFilter, ListFilterIcon, PlusIcon, SearchIcon, TrashIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -41,7 +41,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { LoadingSpinner } from "@/components/loadingSpinner";
-
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner";
 
 type Contact = {
   "organizationId": string,
@@ -58,57 +70,163 @@ const Contact = () => {
   const [params, setParams] = useState({
     total: 0
   })
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setisLoading] = useState(false)
+  const [tableLoading, setTableLoading] = useState(false)
+  const [open, setOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [search, setSearch] = useState('')
-  const {token } = useAuth()
+  const {token, loading } = useAuth()
+  const [expandID, setExpandId] = useState<number | null>(null)
   const [inputs, setInputs] = useState({
     lastName: "",
     firstName: "",
     email: "",
     category: "",
     customer: '',
-    phoneNumber: ''
+    mobileNumber: '',
+    organizationId: ''
   });
 
   
   const handleChange = (name: string, value: string) => {
     setInputs((values) => ({ ...values, [name]: value }));
   };
+  const handleExpand = async (id: number) => {
+    setExpandId(id);
+    console.log(id);
+    try {
+      const resp = await apiService.get(
+        `/api/Contact/GetContactById/${id}`,
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
+      if (resp.succeeded === true) {
+        setInputs(resp.contact);
+        setOpen(true);
+      }
+    } catch (error) {
+      setExpandId(null);
+    }
+  };
+  
+  const handleUpdate = async() => {
+    setisLoading(true)
+    try {
+      const resp = await apiService.put(`/api/Contact/UpdateContact/${expandID}`, inputs, {
+        Authorization: `Bearer ${token}`,
+      }) 
+      console.log(resp)
+      if(resp.succeeded === true) {
+        setOpen(false)
+        setExpandId(null)
+        setisLoading(false)
+       console.log(resp)
+      }  else {
+        setisLoading(false)
+      }   
+    } catch (error) {
+      setisLoading(false)
+
+    }
+ 
+
+  }
+  console.log(expandID)
   useEffect(() => {
     const fetchContacts = async () => {
+      setTableLoading(true)
       try {
-        const response = await apiService.get(`/api/Contact/GetAllContacts?${search}&page=${currentPage}&pageSize=10`, {'Authorization' : `Bearer ${token}`})
+        const response = await apiService.get(`/api/Contact/GetAllContacts?&page=${currentPage}&pageSize=10`, {'Authorization' : `Bearer ${token}`})
         console.log(response)
         if(response.succeeded !== false) {
           setContacts(response.contacts)
         } else {
           console.log(response.responseMessage)
         }
+        setTableLoading(false)
       } catch (error) {
         console.log(error)
+        setTableLoading(false)
+
       }
     }
-    fetchContacts()
-  }, [search, currentPage, token])
+    if(loading === false) {
+
+      fetchContacts()
+    }
+  }, [ currentPage, token, loading])
+  const handleNavigation = (direction: "next" | "prev") => {
+    if(direction === 'next') {
+      setCurrentPage(Number(currentPage + 1))
+    } else {
+      setCurrentPage(Number(currentPage - 1))
+
+    }
+  }
+  function serachContact( ){
+    let query = search.toLowerCase();
+     const comm = contacts.filter(contact => {
+       const searchableProperties = [
+         contact.firstName,
+         contact.lastName,
+         contact.email,
+        //  contact.mobileNumber,
+         contact.customer,
+
+       ].map(prop => prop?.toLowerCase());
+         return searchableProperties.some(prop => prop?.includes(query));
+     });
+  return comm
+   }
   const handleSubmit = async () => {
-    setLoading(true);
+    setisLoading(true);
     try {
       const resp = await apiService.post("/api/Contact/CreateContact", inputs, {
         Authorization: `Bearer ${token}`,
       });
       console.log(resp);
       if (resp.succeeded === true) {
+        setContacts([...contacts, resp.contact]);
+        setOpen(false)
       }
-      setLoading(false);
+      setisLoading(false);
     } catch (error) {
-      setLoading(false);
+      setisLoading(false);
     }
   };
+  const onSubmit = () => {
+    if(expandID) {
+      handleUpdate()
+    } else {
+      handleSubmit()
+    }
+  }
+  const handleDelete = async(id: number) => {
+    try {
+      const response = await apiService.delete(`/api/Contact/DeleteContact/${id}`, {
+        Authorization: `Bearer ${token}`,
+      })
+      if(response.succeeded === true) {
+
+        setContacts(contacts.filter(contact => contact.id !== id))
+      }
+      toast('success',{
+        description: response.responseMessage,
+      })
+    } catch (error) {
+      toast('failed',{
+        description: 'Something went wrong',
+      })
+    }
+  }
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
-        <Select>
+        <div className=" grow">
+
+        </div>
+        {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Last 15 days" />
           </SelectTrigger>
@@ -117,8 +235,8 @@ const Contact = () => {
             <SelectItem value="dark">Dark</SelectItem>
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
-        </Select>
-        <Dialog>
+        </Select> */}
+        <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
           <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
             {" "}
             <span className=" font-bold text-sm">Create customer</span>
@@ -180,11 +298,25 @@ const Contact = () => {
                 </p>
                 <input
                   type="text"
-                  value={inputs.phoneNumber}
+                  value={inputs.mobileNumber}
                   onChange={(e) =>
-                    handleChange("phoneNumber", e.target.value)
+                    handleChange("mobileNumber", e.target.value)
                   }
                   placeholder="Phone number"
+                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                />
+              </div>
+              <div className=" w-full ">
+                <p className=" text-[13px] mb-2 text-[#677189]">
+                 Organization Id
+                </p>
+                <input
+                  type="text"
+                  value={inputs.organizationId}
+                  onChange={(e) =>
+                    handleChange("organizationId", e.target.value)
+                  }
+                  placeholder="Organization Id"
                   className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
                 />
               </div>
@@ -192,13 +324,13 @@ const Contact = () => {
 
               <div className=" w-full">
                 <button
-                  onClick={handleSubmit}
+                  onClick={onSubmit}
                   className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
                 >
-                  {loading ? (
+                  {isLoading ? (
                     <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
                   ) : (
-                    "Add Customer"
+                   expandID ? "Update Customer" : "Add Customer"
                   )}
                 </button>
               </div>
@@ -211,12 +343,12 @@ const Contact = () => {
         </Dialog>
       </div>
       <div className=" border h-[62px] max-w-[1107px] flex items-center justify-between border-[rgb(239,241,244)] rounded-[8px] p-2 ">
-        <div className=" w-1/2 flex h-full items-center max-w-[435px]  bg-white rounded-[8px]">
+        <div className=" w-1/2 flex gap-2 h-full items-center max-w-[435px]  bg-white rounded-[8px]">
           <SearchIcon className=" w-4 h-4" />
           <input
             type="text"
             className=" shadow-none outline-none w-full h-full bg-transparent"
-            placeholder="Search for Customer"
+            placeholder="Search contacts"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
@@ -291,7 +423,27 @@ const Contact = () => {
           </TableHeader>
           <TableBody>
 
-              {contacts.map((contact) => {
+              {tableLoading ? <TableRow>
+
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[30px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[30px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[30px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[30px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[30px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[30px]" />
+                </TableCell>
+              </TableRow> :   serachContact().map((contact) => {
                 return <TableRow key={contact.id} className=" border-b border-b-[rgb(234,236,240)] py-4">
                      <TableCell className="font-medium text-sm text-[#101828]">
                 {contact.firstName}
@@ -311,18 +463,45 @@ const Contact = () => {
               <TableCell>
                 {contact.customer}
               </TableCell>
+              <TableCell>{ <AlertDialog>
+  <AlertDialogTrigger className=" bg-red-600 rounded-[7px] cursor-pointer w-fit h-fit p-2"><TrashIcon className=" w-4 h-4 text-white" /></AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This action cannot be undone. This will permanently delete this entry
+        and remove your data from the servers.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction className=" bg-ai-button-blue" onClick={() => handleDelete(contact.id)} >Continue</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+ }</TableCell>
+                     <TableCell>
+                      {expandID === contact.id ? (
+                        <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                      ) : (
+                        <ChevronsUpDown
+                          onClick={() => handleExpand(contact.id)}
+                          className=" w-4 h-4 cursor-pointer rotate-45"
+                        />
+                      )}
+                    </TableCell>
                 </TableRow>
               })}
           </TableBody>
         </Table>
         <Pagination className=" px-4 pb-7 pt-2">
   <PaginationContent className=" w-full flex items-center justify-between ">
-    <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
+    <PaginationItem onClick={() => handleNavigation('prev')} className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationPrevious href="#" />
     </PaginationItem>
 
     
-    <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
+    <PaginationItem onClick={() => handleNavigation('next')} className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationNext href="#" />
     </PaginationItem>
   </PaginationContent>

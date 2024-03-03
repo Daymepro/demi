@@ -58,10 +58,10 @@ const handleSubmit = async (e: any) => {
         <button onClick={handleSubmit} disabled={location.length < 1} className={` ${location.length > 1 ? 'bg-[#0030AD] text-white' : 'bg-[#D5D9EA] text-[rgba(0,1,3,0.39)]'}  rounded-[8px] py-3 font-bold flex items-center justify-center `}>{loading ? <LoadingSpinner divClassName=' w-[20px] h-[20px]' /> : 'Next'}</button>
        
     </form>
-    <div className="flex gap-1">
+    {/* <div className="flex gap-1">
         <p className=" text-[#8F8F8F] text-sm">Website language English,</p><Link href={'/onboarding/language'} className="text-[#0030AD] font-bold text-sm underline">Change</Link>
 
-        </div>
+        </div> */}
   </div>
   )
 }

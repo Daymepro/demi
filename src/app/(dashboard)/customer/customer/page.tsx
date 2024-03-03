@@ -10,7 +10,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
-import { ListFilter, ListFilterIcon, PlusIcon, SearchIcon } from "lucide-react";
+import {
+  ChevronsUpDown,
+  ListFilter,
+  ListFilterIcon,
+  PlusIcon,
+  SearchIcon,
+  TrashIcon,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -32,6 +39,17 @@ import {
 import axios from "axios";
 import { useAuth } from "@/context/UserContext";
 import { apiService } from "@/utils/apiService";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import clsx from "clsx";
 import {
   Dialog,
@@ -43,7 +61,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { LoadingSpinner } from "@/components/loadingSpinner";
-
+import { getCookie } from "cookies-next";
+import { Skeleton } from "@/components/ui/skeleton";
 export type Customer = {
   organizationId: string;
   id: number;
@@ -52,8 +71,8 @@ export type Customer = {
   category: string;
   relationshipManager: string;
 };
-const Customer =  () => {
-  const { token } = useAuth();
+const Customer = () => {
+  const { token, loading } = useAuth();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [inputs, setInputs] = useState({
     website: "",
@@ -61,42 +80,127 @@ const Customer =  () => {
     relationshipManager: "",
     category: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
+  const [getCustomers, setGetCustomers] = useState(false);
+  const [expandLoading, setExpandLoading] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
   const handleSubmitCustomer = async () => {
-    setLoading(true);
+    setisLoading(true);
     try {
-      const resp = await apiService.post("/api/Customer/CreateCustomer", inputs, {
-        Authorization: `Bearer ${token}`,
-      });
+      const resp = await apiService.post(
+        "/api/Customer/CreateCustomer",
+        inputs,
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
       console.log(resp);
       if (resp.succeeded === true) {
+        setCustomers([...customers, resp.customer]);
       }
-      setLoading(false);
+      setisLoading(false);
     } catch (error) {
-      setLoading(false);
+      setisLoading(false);
     }
   };
+  function searchCustomer() {
+    let query = search.toLowerCase();
+    const comm = customers.filter((customer) => {
+      const searchableProperties = [
+        customer.companyName,
+        customer.website,
+        customer.category,
+        customer.relationshipManager,
+      ].map((prop) => prop.toLowerCase());
+      return searchableProperties.some((prop) => prop.includes(query));
+    });
+    return comm;
+  }
   useEffect(() => {
     const getCustomers = async () => {
+      setGetCustomers(true);
       try {
         const resp = await apiService.get("/api/Customer/GetAllCustomers", {
           Authorization: `Bearer ${token}`,
         });
+        console.log(resp);
         if (resp.succeeded === true) {
           setCustomers(resp.customers);
         }
-      } catch (error) {}
+        setGetCustomers(false);
+      } catch (error) {
+        setGetCustomers(false);
+      }
     };
-    getCustomers();
-  }, []);
-
+    if (loading === false) {
+      getCustomers();
+    }
+  }, [loading, token]);
+  const handleExpand = async (id: number) => {
+    setExpandLoading(id);
+    console.log(id);
+    try {
+      const resp = await apiService.get(`/api/Customer/GetCustomerById/${id}`, {
+        Authorization: `Bearer ${token}`,
+      });
+      if (resp.succeeded === true) {
+        setInputs(resp.customer);
+        setOpen(true);
+      }
+    } catch (error) {
+      setExpandLoading(null);
+    }
+  };
   const handleChange = (name: string, value: string) => {
     setInputs((values) => ({ ...values, [name]: value }));
+  };
+  const onSubmit = () => {
+    if (expandLoading) {
+      handleUpdate();
+    } else {
+      handleSubmitCustomer();
+    }
+  };
+  const handleUpdate = async () => {
+    try {
+      const resp = await apiService.put(
+        `/api/Project/UpdateCustomer/${expandLoading}`,
+        inputs,
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
+      console.log(resp);
+      if (resp.succeeded === true) {
+        setOpen(false);
+        setExpandLoading(null);
+        setisLoading(false);
+        console.log(resp);
+      }
+    } catch (error) {
+      setisLoading(false);
+    }
+  };
+  const handleDelete = async (id: number) => {
+    try {
+      const resp = await apiService.delete(`/api/Project/DeleteProject/${id}`, {
+        Authorization: `Bearer ${token}`,
+      });
+      console.log(resp);
+      if (resp.succeeded === true) {
+        setCustomers((prev) => prev.filter((customer) => customer.id !== id));
+        console.log(resp);
+      }
+    } catch (error) {
+      setisLoading(false);
+    }
   };
   return (
     <main className=" flex gap-10  h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
-        <Select>
+        <div className=" grow"></div>
+        {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Last 15 days" />
           </SelectTrigger>
@@ -105,87 +209,94 @@ const Customer =  () => {
             <SelectItem value="dark">Dark</SelectItem>
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
-        </Select>
-        <Dialog>
+        </Select> */}
+        <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
           <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
             {" "}
             <span className=" font-bold text-sm">Create customer</span>
             <PlusIcon className=" w-4 h-4 text-white" />
           </DialogTrigger>
-            <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
-              <p>Customer</p>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
-                <input
-                  type="text"
-                  value={inputs.companyName}
-                  onChange={(e) => handleChange("companyName", e.target.value)}
-                  placeholder="Customer name"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">Website</p>
-                <input
-                  type="text"
-                  value={inputs.website}
-                  onChange={(e) => handleChange("website", e.target.value)}
-                  placeholder="website"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">
-                  Relationship Manager
-                </p>
-                <input
-                  type="text"
-                  value={inputs.relationshipManager}
-                  onChange={(e) =>
-                    handleChange("relationshipManager", e.target.value)
-                  }
-                  placeholder="Relationship Manager"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <Select>
-                <SelectTrigger className="w-full text-[#B3B3B6] bg-[#F3F4F6]">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {/* <SelectItem value="light">Light</SelectItem>
+          <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+            <p>Customer</p>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
+              <input
+                type="text"
+                value={inputs.companyName}
+                onChange={(e) => handleChange("companyName", e.target.value)}
+                placeholder="Customer name"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Website</p>
+              <input
+                type="text"
+                value={inputs.website}
+                onChange={(e) => handleChange("website", e.target.value)}
+                placeholder="website"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">
+                Relationship Manager
+              </p>
+              <input
+                type="text"
+                value={inputs.relationshipManager}
+                onChange={(e) =>
+                  handleChange("relationshipManager", e.target.value)
+                }
+                placeholder="Relationship Manager"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <Select>
+              <SelectTrigger className="w-full text-[#B3B3B6] bg-[#F3F4F6]">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {/* <SelectItem value="light">Light</SelectItem>
                   <SelectItem value="dark">Dark</SelectItem>
                   <SelectItem value="system">System</SelectItem> */}
-                </SelectContent>
-              </Select>
+              </SelectContent>
+            </Select>
 
-              <div className=" w-full">
-                <button
-                  onClick={handleSubmitCustomer}
-                  className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
-                >
-                  {loading ? (
-                    <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                  ) : (
-                    "Add Customer"
-                  )}
-                </button>
-              </div>
-              <div className=" w-full">
-                <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
-                  Cancel
-                </DialogClose>
-              </div>
+            <div className=" w-full">
+              <button
+                onClick={onSubmit}
+                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+              >
+                {isLoading ? (
+                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                ) : expandLoading ? (
+                  "Edit Customer"
+                ) : (
+                  "Add Customer"
+                )}
+              </button>
+            </div>
+            <div className=" w-full">
+              <DialogClose
+                onClick={() => setExpandLoading(null)}
+                className=" w-full  text-[#8D8D91]  text-sm border-none py-3"
+              >
+                Cancel
+              </DialogClose>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
       <div className=" border h-[62px] max-w-[1107px] flex items-center justify-between border-[rgb(239,241,244)] rounded-[8px] p-2 ">
-        <div className=" w-1/2 flex h-full items-center max-w-[435px]  bg-white rounded-[8px]">
+        <div className=" w-1/2 flex h-full gap-2 items-center max-w-[435px]  bg-white rounded-[8px]">
           <SearchIcon className=" w-4 h-4" />
           <input
             type="text"
             className=" shadow-none outline-none w-full h-full bg-transparent"
             placeholder="Search for Customer"
+            onChange={(e) => setSearch(e.target.value)}
+            value={search}
           />
         </div>
         <div className=" flex items-center gap-3">
@@ -245,6 +356,10 @@ const Customer =  () => {
       </div>
       <div className=" bg-white border overflow-hidden max-w-[1107px] w-full rounded-lg">
         <Table className=" ">
+          <TableCaption>
+            {" "}
+            {customers.length < 1 ? "No customers found" : ""}
+          </TableCaption>
           <TableHeader className=" bg-[rgb(250,251,251)]">
             <TableRow>
               <TableHead className=" bg-transparent">Company name</TableHead>
@@ -254,29 +369,88 @@ const Customer =  () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map((customer, index) => {
-              return (
-                <TableRow
-                  key={customer.id}
-                  className={clsx(" border-b border-b-[rgb(234,236,240)] py-4")}
-                >
-                  <TableCell className="text-sm text-[#42526D]">
-                    {customer.organizationId}
-                  </TableCell>
-                  <TableCell>
-                    <div className="bg-[#ECFDF3] rounded-[16px] w-fit  px-2 py-2 text-xs font-medium ">
-                      {customer.website}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-[#42526D]">
-                    {customer.category}
-                  </TableCell>
-                  <TableCell className=" text-sm text-[#42526D]">
-                    {customer.relationshipManager}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {getCustomers ? (
+              <TableRow>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+              </TableRow>
+            ) : (
+              searchCustomer().map((customer, index) => {
+                return (
+                  <TableRow
+                    key={customer.id}
+                    className={clsx(
+                      " border-b border-b-[rgb(234,236,240)] py-4"
+                    )}
+                  >
+                    <TableCell className="text-sm text-[#42526D]">
+                      {customer.companyName}
+                    </TableCell>
+                    <TableCell>
+                      <div className="bg-[#ECFDF3] rounded-[16px] w-fit  px-2 py-2 text-xs font-medium ">
+                        {customer.website}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-[#42526D]">
+                      {customer.category}
+                    </TableCell>
+                    <TableCell className=" text-sm text-[#42526D]">
+                      {customer.relationshipManager}
+                    </TableCell>
+                    <TableCell>
+                      {
+                        <AlertDialog>
+                          <AlertDialogTrigger className=" bg-red-600 rounded-[7px] cursor-pointer w-fit h-fit p-2">
+                            <TrashIcon className=" w-4 h-4 text-white" />
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete this entry and remove your
+                                data from the servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className=" bg-ai-button-blue"
+                                onClick={() => handleDelete(customer.id)}
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      }
+                    </TableCell>
+                    <TableCell>
+                      {expandLoading === customer.id ? (
+                        <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                      ) : (
+                        <ChevronsUpDown
+                          onClick={() => handleExpand(customer.id)}
+                          className=" w-4 h-4 cursor-pointer rotate-45"
+                        />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
         <Pagination className=" px-4 pb-7 pt-2">

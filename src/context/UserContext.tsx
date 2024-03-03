@@ -5,9 +5,8 @@ import { Router, User } from 'lucide-react';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { createContext } from 'react';
-import {setCookie, getCookie, } from 'cookies-next'
+import {setCookie, getCookie,deleteCookie } from 'cookies-next'
 import { apiService } from '@/utils/apiService';
-
 interface userJWT {
   exp: number
 }
@@ -16,6 +15,7 @@ interface AuthContextProps {
     token: string | null;
     error: string | null;
     isAuthenticated: boolean;
+    isLoading: boolean;
     login: (
     email: string,
     password: string,
@@ -25,15 +25,17 @@ interface AuthContextProps {
     // isReady: boolean;
     loading: boolean
     isLoaded: boolean;
-    // logout: () => void;
-    userJWT: userJWT | null
+    logout: () => void;
+    userJWT: userJWT | null,
+    setUser: React.Dispatch<React.SetStateAction<User | null>>
   }
   
 export interface User {
     firstName: string,
     lastName: string,
     token: string
-    twoFactorEnabled: boolean
+    twoFactorEnabled: boolean,
+    email: string
 }
 export const AuthContext = createContext<AuthContextProps | undefined>(
     undefined
@@ -45,8 +47,9 @@ const UserContext = ({children}: {children: React.ReactNode}) => {
     const [token, setToken] = useState<string>('');
     const [userJWT, setUserJWT] = useState<userJWT | null>( null);
 const [loading, setLoading] = useState<boolean>(true)
+const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
-
+const router = useRouter()
   async function loadUser(token: string) {
     if(token) {
       try {
@@ -55,14 +58,20 @@ const [loading, setLoading] = useState<boolean>(true)
         })
         if(resp.succeeded === true) {
           setUser(resp.account)
+          setToken(token)
+          console.log(resp)
         } else {
-          
+          logout()
         }
         
       } catch (error) {
         
+        logout()
       }
 setLoading(false)
+    } else {
+      logout()
+      setLoading(false)
     }
   }
 useEffect(() => {
@@ -71,17 +80,20 @@ useEffect(() => {
 if(token) {
   setLoading(true)
 loadUser(token)
+} else {
+  logout()
 }
 }, [ ])
 const logout =() => {
   setUser(null)
   setToken('')
   setUserJWT(null)
-  localStorage.clear()
-  // router.push('/signin')
+  deleteCookie('token')
+  
 }
   const login = async (email: string, password: string, callback: () => void) => {
     setLoading(true)
+    setIsLoading(true)
     try {
      const resp = await apiService.post('/api/Auth/Signin', {email, password})
      if(resp.succeeded === true) {
@@ -93,11 +105,14 @@ const logout =() => {
           })
           if(resp.succeeded === true) {
             setUser(user.account)
+            setIsLoading(false)
           } else {
+            setIsLoading(false)
             
           }
           
         } catch (error) {
+          setIsLoading(false)
           
         }
         setCookie('token', resp.token, {expires: new Date(decodeJwt.exp * 1000) })
@@ -105,7 +120,6 @@ const logout =() => {
        return callback()
      } else {
       setError(resp.responseMessage)
-
      }
     } catch (error) {
     }
@@ -118,6 +132,9 @@ const logout =() => {
         login,
         loading,
         error,
+        setUser,
+        logout,
+        isLoading,
         isAuthenticated: !!user,
         userJWT,
         isLoaded: !!(user || token)

@@ -34,7 +34,7 @@ const DashboardSidebar = () => {
             expand === true ? "w-[330px]" : "w-[65px]"
           }  h-screen border-r  border-[#D5D5D5] py-10 px-3 `}
         >
-          <div className=" flex flex-col mx-auto h-full justify-between">
+          <div className=" flex flex-col mx-auto h-full overflow-y-scroll remove-scrollbar justify-between">
             <div className=" flex justify-between">
             <div  className=" flex items-center gap-2">
               <div className=" rounded-full  h-[30px] w-[30px] object-contain">

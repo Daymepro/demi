@@ -75,6 +75,23 @@ const Container = ({ element }: Props) => {
           },
         });
         break;
+        case "image":
+          dispatch({
+            type: "ADD_ELEMENT",
+            payload: {
+              containerId: id,
+              elementDetails: {
+                content: {
+                  src: "",
+                },
+                id: v4(),
+                name: "image",
+                styles: {},
+                type: "image",
+              },
+            },
+          });
+          break;
       case "container":
         dispatch({
           type: "ADD_ELEMENT",
