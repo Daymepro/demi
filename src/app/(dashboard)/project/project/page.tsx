@@ -124,7 +124,6 @@ const Project = () => {
           `/api/Project/GetAllProjects?&page=${currentPage}&pageSize=${pagination}`,
           { Authorization: `Bearer ${token}` }
         );
-        console.log(response);
         if (response.succeeded !== false) {
           setProjects(response.projects);
           setParams({
@@ -242,7 +241,6 @@ const Project = () => {
       console.log(error);
     }
   };
-  console.log(expandLoading)
   const handleDelete = async (id: number) => {
     try {
       const resp = await apiService.delete(`/api/Project/DeleteProject/${id}`, {

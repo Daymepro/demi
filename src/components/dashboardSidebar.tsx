@@ -51,7 +51,7 @@ const DashboardSidebar = () => {
             </div>
           
             <div className={`flex mt-[49px]  flex-col gap-1 `}>
-              <Link
+              {/* <Link
                 href={"/"}
                 className={`${
                   pathSplit === "home"
@@ -65,7 +65,7 @@ const DashboardSidebar = () => {
                     Home
                   </span>
                 )}
-              </Link>
+              </Link> */}
               <Link
                 href={"/website/preview"}
                 className={`${
@@ -77,7 +77,7 @@ const DashboardSidebar = () => {
                 <RectangleGroupIcon className="h-5 w-5 " />
                 {expand && (
                   <span className=" font-medium font-sans text-[13px]">
-                    Customer
+                    Website
                   </span>
                 )}
               </Link>
@@ -92,7 +92,7 @@ const DashboardSidebar = () => {
                 <UserGroupIcon className="h-5 w-5 " />
                 {expand && (
                   <span className=" font-medium font-sans text-[13px]">
-                    Website
+                    Customer
                   </span>
                 )}
               </Link>
@@ -156,7 +156,7 @@ const DashboardSidebar = () => {
                   </span>
                 )}
               </Link>
-              <Link
+              {/* <Link
                 href={"/communication"}
                 className={`${
                   pathSplit === "communication"
@@ -170,7 +170,7 @@ const DashboardSidebar = () => {
                     Communication
                   </span>
                 )}
-              </Link>
+              </Link> */}
               <Link
                 href={"/support"}
                 className={`${
