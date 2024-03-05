@@ -51,12 +51,17 @@ type Stakeholder = {
     "role": string,
     "projectId": number
 }
-const ProjectStakeholders = () => {
+type Props = {
+  params: {
+    projectId: string
+  }
+}
+const ProjectStakeholders = (props: Props) => {
+  const {projectId} = props.params
   const [projectStakeholders, setProjectStakeholders] = useState<Stakeholder[]>([])
-
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setisLoading] = useState(false)
   const [search, setSearch] = useState('')
-  const {token } = useAuth()
+  const {token, loading } = useAuth()
   const [inputs, setInputs] = useState<Stakeholder>({
     organizationId: "",
     userId: "",
@@ -70,7 +75,7 @@ const ProjectStakeholders = () => {
   useEffect(() => {
     const fetchStakeholders = async () => {
       try {
-        const response = await apiService.get(`/api/ProjectStakeHolders/GetAllProjectStakeHolders`, {'Authorization' : `Bearer ${token}`})
+        const response = await apiService.get(`/api/ProjectStakeHolders/GetAllProjectStakeHolders/${projectId}`, {'Authorization' : `Bearer ${token}`})
         console.log(response)
         if(response.succeeded !== false) {
             setProjectStakeholders(response.stakeholders)
@@ -81,10 +86,13 @@ const ProjectStakeholders = () => {
         console.log(error)
       }
     }
-    fetchStakeholders()
-  }, [ token])
+    if(loading === false) {
+
+      fetchStakeholders()
+    }
+  }, [ token, loading])
   const handleSubmitProject = async () => {
-    setLoading(true);
+    setisLoading(true);
     try {
       const resp = await apiService.post("/api/ProjectStakeHolders/AddProjectStakeHolder", inputs, {
         Authorization: `Bearer ${token}`,
@@ -92,9 +100,9 @@ const ProjectStakeholders = () => {
       console.log(resp);
       if (resp.succeeded === true) {
       }
-      setLoading(false);
+      setisLoading(false);
     } catch (error) {
-      setLoading(false);
+      setisLoading(false);
     }
   };
   return (
@@ -151,7 +159,7 @@ const ProjectStakeholders = () => {
                 onClick={handleSubmitProject}
                 className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
               >
-                {loading ? (
+                {isLoading ? (
                   <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
                 ) : (
                   "Create"
@@ -251,7 +259,7 @@ const ProjectStakeholders = () => {
           </TableHeader>
           <TableBody>
 
-              {projectStakeholders.map((project) => {
+              {projectStakeholders?.map((project) => {
                 return <TableRow key={project.id} className=" border-b border-b-[rgb(234,236,240)] py-4">
                      <TableCell className="font-medium text-sm text-[#101828]">
                 {project.userId}

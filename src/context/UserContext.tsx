@@ -122,6 +122,8 @@ const logout =() => {
       setError(resp.responseMessage)
      }
     } catch (error) {
+      setIsLoading(false)
+
     }
   };
 

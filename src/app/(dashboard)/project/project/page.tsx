@@ -11,10 +11,14 @@ import {
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
 import {
+  ArrowLeft,
+  ArrowRight,
   CalendarIcon,
   ChevronsUpDown,
+  Edit,
   ListFilter,
   ListFilterIcon,
+  MoreVertical,
   PlusIcon,
   SearchIcon,
   TrashIcon,
@@ -47,7 +51,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { format } from "date-fns";
+import { format, formatISO } from "date-fns";
 import { LoadingSpinner } from "@/components/loadingSpinner";
 import { formatDate } from "@/utils/formatDate";
 import { Switch } from "@/components/ui/switch";
@@ -62,6 +66,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Contact = {
   id: number;
@@ -77,11 +83,15 @@ const Project = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const [isLoading, setisLoading] = useState(false);
+  const [params, setParams] = useState({
+    total: 0,
+  });
   const [search, setSearch] = useState("");
   const { token } = useAuth();
   const { loading } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState(10);
+  const [tableLoading, setTableLoading] = useState(false);
   const [inputs, setInputs] = useState({
     description: "",
     assignedTo: "",
@@ -108,6 +118,7 @@ const Project = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
+      setTableLoading(true);
       try {
         const response = await apiService.get(
           `/api/Project/GetAllProjects?&page=${currentPage}&pageSize=${pagination}`,
@@ -116,17 +127,22 @@ const Project = () => {
         console.log(response);
         if (response.succeeded !== false) {
           setProjects(response.projects);
+          setParams({
+            total: response.total,
+          });
         } else {
           console.log(response.responseMessage);
         }
+        setTableLoading(false);
       } catch (error) {
         console.log(error);
+        setTableLoading(false);
       }
     };
     if (loading === false) {
       fetchProjects();
     }
-  }, [token, loading]);
+  }, [token, loading, currentPage]);
   const createProject = async () => {
     try {
       const resp = await apiService.post(
@@ -146,6 +162,17 @@ const Project = () => {
       setisLoading(false);
     }
   };
+  const maxPage = Math.ceil(params.total / pagination);
+
+  const handlePageNavigation = (directon: "next" | "previous") => {
+    if (directon === "next") {
+      if (maxPage === currentPage) return;
+      setCurrentPage(currentPage + 1);
+    } else {
+      if (currentPage === 1) return;
+      setCurrentPage(currentPage - 1);
+    }
+  };
   const handleSubmitProject = async () => {
     setisLoading(true);
     if (expandLoading === null) {
@@ -154,11 +181,21 @@ const Project = () => {
       handleUpdate();
     }
   };
+  function searchProject() {
+    let query = search.toLowerCase();
+    const comm = projects.filter((project) => {
+      const searchableProperties = [
+        project?.description,
+        project?.projectName,
+        project?.blockers,
+      ].map((prop) => prop?.toLowerCase());
+      return searchableProperties?.some((prop) => prop?.includes(query));
+    });
+    return comm;
+  }
   const [expandLoading, setExpandLoading] = useState<number | null>(null);
-  const identity = useRef<number | null>(null);
   const expand = async (id: number) => {
     setExpandLoading(id);
-    identity.current = id;
     console.log(inputs);
     try {
       const resp = await apiService.get(`/api/Project/GetProjectById/${id}`, {
@@ -172,11 +209,14 @@ const Project = () => {
       }
     } catch (error) {}
   };
+  console.log(inputs)
   const handleUpdate = async () => {
+    // console.log('firing')
+    setisLoading(true)
     try {
       const resp = await apiService.put(
-        `/api/Project/UpdateProject/${identity.current}`,
-        { ...inputs, dueDate: format(inputs.dueDate, "yyyy-MM-dd HH:mm:ss") },
+        `/api/Project/UpdateProject/${expandLoading}`,
+        { ...inputs, dueDate: formatISO(inputs.dueDate, { representation: "complete" }) },
         {
           Authorization: `Bearer ${token}`,
         }
@@ -187,16 +227,22 @@ const Project = () => {
         setExpandLoading(null);
         setisLoading(false);
         console.log(resp);
-        identity.current = null;
+        const updatedproject = resp.project; 
+        const index = projects.findIndex(project => project.id === expandLoading);
+        if (index !== -1) {
+          const updatedprojects = [...projects];
+          updatedprojects[index] = updatedproject;
+          setProjects(updatedprojects);
+        }
       } else {
         setisLoading(false);
-
       }
     } catch (error) {
       setisLoading(false);
-      identity.current = null;
+      console.log(error);
     }
   };
+  console.log(expandLoading)
   const handleDelete = async (id: number) => {
     try {
       const resp = await apiService.delete(`/api/Project/DeleteProject/${id}`, {
@@ -209,17 +255,22 @@ const Project = () => {
         setisLoading(false);
         setProjects((prev) => prev.filter((project) => project.id !== id));
         console.log(resp);
-        identity.current = null;
       }
     } catch (error) {
       setisLoading(false);
-      identity.current = null;
     }
   };
+  const onSubmit = () => {
+    if(expandLoading) {
+      handleUpdate()
+    } else {
+      handleSubmitProject()
+    }
+  }
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       {openModal && (
-        <div className=" flex items-center fixed w-screen top-0 right-0 left-0 bottom-0 h-screen justify-center z-50 bg-[rgba(0,0,0,0.6)]">
+        <div className=" flex items-center fixed w-screen top-0 right-0 left-0 bottom-0 h-screen justify-center z-[50] bg-[rgba(0,0,0,0.6)]">
           <div className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
             <p>Project</p>
             <div className=" w-full ">
@@ -277,32 +328,32 @@ const Project = () => {
                   <Calendar
                     mode="single"
                     selected={inputs.dueDate as unknown as Date}
-                    disabled={disabledDays}
                     onSelect={(d) => handleEndDateChange(d as Date)}
                     initialFocus
                   />
                 </PopoverContent>
               </Popover>
             </div>
-            {identity.current !== null && (
+            {expandLoading !== null && (
               <div className=" w-full flex items-center justify-between ">
                 <p className=" text-[13px] mb-2 text-[#677189]">Completed</p>
                 <Switch
                   defaultChecked={inputs.isCompleted}
                   onCheckedChange={(e) => handleChange("isCompleted", e)}
                   checked={inputs.isCompleted}
+                  className=" bg-ai-button-blue"
                 />
               </div>
             )}
 
             <div className=" w-full">
               <button
-                onClick={handleSubmitProject}
+                onClick={onSubmit}
                 className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
               >
                 {isLoading ? (
                   <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                ) : identity.current !== null ? (
+                ) : expandLoading !== null ? (
                   "Update"
                 ) : (
                   "Create"
@@ -350,7 +401,7 @@ const Project = () => {
           <input
             type="text"
             className=" shadow-none outline-none w-full h-full bg-transparent"
-            placeholder="Search for Customer"
+            placeholder="Search projects"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
@@ -425,85 +476,144 @@ const Project = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {projects.map((project) => {
-              return (
-                <TableRow
-                  key={project.id}
-                  className=" border-b border-b-[rgb(234,236,240)] py-4"
-                >
-                  <TableCell className="font-medium text-sm text-[#101828]">
-                    {project.projectName}
-                  </TableCell>
-                  <TableCell>{project.description}</TableCell>
+            {tableLoading ? (
+              <TableRow>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+              </TableRow>
+            ) : (
+              searchProject()?.map((project) => {
+                return (
+                  <TableRow
+                    key={project.id}
+                    className=" border-b border-b-[rgb(234,236,240)] py-4"
+                  >
+                    <TableCell className="font-medium text-sm text-[#101828]">
+                      {project.projectName}
+                    </TableCell>
+                    <TableCell>{project.description}</TableCell>
 
-                  <TableCell>{formatDate(project.startDate)}</TableCell>
-                  <TableCell>{formatDate(project.dueDate)}</TableCell>
-                  <TableCell className="text-sm text-[#42526D]">
-                    <div
-                      className={clsx(
-                        " rounded-[16px] w-fit  px-2 py-2 text-xs font-medium",
-                        {
-                          " bg-green-600 text-white": project.isCompleted,
-                          "bg-[#D6F3FF] text-[#0A3465]": !project.isCompleted,
-                        }
-                      )}
-                    >
-                      {project.isCompleted ? "Completed" : "In Progress"}
-                    </div>
-                  </TableCell>
-                  <TableCell>{project.blockers}</TableCell>
-                  <TableCell>
-                    {
-                      <AlertDialog>
-                        <AlertDialogTrigger className=" bg-red-600 rounded-[7px] cursor-pointer w-fit h-fit p-2">
-                          <TrashIcon className=" w-4 h-4 text-white" />
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete this entry and remove your data
-                              from the servers.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction className=" bg-ai-button-blue"
-                              onClick={() => handleDelete(project.id)}
-                            >
-                              Continue
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    }
-                  </TableCell>
-                  <TableCell>
-                    {expandLoading === project.id ? (
-                      <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                    ) : (
-                      <ChevronsUpDown
-                        onClick={() => expand(project.id)}
-                        className=" w-4 h-4 rotate-45 cursor-pointer"
-                      />
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                    <TableCell>{formatDate(project.startDate)}</TableCell>
+                    <TableCell>{formatDate(project.dueDate)}</TableCell>
+                    <TableCell className="text-sm text-[#42526D]">
+                      <div
+                        className={clsx(
+                          " rounded-[16px] w-fit  px-2 py-2 text-xs font-medium",
+                          {
+                            " bg-green-600 text-white": project.isCompleted,
+                            "bg-[#D6F3FF] text-[#0A3465]": !project.isCompleted,
+                          }
+                        )}
+                      >
+                        {project.isCompleted ? "Completed" : "In Progress"}
+                      </div>
+                    </TableCell>
+                    <TableCell>{project.blockers}</TableCell>
+                    <TableCell>
+                      <Popover>
+                        <PopoverTrigger>
+                          <MoreVertical className=" w-4 h-4" />
+                        </PopoverTrigger>
+                        <PopoverContent className=" w-fit flex flex-col gap-3">
+                          <Link
+                            href={`/project/${project.id}/task`}
+                            className=" text-sm"
+                          >
+                            View task
+                          </Link>
+                          <Link
+                            href={`/project/${project.id}/project-stakeholder`}
+                            className=" text-sm"
+                          >
+                            View stakeholders
+                          </Link>
+                          <AlertDialog>
+                            <AlertDialogTrigger className="  cursor-pointer flex gap-2 justify-between items-center">
+                              <span className=" text-sm">Delete</span>
+                              <div className=" bg-red-600 w-fit   p-2 rounded-[7px]">
+                                <TrashIcon className=" w-4 h-4 text-white" />
+                              </div>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete this entry and remove your
+                                  data from the servers.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className=" bg-ai-button-blue"
+                                  onClick={() => handleDelete(project.id)}
+                                >
+                                  Continue
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          {expandLoading === project.id ? (
+                            <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                          ) : (
+                            <div onClick={() => expand(project.id)} className=" flex cursor-pointer  items-center justify-between gap-2">
+                              <span className=" text-sm">Edit</span>
+                              <Edit
+                                
+                                className=" w-4 h-4 rotate-45 cursor-pointer"
+                              />
+                            </div>
+                          )}
+                        </PopoverContent>
+                      </Popover>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
         <Pagination className=" px-4 pb-7 pt-2">
           <PaginationContent className=" w-full flex items-center justify-between ">
             <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
-              <PaginationPrevious href="#" />
+              <button
+                disabled={currentPage === 1}
+                className=" disabled:cursor-not-allowed  px-4 py-2 rounded-[8px] flex items-center justify-center gap-2 text-[#344054] border-[#D0D5DD] border "
+                onClick={() => handlePageNavigation("previous")}
+              >
+                <ArrowLeft className=" w-4 h-4" /> <span>Previous</span>{" "}
+              </button>
             </PaginationItem>
+            <div className=" flex text-sm font-medium items-center gap-2"></div>
 
             <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
-              <PaginationNext href="#" />
+              <button
+                disabled={maxPage === currentPage}
+                className=" disabled:cursor-not-allowed  px-4 py-2 rounded-[8px] flex items-center justify-center gap-2 text-[#344054] border-[#D0D5DD] border "
+                onClick={() => handlePageNavigation("next")}
+              >
+                <span>Next</span>
+                <ArrowRight className=" w-4 h-4" />
+              </button>
             </PaginationItem>
           </PaginationContent>
         </Pagination>

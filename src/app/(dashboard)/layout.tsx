@@ -68,14 +68,6 @@ const nav: Nav = {
         name: "project",
         path: "/project/project",
       },
-      {
-        name: "stakeholders",
-        path: "/project/project-stakeholder",
-      },
-      {
-        name: "task",
-        path: "/project/task",
-      },
     ],
   },
   "customer": {
@@ -86,20 +78,12 @@ const nav: Nav = {
         path: "/customer/customer",
       },
       {
-        name: "contact",
-        path: "/customer/contact",
-      },
-      {
         name: "lead",
         path: "/customer/lead",
       },
       {
         name: "opportunity",
         path: "/customer/opportunity",
-      },
-      {
-        name: "invoice",
-        path: "/customer/invoice",
       },
 
     ],
@@ -110,12 +94,7 @@ const nav: Nav = {
 
     ],
   },
-  "communication": {
-    pathname: "Communication",
-    paths: [
 
-    ],
-  },
   "support": {
     pathname: "Support Ticket",
     paths: [
