@@ -16,12 +16,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRightCircleIcon, ChevronRightIcon } from "lucide-react";
 import UserImage from "./userIcon";
+import { useAuth } from "@/context/UserContext";
 
 const DashboardSidebar = () => {
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[1];
   const [expand, setExpand] = useState(false);
-
+const {user} = useAuth()
   const handleExpand = () => {
     setExpand(!expand);
   };
@@ -41,7 +42,7 @@ const DashboardSidebar = () => {
               <UserImage />
 
               </div>
-            {expand &&  <span className=" text-[#000103] font-bold text-[20px]">Sonio</span>}
+            {expand &&  <span className=" text-[#000103] font-bold text-[20px]">{user?.firstName}</span>}
             </div>
            {expand && <div className=" flex items-center justify-between">
               <span>

@@ -185,7 +185,7 @@ const handleOnPreview = () => {
   })
 }
 
-  return <div className={clsx(' use-automation-zoom  h-full overflow-scroll remove-scrollbar mr-[385px] bg-background transition-all rounded-md', {
+  return <div className={clsx(' use-automation-zoom  h-screen overflow-y-scroll mr-[385px] bg-background transition-all rounded-md', {
     ' !p-0 !mr-0': state.editor.previewMode === true || state.editor.liveMode === true,
     " !w-[850px]" : state.editor.device === 'Tablet',
     " !w-[420px]" : state.editor.device === 'Mobile',

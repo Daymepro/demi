@@ -76,6 +76,7 @@ import { formatDate } from "@/utils/formatDate";
 import { Switch } from "@/components/ui/switch";
 import { boolean } from "zod";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 type Contact = {
   organizationId: string;
@@ -155,6 +156,9 @@ const Tasks = (props: Props) => {
         setOpenModal(false);
         setTasks((prev) => prev.filter((task) => task.id !== id));
         console.log(resp);
+        toast('success', {
+          description: "Task deleted successfully",
+        } );
       }
       setisLoading(false);
 
@@ -179,7 +183,6 @@ const Tasks = (props: Props) => {
           Authorization: `Bearer ${token}`,
         }
       );
-      console.log(resp);
       if (resp.succeeded === true) {
         setOpenModal(false);
         setExpandLoading(null);
@@ -191,9 +194,22 @@ const Tasks = (props: Props) => {
           updatedTasks[index] = updatedTask;
           setTasks(updatedTasks);
         }
+        setInputs({
+          description: "",
+          assignedTo: "",
+          dateCreated: new Date(),
+          dueDate: new Date(),
+          status: "",
+          blockers: "",
+          isCompleted: false
+        })
       } else {
+        toast('error', {
+          description: resp.responseMessage
+        })
         setisLoading(false);
       }
+     
     } catch (error) {
       setisLoading(false);
     }
@@ -249,16 +265,28 @@ const Tasks = (props: Props) => {
           dateCreated: formatISO(inputs.dateCreated, {
             representation: "complete",
           }),
-          projectId: projectId,
+          propjectId: projectId,
         },
         {
           Authorization: `Bearer ${token}`,
         }
       );
-      console.log(resp);
       if (resp.succeeded === true) {
         setOpenModal(false);
         setTasks([...tasks, resp.task]);
+        setInputs({
+          description: "",
+          assignedTo: "",
+          dateCreated: new Date(),
+          dueDate: new Date(),
+          status: "",
+          blockers: "",
+          isCompleted: false
+        })
+      } else {
+        toast('error', {
+          description: resp.responseMessage
+        })
       }
       setisLoading(false);
     } catch (error) {
@@ -272,6 +300,19 @@ const Tasks = (props: Props) => {
     } else {
       handleSubmitTask()
     }
+  }
+  const handleCancel = () => {
+    setInputs({
+      description: "",
+      assignedTo: "",
+      dateCreated: new Date(),
+      dueDate: new Date(),
+      status: "",
+      blockers: "",
+      isCompleted: false
+    })
+    setOpenModal(false); 
+    setExpandLoading(null)
   }
   const handleExpand = async (id: number) => {
     setExpandLoading(id);
@@ -292,22 +333,22 @@ const Tasks = (props: Props) => {
   };
   function searchTasks( ){
     let query = search.toLowerCase();
-     const comm = tasks.filter(task => {
+     const comm = tasks?.filter(task => {
        const searchableProperties = [
-         task.description,
-         task.blockers,
-         task.status,
-
-       ].map(prop => prop.toLowerCase());
-         return searchableProperties.some(prop => prop.includes(query));
+         task?.description,
+         task?.blockers,
+         task?.status,
+          task?.assignedTo
+       ].map(prop => prop?.toLowerCase());
+         return searchableProperties?.some(prop => prop?.includes(query));
      });
   return comm
    }
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll flex-col">
       {openModal && (
-        <div className=" flex items-center fixed w-screen top-0 right-0 left-0 bottom-0 h-screen justify-center z-[5000000] bg-[rgba(0,0,0,0.6)]">
-          <div className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+        <div key={expandLoading}  className=" flex items-center fixed w-screen top-0 right-0 left-0 bottom-0 h-screen justify-center z-[5000000] bg-[rgba(0,0,0,0.6)]">
+          <div  className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
             <p>Task</p>
             <div className=" w-full ">
               <p className=" text-[13px] mb-2 text-[#677189]">
@@ -318,16 +359,19 @@ const Tasks = (props: Props) => {
                 onChange={(e) => handleChange("description", e.target.value)}
                 placeholder="Description"
                 className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+                value={inputs.description}
               />
             </div>
             <div className=" w-full ">
               <p className=" text-[13px] mb-2 text-[#677189]">Assigned to</p>
-              <input
-                type="text"
-                onChange={(e) => handleChange("assignedTo", e.target.value)}
-                placeholder="Assigned to"
-                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-              />
+           <Select>
+          <SelectTrigger className="  bg-[#F3F4F6] px-2 focus:border-none w-full py-2 rounded-[4px] text-[#677189]">
+            <SelectValue placeholder=" Select user" />
+          </SelectTrigger>
+          <SelectContent>
+         
+          </SelectContent>
+        </Select>
             </div>
             <div className=" w-full ">
               <p className=" text-[13px] mb-2 text-[#677189]">Status</p>
@@ -336,6 +380,7 @@ const Tasks = (props: Props) => {
                 onChange={(e) => handleChange("status", e.target.value)}
                 placeholder="status"
                 className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                value={inputs.status}
               />
             </div>
             <div className=" w-full ">
@@ -345,12 +390,10 @@ const Tasks = (props: Props) => {
                 onChange={(e) => handleChange("blockers", e.target.value)}
                 placeholder="Blockers"
                 className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                value={inputs.blockers}
               />
             </div>
-           {expandLoading !== null && <div className=" w-full flex items-center justify-between ">
-              <p className=" text-[13px] mb-2 text-[#677189]">Completed</p>
-              <Switch onCheckedChange={(e) => handleChange("isCompleted", e)} defaultChecked={inputs.isCompleted} />
-            </div>}
+        
             <div className=" w-full ">
               <p className=" text-[13px] mb-2 text-[#677189]">Start Date</p>
               <Popover>
@@ -370,19 +413,20 @@ const Tasks = (props: Props) => {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0  z-[6000000000]" align="start">
                   <Calendar
                     mode="single"
                     className=" "
                     selected={inputs.dateCreated as unknown as Date}
                     onSelect={(d) => handleStartDateChange(d as Date)}
                     initialFocus
+                    
                   />
                 </PopoverContent>
               </Popover>
             </div>
             <div className=" w-full ">
-              <p className=" text-[13px] mb-2 text-[#677189]">End Date</p>
+              <p className=" text-[13px] mb-2 text-[#677189] ">End Date</p>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -400,7 +444,7 @@ const Tasks = (props: Props) => {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 z-[6000000000]" align="start">
                   <Calendar
                     mode="single"
                     selected={inputs.dueDate as unknown as Date}
@@ -410,6 +454,10 @@ const Tasks = (props: Props) => {
                 </PopoverContent>
               </Popover>
             </div>
+            {expandLoading !== null && <div className=" w-full flex items-center justify-between ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Completed</p>
+              <Switch onCheckedChange={(e) => handleChange("isCompleted", e)} defaultChecked={inputs.isCompleted} />
+            </div>}
             <div className=" w-full">
               <button
                 onClick={onSubmit}
@@ -422,7 +470,7 @@ const Tasks = (props: Props) => {
                 )}
               </button>
             </div>
-            <div onClick={() => setOpenModal(false)} className=" w-full">
+            <div onClick={handleCancel} className=" w-full">
               <button className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
                 Cancel
               </button>

@@ -201,11 +201,11 @@ const Container = ({ element }: Props) => {
   return (
     <div
       style={styles}
-      className={clsx("relative p-4 transition-all remove-scrollbar group", {
+      className={clsx("relative p-4 transition-all  group", {
         "max-w-full w-full": type === "container" || type === "2Col",
         "h-fit": type === "container",
-        "h-full border": type === "__body",
-        "overflow-scroll ": type === "__body",
+        "h-full  border": type === "__body",
+        "overflow-scroll remove-scrollbar": type === "__body",
         "flex flex-col md:!flex-row": type === "2Col",
         "!border-blue-500":
           state.editor.selectedElement.id === id &&

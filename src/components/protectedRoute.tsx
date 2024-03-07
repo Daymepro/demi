@@ -5,9 +5,7 @@ import { getCookie } from 'cookies-next'
 const ProtectedRoute = ({children} : {children: React.ReactNode}) => {
     const {isAuthenticated, loading, user, logout} = useAuth()
 
-//   if(user?.twoFactorEnabled === false) {
-//     redirect('/onboarding/industry')
-//   }
+
 const pathName = usePathname()
 
 useEffect(() => {
@@ -25,7 +23,6 @@ useEffect(() => {
       } 
       const decodedJWT = parseJwt()
       if(decodedJWT) {
-        console.log(decodedJWT)
   
         if(decodedJWT.exp * 1000 < Date.now()) {
           logout()

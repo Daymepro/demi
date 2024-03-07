@@ -1,5 +1,5 @@
 "use client"
-import EditorProvider from '@/providers/editor-provider'
+import EditorProvider, { useEditor } from '@/providers/editor-provider'
 import { redirect } from 'next/navigation'
 import React from 'react'
 import FunnelEditorNavigation from './_components/funnel-editor-navigation'
@@ -15,6 +15,8 @@ type props = {
 }
 const Page = async(props: props) => {
     const {funnelPageId} = props.params
+    const {state} = useEditor()
+    console.log(state)
 
     //fetch funnelId
     const funnelPageDetails = {

@@ -11,13 +11,18 @@ import {
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
 import {
+  ArrowLeft,
+  ArrowRight,
   ChevronsUpDown,
+  Edit,
   ListFilter,
   ListFilterIcon,
+  MoreVertical,
   PlusIcon,
   SearchIcon,
   TrashIcon,
 } from "lucide-react";
+import Link from "next/link";
 import {
   Table,
   TableBody,
@@ -60,8 +65,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { LoadingSpinner } from "@/components/loadingSpinner";
-import { getCookie } from "cookies-next";
 import { Skeleton } from "@/components/ui/skeleton";
 export type Customer = {
   organizationId: string;
@@ -85,6 +94,11 @@ const Customer = () => {
   const [expandLoading, setExpandLoading] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+  const [params, setParams] = useState({
+    total: 0
+  })
+  const [currentPage, setCurrentPage] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
   const handleSubmitCustomer = async () => {
     setisLoading(true);
     try {
@@ -98,6 +112,8 @@ const Customer = () => {
       console.log(resp);
       if (resp.succeeded === true) {
         setCustomers([...customers, resp.customer]);
+        setOpen(false);
+
       }
       setisLoading(false);
     } catch (error) {
@@ -106,14 +122,14 @@ const Customer = () => {
   };
   function searchCustomer() {
     let query = search.toLowerCase();
-    const comm = customers.filter((customer) => {
+    const comm = customers?.filter((customer) => {
       const searchableProperties = [
-        customer.companyName,
-        customer.website,
-        customer.category,
-        customer.relationshipManager,
-      ].map((prop) => prop.toLowerCase());
-      return searchableProperties.some((prop) => prop.includes(query));
+        customer?.companyName,
+        customer?.website,
+        customer?.category,
+        customer?.relationshipManager,
+      ].map((prop) => prop?.toLowerCase());
+      return searchableProperties?.some((prop) => prop?.includes(query));
     });
     return comm;
   }
@@ -127,6 +143,9 @@ const Customer = () => {
         console.log(resp);
         if (resp.succeeded === true) {
           setCustomers(resp.customers);
+          setParams({
+            total: resp.total
+          })
         }
         setGetCustomers(false);
       } catch (error) {
@@ -137,9 +156,21 @@ const Customer = () => {
       getCustomers();
     }
   }, [loading, token]);
+
+
+  const maxPage = Math.ceil(params.total / pageSize);
+
+  const handlePageNavigation = (directon: "next" | "previous") => {
+    if (directon === "next") {
+      if (maxPage === currentPage) return;
+      setCurrentPage(currentPage + 1);
+    } else {
+      if (currentPage === 1) return;
+      setCurrentPage(currentPage - 1);
+    }
+  };
   const handleExpand = async (id: number) => {
     setExpandLoading(id);
-    console.log(id);
     try {
       const resp = await apiService.get(`/api/Customer/GetCustomerById/${id}`, {
         Authorization: `Bearer ${token}`,
@@ -163,10 +194,11 @@ const Customer = () => {
     }
   };
   const handleUpdate = async () => {
+    setisLoading(true)
     try {
       const resp = await apiService.put(
-        `/api/Project/UpdateCustomer/${expandLoading}`,
-        inputs,
+        `/api/Customer/UpdateCustomer/${expandLoading}`,
+        {...inputs, id: expandLoading},
         {
           Authorization: `Bearer ${token}`,
         }
@@ -176,15 +208,30 @@ const Customer = () => {
         setOpen(false);
         setExpandLoading(null);
         setisLoading(false);
-        console.log(resp);
+        const updatedCustomer = resp.customer; 
+        const index = customers.findIndex(customer => customer.id === expandLoading);
+        if (index !== -1) {
+          const updatedcustomers = [...customers];
+          updatedcustomers[index] = updatedCustomer;
+          setCustomers(updatedcustomers);
+        }
+        setInputs({
+          website: "",
+          companyName: "",
+          relationshipManager: "",
+          category: "",
+        })
       }
+      setisLoading(false)
     } catch (error) {
       setisLoading(false);
+      setisLoading(false)
+
     }
   };
   const handleDelete = async (id: number) => {
     try {
-      const resp = await apiService.delete(`/api/Project/DeleteProject/${id}`, {
+      const resp = await apiService.delete(`/api/Customer/DeleteCustomer/${id}`, {
         Authorization: `Bearer ${token}`,
       });
       console.log(resp);
@@ -196,6 +243,15 @@ const Customer = () => {
       setisLoading(false);
     }
   };
+  const handleCancel = () => {
+    setInputs({
+      website: "",
+      companyName: "",
+      relationshipManager: "",
+      category: "",
+    })
+    setExpandLoading(null)
+  }
   return (
     <main className=" flex gap-10  h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
@@ -242,26 +298,33 @@ const Customer = () => {
               <p className=" text-[13px] mb-2 text-[#677189]">
                 Relationship Manager
               </p>
-              <input
+           
+                     <Select>
+          <SelectTrigger className="bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]">
+            <SelectValue placeholder="Relationship manager" />
+          </SelectTrigger>
+          <SelectContent>
+            {/* <SelectItem value="light">Light</SelectItem>
+            <SelectItem value="dark">Dark</SelectItem>
+            <SelectItem value="system">System</SelectItem> */}
+          </SelectContent>
+        </Select>
+            </div>
+            <div className=" w-full">
+            <p className=" text-[13px] mb-2 text-[#677189]">
+                Category
+              </p>
+            <input
                 type="text"
-                value={inputs.relationshipManager}
+                value={inputs.category}
                 onChange={(e) =>
-                  handleChange("relationshipManager", e.target.value)
+                  handleChange("category", e.target.value)
                 }
-                placeholder="Relationship Manager"
+                placeholder="Category"
                 className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
               />
+
             </div>
-            <Select>
-              <SelectTrigger className="w-full text-[#B3B3B6] bg-[#F3F4F6]">
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {/* <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem> */}
-              </SelectContent>
-            </Select>
 
             <div className=" w-full">
               <button
@@ -279,7 +342,7 @@ const Customer = () => {
             </div>
             <div className=" w-full">
               <DialogClose
-                onClick={() => setExpandLoading(null)}
+                onClick={handleCancel}
                 className=" w-full  text-[#8D8D91]  text-sm border-none py-3"
               >
                 Cancel
@@ -407,45 +470,74 @@ const Customer = () => {
                     <TableCell className=" text-sm text-[#42526D]">
                       {customer.relationshipManager}
                     </TableCell>
+ 
+   
                     <TableCell>
-                      {
-                        <AlertDialog>
-                          <AlertDialogTrigger className=" bg-red-600 rounded-[7px] cursor-pointer w-fit h-fit p-2">
-                            <TrashIcon className=" w-4 h-4 text-white" />
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Are you absolutely sure?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. This will
-                                permanently delete this entry and remove your
-                                data from the servers.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                className=" bg-ai-button-blue"
-                                onClick={() => handleDelete(customer.id)}
-                              >
-                                Continue
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      }
-                    </TableCell>
-                    <TableCell>
-                      {expandLoading === customer.id ? (
-                        <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                      ) : (
-                        <ChevronsUpDown
-                          onClick={() => handleExpand(customer.id)}
-                          className=" w-4 h-4 cursor-pointer rotate-45"
-                        />
-                      )}
+                      <Popover>
+                        <PopoverTrigger>
+                          <MoreVertical className=" w-4 h-4" />
+                        </PopoverTrigger>
+                        <PopoverContent className=" w-fit flex flex-col gap-3">
+                          <Link
+                            href={`/customer/${customer.id}/invoice`}
+                            className=" text-sm"
+                          >
+                            View invoice
+                          </Link>
+                          <Link
+                            href={`/customer/${customer.id}/contact`}
+                            className=" text-sm"
+                          >
+                            View contact
+                          </Link>
+                          <Link
+                            href={`/customer/${customer.id}/communication`}
+                            className=" text-sm"
+                          >
+                            View communication
+                          </Link>
+                          <AlertDialog>
+                            <AlertDialogTrigger className="  cursor-pointer flex gap-2 justify-between items-center">
+                              <span className=" text-sm">Delete</span>
+                              <div className=" bg-red-600 w-fit   p-2 rounded-[7px]">
+                                <TrashIcon className=" w-4 h-4 text-white" />
+                              </div>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete this entry and remove your
+                                  data from the servers.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className=" bg-ai-button-blue"
+                                  onClick={() => handleDelete(customer.id)}
+                                >
+                                  Continue
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          {expandLoading === customer.id ? (
+                            <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                          ) : (
+                            <div onClick={() => handleExpand(customer.id)} className=" flex cursor-pointer  items-center justify-between w-full gap-2">
+                              <span className=" text-sm">Edit</span>
+                              <Edit
+                                
+                                className=" w-4 h-4 rotate-45 cursor-pointer"
+                              />
+                            </div>
+                          )}
+                        </PopoverContent>
+                      </Popover>
                     </TableCell>
                   </TableRow>
                 );
@@ -454,13 +546,27 @@ const Customer = () => {
           </TableBody>
         </Table>
         <Pagination className=" px-4 pb-7 pt-2">
-          <PaginationContent className=" w-full flex items-center justify-between ">
+        <PaginationContent className=" w-full flex items-center justify-between ">
             <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
-              <PaginationPrevious href="#" />
+              <button
+                disabled={currentPage === 1}
+                className=" disabled:cursor-not-allowed  px-4 py-2 rounded-[8px] flex items-center justify-center gap-2 text-[#344054] border-[#D0D5DD] border "
+                onClick={() => handlePageNavigation("previous")}
+              >
+                <ArrowLeft className=" w-4 h-4" /> <span>Previous</span>{" "}
+              </button>
             </PaginationItem>
+            <div className=" flex text-sm font-medium items-center gap-2"></div>
 
             <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
-              <PaginationNext href="#" />
+              <button
+                disabled={maxPage === currentPage}
+                className=" disabled:cursor-not-allowed  px-4 py-2 rounded-[8px] flex items-center justify-center gap-2 text-[#344054] border-[#D0D5DD] border "
+                onClick={() => handlePageNavigation("next")}
+              >
+                <span>Next</span>
+                <ArrowRight className=" w-4 h-4" />
+              </button>
             </PaginationItem>
           </PaginationContent>
         </Pagination>
