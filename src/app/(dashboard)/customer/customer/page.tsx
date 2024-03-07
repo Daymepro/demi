@@ -210,7 +210,7 @@ const Customer = () => {
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select> */}
-        <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
+        <Dialog open={open} onOpenChange={(o) => setOpen(o)} >
           <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
             {" "}
             <span className=" font-bold text-sm">Create customer</span>
