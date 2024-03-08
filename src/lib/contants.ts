@@ -12,6 +12,7 @@ export type EditorBtns =
   | '__body'
   | 'image'
   | 'services'
+  | 'pricing'
   | 'button'
   | null
   | '3Col'

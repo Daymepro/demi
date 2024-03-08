@@ -1,6 +1,5 @@
 "use client"
 import EditorProvider, { useEditor } from '@/providers/editor-provider'
-import EditorProvider, { useEditor } from '@/providers/editor-provider'
 import { redirect } from 'next/navigation'
 import React from 'react'
 import FunnelEditorNavigation from './_components/funnel-editor-navigation'

@@ -16,6 +16,7 @@ import ImagePlaceholder from './image-placeholder'
 import ContactFormComponentPlaceholderNew from './ContactFormComponentPlaceholderNew'
 import ServicesPlaceHolder from './servicesPlaceHolder'
 import ButtonPlaceHolder from './buttonPlaceholder'
+import PricingPlaceholder from './PricingPlaceholder'
   
   type Props = {}
   
@@ -79,6 +80,12 @@ import ButtonPlaceHolder from './buttonPlaceholder'
         label: 'Button',
         id: 'button',
         group: 'elements',
+      },
+      {
+        Component: <PricingPlaceholder />,
+        label: 'Pricing',
+        id: 'pricing',
+        group: 'layout',
       },
 
     //   {

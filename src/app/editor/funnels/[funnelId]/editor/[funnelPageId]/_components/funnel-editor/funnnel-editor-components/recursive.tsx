@@ -11,6 +11,7 @@ import ContactFormComponentNew from './contact-form-new'
 import TextAreaComponent from './textAreaComponent'
 import ServicesComponent from './servicesContainer'
 import ButtonComponent from './ButtonComponent'
+import PricingComponent from './PricingContainer'
 
 type Props = {
     element: EditorElement
@@ -45,6 +46,8 @@ const recursive = (props: Props) => {
       return <TextAreaComponent element={element} />
     case 'services':
       return <ServicesComponent element={element} />
+    case 'pricing':
+      return <PricingComponent element={element} />
     case 'link':
       return <LinkComponent element={element} />
     case 'button':

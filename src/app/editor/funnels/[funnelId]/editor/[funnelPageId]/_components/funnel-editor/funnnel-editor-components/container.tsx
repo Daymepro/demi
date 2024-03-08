@@ -145,6 +145,202 @@ const Container = ({ element }: Props) => {
           },
         });
         break;
+        case "pricing":
+          dispatch({
+            type: "ADD_ELEMENT",
+            payload: {
+              containerId: id,
+              elementDetails: {
+                content: [
+                  {
+                    content: [
+                      {
+                        content: [],
+                        id: v4(),
+                        name: "Container",
+                        styles: {
+                          height: "400px",
+                          borderRadius: "30px",
+                          backgroundImage:
+                            "url(https://images.unsplash.com/photo-1455165814004-1126a7199f9b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGVuZ2luZWVyaW5nfGVufDB8fDB8fHww)",
+                          borderWidth: "0px",
+                        },
+                        type: "container",
+                      },
+                      {
+                        content: [
+                          {
+                            content: [
+                              {
+                                content: {
+                                  innerText: "Standard Civil Engineering Plan",
+                                },
+                                id: v4(),
+                                name: "Text",
+                                styles: {
+                                  color: "black",
+                                  backgroundPosition: "center",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "no-repeat",
+                                  textAlign: "left",
+                                  opacity: "100%",
+                                  fontSize: "25px",
+                                },
+                                type: "text",
+                              },
+                              {
+                                content: { innerText: "$500" },
+                                id: v4(),
+                                name: "Text",
+                                styles: {
+                                  color: "black",
+                                  backgroundPosition: "center",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "no-repeat",
+                                  textAlign: "left",
+                                  opacity: "100%",
+                                  fontWeight: "bold",
+                                  fontSize: "30px",
+                                },
+                                type: "text",
+                              },
+                              {
+                                content: { innerText: "Per Project" },
+                                id: v4(),
+                                name: "Text",
+                                styles: {
+                                  color: "black",
+                                  backgroundPosition: "center",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "no-repeat",
+                                  textAlign: "left",
+                                  opacity: "100%",
+                                },
+                                type: "text",
+                              },
+                              {
+                                content: {
+                                  innerText: "Comprehensive Plans For Projects",
+                                },
+                                id: v4(),
+                                name: "Text",
+                                styles: {
+                                  color: "black",
+                                  backgroundPosition: "center",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "no-repeat",
+                                  textAlign: "left",
+                                  opacity: "100%",
+                                  fontWeight: "bold",
+                                },
+                                type: "text",
+                              },
+                              {
+                                content: { innerText: "✓ Details" },
+                                id: v4(),
+                                name: "Text",
+                                styles: {
+                                  color: "black",
+                                  backgroundPosition: "center",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "no-repeat",
+                                  textAlign: "left",
+                                  opacity: "100%",
+                                },
+                                type: "text",
+                              },
+                              {
+                                content: { innerText: "✓ Analysis" },
+                                id: v4(),
+                                name: "Text",
+                                styles: {
+                                  color: "black",
+                                  backgroundPosition: "center",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "no-repeat",
+                                  textAlign: "left",
+                                  opacity: "100%",
+                                },
+                                type: "text",
+                              },
+                              {
+                                content: { innerText: "✓ Blueprints" },
+                                id: v4(),
+                                name: "Text",
+                                styles: {
+                                  color: "black",
+                                  backgroundPosition: "center",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "no-repeat",
+                                  textAlign: "left",
+                                  opacity: "100%",
+                                },
+                                type: "text",
+                              },
+                              {
+                                content: { innerText: "✓ Supervision" },
+                                id: v4(),
+                                name: "Text",
+                                styles: {
+                                  color: "black",
+                                  backgroundPosition: "center",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "no-repeat",
+                                  textAlign: "left",
+                                  opacity: "100%",
+                                },
+                                type: "text",
+                              },
+                            ],
+                            id: v4(),
+                            name: "Container",
+                            styles: {},
+                            type: "container",
+                          },
+                        ],
+                        id: v4(),
+                        name: "Container",
+                        styles: {
+                          width: "fit-content",
+                        },
+                        type: "container",
+                      },
+                    ],
+                    id: v4(),
+                    name: "Container",
+                    styles: {
+                      maxWidth: "570px",
+                      display: "flex",
+                      flexDirection: "column",
+                      rowGap: "10px",
+                    },
+                    type: "container",
+                  },
+                  // {
+                  //   content: [],
+                  //   id: "a5609d80-a66f-4bb4-aae4-0b32c565471c",
+                  //   name: "Container",
+                  //   styles: { maxWidth: "570px" },
+                  //   type: "container",
+                  // },
+                  // {
+                  //   content: [],
+                  //   id: "071745de-ef43-44bc-996c-227d1598591f",
+                  //   name: "Container",
+                  //   styles: { maxWidth: "570px" },
+                  //   type: "container",
+                  // },
+                ],
+                id: v4(),
+                name: "Pricing",
+                styles: {
+                  width: "fit-content",
+                },
+                type: "pricing",
+              },
+            },
+          });
+          break;
       case "services":
         dispatch({
           type: "ADD_ELEMENT",
