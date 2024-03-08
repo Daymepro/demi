@@ -107,13 +107,34 @@ const nav: Nav = {
 
     ],
   },
+  "task": {
+    pathname: "Task",
+    paths: [
+
+    ],
+  },
+  "project-stakeholder": {
+    pathname: "Project stakeholder",
+    paths: [
+
+    ],
+  },
 };
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
 
   const pathname = usePathname();
-  const pathSplit = pathname.split("/")[1];
-  const findPath = nav[pathSplit];
+  // const pathSplit = pathname.split("/")[1];
+  const getPath = () => {
+    const splitPath =  pathname.split("/")
+    if(splitPath.length === 3){
+      return splitPath[1]
+    } else if(splitPath.length === 4){
+      return splitPath[3]
+    }
+  }
+  
+  const findPath = nav[getPath() as keyof typeof nav];
 
   useEffect(() => {
     const original = document.body.style.overflow

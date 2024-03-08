@@ -52,7 +52,12 @@ action: string,
 stage: string,
 amount: string
 }
-const Invoice = () => {
+type Props = {
+  params: {
+    customerid: string
+  }
+}
+const Invoice = (props: Props) => {
   const [invoice, setInvoice] = useState<Invoice[]>([])
   const [params, setParams] = useState({
     total: 0
@@ -62,7 +67,7 @@ const Invoice = () => {
   const [search, setSearch] = useState('')
   const {token } = useAuth()
   const [inputs, setInputs] = useState<Invoice>({} as Invoice);
-
+const {customerid} = props.params
   
   const handleChange = (name: string, value: string) => {
     setInputs((values) => ({ ...values, [name]: value }));

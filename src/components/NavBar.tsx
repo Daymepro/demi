@@ -48,7 +48,7 @@ function NavBar() {
 
   return (
     <>
-      <div className="xl:px-[140px] md:px-10 px-5 sticky top-0 flex md:backdrop-blur-sm bg-white  justify-between items-center py-[30px]">
+      <div className="xl:px-[140px] md:px-10 px-5 z-[4744747] sticky top-0 flex md:backdrop-blur-sm bg-white  justify-between items-center py-[30px]">
         <div className="flex gap-6 items-center">
           <Link className=" " href="/">
             <div className=" nav-icon text-sm font-semibold mr-4">

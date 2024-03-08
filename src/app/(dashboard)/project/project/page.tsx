@@ -101,6 +101,7 @@ const Project = () => {
     dueDate: new Date(),
     isCompleted: false,
   });
+
   const disabledBeforeDate = new Date();
 
   const disabledDays = { before: disabledBeforeDate };
@@ -146,12 +147,11 @@ const Project = () => {
     try {
       const resp = await apiService.post(
         "/api/Project/CreateProject",
-        { ...inputs, dueDate: format(inputs.dueDate, "yyyy-MM-dd HH:mm:ss") },
+        { ...inputs, dueDate: formatISO(inputs.dueDate, { representation: "complete" }) },
         {
           Authorization: `Bearer ${token}`,
         }
       );
-      console.log(resp);
       if (resp.succeeded === true) {
         setOpenModal(false);
         setProjects([...projects, resp.project]);
@@ -208,14 +208,12 @@ const Project = () => {
       }
     } catch (error) {}
   };
-  console.log(inputs)
   const handleUpdate = async () => {
-    // console.log('firing')
     setisLoading(true)
     try {
       const resp = await apiService.put(
         `/api/Project/UpdateProject/${expandLoading}`,
-        { ...inputs, dueDate: formatISO(inputs.dueDate, { representation: "complete" }) },
+        { ...inputs, id: expandLoading, dueDate: formatISO(inputs.dueDate, { representation: "complete" }) },
         {
           Authorization: `Bearer ${token}`,
         }
@@ -268,7 +266,7 @@ const Project = () => {
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       {openModal && (
-        <div className=" flex items-center fixed w-screen top-0 right-0 left-0 bottom-0 h-screen justify-center z-[50] bg-[rgba(0,0,0,0.6)]">
+        <div className=" flex items-center fixed w-screen top-0 right-0 left-0 bottom-0 h-screen justify-center z-[50000] bg-[rgba(0,0,0,0.6)]">
           <div className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
             <p>Project</p>
             <div className=" w-full ">
@@ -305,8 +303,8 @@ const Project = () => {
             </div>
             <div className=" w-full ">
               <p className=" text-[13px] mb-2 text-[#677189]">Due Date</p>
-              <Popover>
-                <PopoverTrigger asChild>
+              <Popover >
+                <PopoverTrigger asChild >
                   <Button
                     variant={"outline"}
                     className={clsx(
@@ -322,12 +320,13 @@ const Project = () => {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 z-[60000000]" align="start">
                   <Calendar
                     mode="single"
                     selected={inputs.dueDate as unknown as Date}
                     onSelect={(d) => handleEndDateChange(d as Date)}
                     initialFocus
+                    disabled={disabledDays}
                   />
                 </PopoverContent>
               </Popover>
