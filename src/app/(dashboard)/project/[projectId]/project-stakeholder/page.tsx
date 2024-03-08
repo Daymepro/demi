@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
-import { ListFilter, ListFilterIcon, PlusIcon, SearchIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, EditIcon, ListFilter, ListFilterIcon, PlusIcon, SearchIcon, TrashIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -40,7 +40,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { LoadingSpinner } from "@/components/loadingSpinner";
+import { toast } from "sonner";
 
 
 
@@ -50,6 +62,7 @@ type Stakeholder = {
     "userId": string,
     "role": string,
     "projectId": number
+    name: string
 }
 type Props = {
   params: {
@@ -67,7 +80,15 @@ const ProjectStakeholders = (props: Props) => {
     userId: "",
     role: "",
     projectId: 0,
-    id: 0
+    id: 0,
+    name: ''
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [expandLoading, setExpandLoading] = useState<number | null>(null);
+  const [open, setOpen] = useState(false)
+  const [params, setParams] = useState({
+    total: 0,
   });
   const handleChange = (name: string, value: string | Date) => {
     setInputs((values) => ({ ...values, [name]: value }));
@@ -75,10 +96,9 @@ const ProjectStakeholders = (props: Props) => {
   useEffect(() => {
     const fetchStakeholders = async () => {
       try {
-        const response = await apiService.get(`/api/ProjectStakeHolders/GetAllProjectStakeHolders/${projectId}`, {'Authorization' : `Bearer ${token}`})
-        console.log(response)
+        const response = await apiService.get(`/api/ProjectStakeHolders/GetAllProjectStakeHolders/${projectId}?id=${projectId}&search=""&page=${currentPage}&pageSize=${pageSize}`, {'Authorization' : `Bearer ${token}`})
         if(response.succeeded !== false) {
-            setProjectStakeholders(response.stakeholders)
+            setProjectStakeholders(response.projectStakeHolders)
         } else {
           console.log(response.responseMessage)
         }
@@ -90,21 +110,125 @@ const ProjectStakeholders = (props: Props) => {
 
       fetchStakeholders()
     }
-  }, [ token, loading])
+  }, [ token, loading, currentPage, pageSize])
+  const maxPage = Math.ceil(params.total / pageSize);
+
+  const handlePageNavigation = (directon: "next" | "previous") => {
+    if (directon === "next") {
+      if (maxPage === currentPage) return;
+      setCurrentPage(currentPage + 1);
+    } else {
+      if (currentPage === 1) return;
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  function searchStakeholders() {
+    let query = search.toLowerCase();
+    const comm = projectStakeholders?.filter((project) => {
+      const searchableProperties = [
+        project?.name,
+        project?.role,
+        project?.userId,
+      ].map((prop) => prop?.toLowerCase());
+      return searchableProperties?.some((prop) => prop?.includes(query));
+    });
+    return comm;
+  }
   const handleSubmitProject = async () => {
     setisLoading(true);
     try {
-      const resp = await apiService.post("/api/ProjectStakeHolders/AddProjectStakeHolder", inputs, {
+      const resp = await apiService.post("/api/ProjectStakeHolders/AddProjectStakeHolder", {...inputs, projectId}, {
         Authorization: `Bearer ${token}`,
       });
-      console.log(resp);
       if (resp.succeeded === true) {
+        setProjectStakeholders([...projectStakeholders, resp.projectStakeHolder]);
+        setOpen(false)
       }
       setisLoading(false);
     } catch (error) {
       setisLoading(false);
     }
   };
+  const handleDelete = async (id: number) => {
+    try {
+      const resp = await apiService.delete(`/api/ProjectStakeHolders/DeleteProjectStakeHolder/${id}`, {
+        Authorization: `Bearer ${token}`,
+      });
+      console.log(resp);
+      if (resp.succeeded === true) {
+        setProjectStakeholders((prev) => prev.filter((project) => project.id !== id));
+        console.log(resp);
+        toast("success", {
+          description: "Task deleted successfully",
+        });
+      }
+      setisLoading(false);
+    } catch (error) {
+      setisLoading(false);
+    }
+  };
+  const handleExpand = async (id: number) => {
+    console.log(id);
+    setExpandLoading(id);
+    try {
+      const resp = await apiService.get(`/api/ProjectStakeHolders/GetProjectStakeHolderById/${id}`, {
+        Authorization: `Bearer ${token}`,
+      });
+      console.log(resp);
+      if (resp.succeeded === true) {
+        setInputs(resp.projectStakeHolder);
+        setOpen(true);
+      } else {
+        setExpandLoading(null);
+      }
+    } catch (error) {
+      setExpandLoading(null);
+    }
+  };
+  const handleUpdate = async () => {
+    setisLoading(true);
+    try {
+      const resp = await apiService.put(
+        `/api/ProjectStakeHolders/UpdateProjectStakeHolder/${expandLoading}`,
+        {
+          ...inputs,
+          projectId
+        },
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
+      if (resp.succeeded === true) {
+        setOpen(false);
+        setExpandLoading(null);
+        setisLoading(false);
+        const updatedproject = resp.projectStakeHolder;
+        const index = projectStakeholders.findIndex(
+          (project) => project.id === expandLoading
+        );
+        if (index !== -1) {
+          const updatedprojects = [...projectStakeholders];
+          updatedprojects[index] = updatedproject;
+          setProjectStakeholders(updatedprojects);
+        }
+      } else {
+        toast("error", {
+          description: resp.responseMessage,
+        });
+        setisLoading(false);
+      }
+    } catch (error) {
+      setisLoading(false);
+    }
+  };
+  const onSubmit = () => {
+    if (expandLoading) {
+      handleUpdate();
+    } else {
+      handleSubmitProject();
+    }
+  };
+  console.log(projectStakeholders)
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
@@ -119,60 +243,6 @@ const ProjectStakeholders = (props: Props) => {
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select> */}
-        <Dialog>
-  <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">     <span className=" font-bold text-sm">Add stakeholder</span>
-          <PlusIcon className=" w-4 h-4 text-white" /></DialogTrigger>
-  <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
-            <p>Project</p>
-            <div className=" w-full ">
-              <p className=" text-[13px] mb-2 text-[#677189]">
-                Project Name
-              </p>
-              <input
-                type="text"
-                onChange={(e) => handleChange("projectName", e.target.value)}
-                placeholder="Project name"
-                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
-              />
-            </div>
-            <div className=" w-full ">
-              <p className=" text-[13px] mb-2 text-[#677189]">Project Description</p>
-              <input
-                type="text"
-                onChange={(e) => handleChange("description", e.target.value)}
-                placeholder="Description"
-                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-              />
-            </div>
-            <div className=" w-full ">
-              <p className=" text-[13px] mb-2 text-[#677189]">Blockers</p>
-              <input
-                type="text"
-                onChange={(e) => handleChange("projectId", e.target.value)}
-                placeholder="project id"
-                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-              />
-            </div>
-
-            <div className=" w-full">
-              <button
-                onClick={handleSubmitProject}
-                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
-              >
-                {isLoading ? (
-                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                ) : (
-                  "Create"
-                )}
-              </button>
-            </div>
-            <div className=" w-full">
-              <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
-                Cancel
-              </DialogClose>
-            </div>
-  </DialogContent>
-</Dialog>
 
         {/* <div className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
           <span className=" font-bold text-sm">Edit website</span>
@@ -191,58 +261,75 @@ const ProjectStakeholders = (props: Props) => {
           />
         </div>
         <div className=" flex items-center gap-3">
-          <div className="flex rounded-[8px] border py-[10px] px-4 border-[rgb(239,239,239)]">
-            <ListFilterIcon className=" w-5 h-5 text-[rgb(52,64,84)]" />
-            <span className=" text-sm text-[#344054]">Filter</span>
-          </div>
-          <div className="flex rounded-[8px]  py-[10px] px-4  bg-[#EFEFEF]">
-            <ListBulletIcon className=" w-5 h-5 text-white" />
-          </div>
-          <div className="flex  rounded-[8px] border py-[10px] px-4 border-[rgb(239,239,239)] bg-[#EFEFEF]">
-            <svg
-              width="20.000000"
-              height="20.000000"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <desc>Created with Pixso.</desc>
-              <defs />
-              <path
-                id="Vector"
-                d="M18.334 3.31665C18.334 2.1416 17.8008 1.66663 16.4746 1.66663L13.1074 1.66663C11.7832 1.66663 11.25 2.1416 11.25 3.31665L11.25 7.09167C11.25 8.2749 11.7832 8.74158 13.1074 8.74158L16.4746 8.74158C17.8008 8.75 18.334 8.2749 18.334 7.09998L18.334 3.31665Z"
-                stroke="#292D32"
-                stroke-opacity="1.000000"
-                stroke-width="1.500000"
-                stroke-linejoin="round"
+        <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
+  <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">     <span className=" font-bold text-sm">Add stakeholder</span>
+          <PlusIcon className=" w-4 h-4 text-white" /></DialogTrigger>
+  <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+            <p>Project</p>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">
+                Username
+              </p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("userId", e.target.value)}
+                placeholder="Username"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+                value={inputs.userId}
               />
-              <path
-                id="Vector"
-                d="M18.334 13.1083C18.334 11.7833 17.8008 11.25 16.4746 11.25L13.1074 11.25C11.7832 11.25 11.25 11.7833 11.25 13.1083L11.25 16.475C11.25 17.8 11.7832 18.3334 13.1074 18.3334L16.4746 18.3334C17.8008 18.3334 18.334 17.8 18.334 16.475L18.334 13.1083Z"
-                stroke="#292D32"
-                strokeOpacity="1.000000"
-                strokeWidth="1.500000"
-                strokeLinejoin="round"
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">
+               Role
+              </p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("role", e.target.value)}
+                placeholder="Role"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+                value={inputs.role}
               />
-              <path
-                id="Vector"
-                d="M8.75 3.31665C8.75 2.1416 8.2168 1.66663 6.89062 1.66663L3.52344 1.66663C2.19922 1.66663 1.66602 2.1416 1.66602 3.31665L1.66602 7.09167C1.66602 8.2749 2.19922 8.74158 3.52344 8.74158L6.89062 8.74158C8.2168 8.75 8.75 8.2749 8.75 7.09998L8.75 3.31665Z"
-                stroke="#292D32"
-                strokeOpacity="1.000000"
-                strokeWidth="1.500000"
-                strokeLinejoin="round"
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Name</p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("name", e.target.value)}
+                placeholder="name"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                value={inputs.name}
               />
-              <path
-                id="Vector"
-                d="M8.75 13.1083C8.75 11.7833 8.2168 11.25 6.89062 11.25L3.52344 11.25C2.19922 11.25 1.66602 11.7833 1.66602 13.1083L1.66602 16.475C1.66602 17.8 2.19922 18.3334 3.52344 18.3334L6.89062 18.3334C8.2168 18.3334 8.75 17.8 8.75 16.475L8.75 13.1083Z"
-                stroke="#292D32"
-                strokeOpacity="1.000000"
-                strokeWidth="1.500000"
-                strokeLinejoin="round"
+            </div>
+            {/* <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Project Id</p>
+              <input
+                type="text"
+                onChange={(e) => handleChange("projectId", e.target.value)}
+                placeholder="project id"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
               />
-              <g opacity="0.000000" />
-            </svg>
-          </div>
+            </div> */}
+
+            <div className=" w-full">
+              <button
+                onClick={onSubmit}
+                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+              >
+                {isLoading ? (
+                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                ) : (
+                 expandLoading ? "Update" : "Create"
+                )}
+              </button>
+            </div>
+            <div className=" w-full">
+              <DialogClose onClick={() => setExpandLoading(null)} className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
+                Cancel
+              </DialogClose>
+            </div>
+  </DialogContent>
+</Dialog>
+
         </div>
       </div>
       <div className=" bg-white max-w-[1107px] w-full rounded-lg">
@@ -259,7 +346,7 @@ const ProjectStakeholders = (props: Props) => {
           </TableHeader>
           <TableBody>
 
-              {projectStakeholders?.map((project) => {
+              {searchStakeholders()?.map((project) => {
                 return <TableRow key={project.id} className=" border-b border-b-[rgb(234,236,240)] py-4">
                      <TableCell className="font-medium text-sm text-[#101828]">
                 {project.userId}
@@ -272,23 +359,75 @@ const ProjectStakeholders = (props: Props) => {
                 </div>
               </TableCell>
               <TableCell>
-                {project.projectId}
+                {project.name}
               </TableCell>
+              <TableCell>
+              <AlertDialog>
+                          <AlertDialogTrigger className=" bg-red-600 rounded-[7px] cursor-pointer w-fit h-fit p-2">
+                            <TrashIcon className=" w-4 h-4 text-white" />
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete this entry and remove your
+                                data from the servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className=" bg-ai-button-blue"
+                                onClick={() => handleDelete(project.id)}
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+
+              </TableCell>
+              <TableCell>
+                      {expandLoading === project.id ? (
+                        <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                      ) : (
+                        <EditIcon
+                          onClick={() => handleExpand(project.id)}
+                          className=" w-4 h-4 cursor-pointer rotate-45"
+                        />
+                      )}
+                    </TableCell>
                 </TableRow>
               })}
           </TableBody>
         </Table>
         <Pagination className=" px-4 pb-7 pt-2">
-  <PaginationContent className=" w-full flex items-center justify-between ">
-    <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
-      <PaginationPrevious href="#" />
-    </PaginationItem>
- 
-    
-    <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
-      <PaginationNext href="#" />
-    </PaginationItem>
-  </PaginationContent>
+        <PaginationContent className=" w-full flex items-center justify-between ">
+            <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
+              <button
+                disabled={currentPage === 1}
+                className=" disabled:cursor-not-allowed  px-4 py-2 rounded-[8px] flex items-center justify-center gap-2 text-[#344054] border-[#D0D5DD] border "
+                onClick={() => handlePageNavigation("previous")}
+              >
+                <ArrowLeft className=" w-4 h-4" /> <span>Previous</span>{" "}
+              </button>
+            </PaginationItem>
+            <div className=" flex text-sm font-medium items-center gap-2"></div>
+
+            <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
+              <button
+                disabled={maxPage === currentPage}
+                className=" disabled:cursor-not-allowed  px-4 py-2 rounded-[8px] flex items-center justify-center gap-2 text-[#344054] border-[#D0D5DD] border "
+                onClick={() => handlePageNavigation("next")}
+              >
+                <span>Next</span>
+                <ArrowRight className=" w-4 h-4" />
+              </button>
+            </PaginationItem>
+          </PaginationContent>
 </Pagination>
 
       </div>

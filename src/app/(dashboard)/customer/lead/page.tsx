@@ -41,6 +41,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { LoadingSpinner } from "@/components/loadingSpinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 type Contact = {
@@ -55,49 +56,63 @@ const Contact = () => {
   const [params, setParams] = useState({
     total: 0
   })
-  const [loading, setLoading] = useState(false)
+  const {loading} = useAuth()
+  const [isLoading, setisLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [search, setSearch] = useState('')
   const {token } = useAuth()
   const [inputs, setInputs] = useState({
-    lastName: "",
-    firstName: "",
-    email: "",
-    category: "",
+    status: "",
+    prospects: "",
+    notes: "",
+    customerId: 0,
     customer: '',
-    phoneNumber: ''
+    companyName: ''
   });
+  const [tableLoading, setTableLoading] = useState(false)
 
   
   useEffect(() => {
     const fetchLeads = async () => {
+      setTableLoading(true)
       try {
-        const response = await apiService.get(`/api/Lead/GetLeads?page=1&pageSize=10&sortBy=Id&sortOrder=asc`, {'Authorization' : `Bearer ${token}`})
+        const response = await apiService.get(`/api/Lead/GetLeads`, {'Authorization' : `Bearer ${token}`})
         console.log(response)
         if(response.succeeded !== false) {
           setLeads(response.leads)
         } else {
           console.log(response.responseMessage)
         }
+        setTableLoading(false)
+
       } catch (error) {
         console.log(error)
+      setTableLoading(false)
+
       }
     }
-    fetchLeads()
-  }, [search, currentPage, token])
+    if(loading === false) {
+
+      fetchLeads()
+    }
+  }, [search, currentPage, token, loading])
   const handleSubmit = async () => {
-    setLoading(true);
+    setisLoading(true);
     try {
-      const resp = await apiService.post("/api/Contact/CreateContact", inputs, {
+      const resp = await apiService.post("/api/Lead/LinkLeadToCustomer", inputs, {
         Authorization: `Bearer ${token}`,
       });
       console.log(resp);
       if (resp.succeeded === true) {
+        setLeads([...leads, resp.lead]);
       }
-      setLoading(false);
+      setisLoading(false);
     } catch (error) {
-      setLoading(false);
+      setisLoading(false);
     }
+  };
+  const handleChange = (name: string, value: string | boolean) => {
+    setInputs((values) => ({ ...values, [name]: value }));
   };
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
@@ -112,11 +127,11 @@ const Contact = () => {
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select> */}
-        {/* <Dialog>
+        <div className=" grow"></div>
+        <Dialog>
           <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
             {" "}
-            <span className=" font-bold text-sm">Create customer</span>
-            <PlusIcon className=" w-4 h-4 text-white" />
+            <span className=" font-bold text-sm">Link lead to customer</span>
           </DialogTrigger>
             <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
               <p>Customer</p>
@@ -124,61 +139,61 @@ const Contact = () => {
                 <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
                 <input
                   type="text"
-                  value={inputs.firstName}
-                  onChange={(e) => handleChange("firstName", e.target.value)}
-                  placeholder="First name"
+                  value={inputs.companyName}
+                  onChange={(e) => handleChange("companyName", e.target.value)}
+                  placeholder="Company name"
                   className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
                 />
               </div>
               <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">lastName</p>
+                <p className=" text-[13px] mb-2 text-[#677189]">Prospects</p>
                 <input
                   type="text"
-                  value={inputs.lastName}
-                  onChange={(e) => handleChange("lastName", e.target.value)}
+                  value={inputs.prospects}
+                  onChange={(e) => handleChange("prospects", e.target.value)}
                   placeholder="Last Name"
                   className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
                 />
               </div>
               <div className=" w-full ">
                 <p className=" text-[13px] mb-2 text-[#677189]">
-                  Email
+                  Status
                 </p>
                 <input
-                  type="email"
-                  value={inputs.email}
+                  type="text"
+                  value={inputs.status}
                   onChange={(e) =>
-                    handleChange("email", e.target.value)
+                    handleChange("status", e.target.value)
                   }
-                  placeholder="Email"
+                  placeholder="Status"
                   className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
                 />
               </div>
               <div className=" w-full ">
                 <p className=" text-[13px] mb-2 text-[#677189]">
-                  Customer
+                  Notes
                 </p>
                 <input
                   type="text"
-                  value={inputs.customer}
+                  value={inputs.notes}
                   onChange={(e) =>
-                    handleChange("customer", e.target.value)
+                    handleChange("notes", e.target.value)
                   }
-                  placeholder="Customer"
+                  placeholder="Notes"
                   className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
                 />
               </div>
               <div className=" w-full ">
                 <p className=" text-[13px] mb-2 text-[#677189]">
-                  Phone Number
+                  Customer Id
                 </p>
                 <input
                   type="text"
-                  value={inputs.phoneNumber}
+                  value={inputs.customerId}
                   onChange={(e) =>
-                    handleChange("phoneNumber", e.target.value)
+                    handleChange("customerId", e.target.value)
                   }
-                  placeholder="Phone number"
+                  placeholder="Customer Id"
                   className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
                 />
               </div>
@@ -189,7 +204,7 @@ const Contact = () => {
                   onClick={handleSubmit}
                   className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
                 >
-                  {loading ? (
+                  {isLoading ? (
                     <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
                   ) : (
                     "Add Customer"
@@ -202,7 +217,7 @@ const Contact = () => {
                 </DialogClose>
               </div>
           </DialogContent>
-        </Dialog> */}
+        </Dialog>
       </div>
       <div className=" border h-[62px] max-w-[1107px] flex items-center justify-between border-[rgb(239,241,244)] rounded-[8px] p-2 ">
         <div className=" w-1/2 flex h-full items-center max-w-[435px]  bg-white rounded-[8px]">
@@ -272,7 +287,7 @@ const Contact = () => {
       </div>
       <div className=" bg-white max-w-[1107px] w-full rounded-lg">
         <Table className="">
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+       {tableLoading === false && leads.length < 1 &&  <TableCaption>No leads</TableCaption>}
           <TableHeader className=" bg-[rgb(250,251,251)]">
             <TableRow>
               <TableHead className=" bg-transparent">Company Name</TableHead>
@@ -284,7 +299,23 @@ const Contact = () => {
           </TableHeader>
           <TableBody>
 
-              {leads.map((lead, id) => {
+              {tableLoading ? <TableRow>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+              </TableRow> : leads.map((lead, id) => {
                 return <TableRow key={id} className=" border-b border-b-[rgb(234,236,240)] py-4">
                      <TableCell className="font-medium text-sm text-[#101828]">
                 {lead.companyName}
@@ -303,7 +334,7 @@ const Contact = () => {
               })}
           </TableBody>
         </Table>
-        <Pagination className=" px-4 pb-7 pt-2">
+        {/* <Pagination className=" px-4 pb-7 pt-2">
   <PaginationContent className=" w-full flex items-center justify-between ">
     <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
       <PaginationPrevious href="#" />
@@ -314,7 +345,7 @@ const Contact = () => {
       <PaginationNext href="#" />
     </PaginationItem>
   </PaginationContent>
-</Pagination>
+</Pagination> */}
 
       </div>
     </main>

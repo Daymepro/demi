@@ -4,8 +4,10 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useAuth } from '@/context/UserContext'
 import { upsertFunnelPage } from '@/lib/queries'
 import { DeviceTypes, useEditor } from '@/providers/editor-provider'
+import { apiService } from '@/utils/apiService'
 import clsx from 'clsx'
 import { ArrowLeftCircle, EyeIcon, Laptop, Redo2, Smartphone, Tablet, TabletIcon, Undo2 } from 'lucide-react'
 import Link from 'next/link'
@@ -20,7 +22,7 @@ type Props = {
 
 const FunnelEditorNavigation = (props: Props) => {
   const {funnelPageDetails, funnelId} = props
-
+  const {token} = useAuth()
     const router = useRouter()
     const {state, dispatch} = useEditor()
 
@@ -75,14 +77,18 @@ const FunnelEditorNavigation = (props: Props) => {
     const handleOnSave = async () => {
       const content = JSON.stringify(state.editor.elements)
       try {
-        const response = await upsertFunnelPage(
-          // subaccountId,
-          {
-            ...funnelPageDetails,
-            content,
-          },
-          funnelId
-        )
+        const response = await apiService.post(`/api/MyWebsite/AddPage/${funnelPageDetails.id}`, {content, path: 'home', }, {
+          Authorization: `Bearer ${token}`,
+        })
+        console.log(response)
+        // const response = await upsertFunnelPage(
+        //   // subaccountId,
+        //   {
+        //     ...funnelPageDetails,
+        //     content,
+        //   },
+        //   funnelId
+        // )
         localStorage.setItem('site Content', content)
         // await saveActivityLogsNotification({
         //   agencyId: undefined,

@@ -119,6 +119,8 @@ const logout =() => {
         setToken(resp.token);
        return callback()
      } else {
+    setIsLoading(false)
+
       setError(resp.responseMessage)
      }
     } catch (error) {
