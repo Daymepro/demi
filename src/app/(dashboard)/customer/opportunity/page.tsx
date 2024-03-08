@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -10,7 +10,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
-import { ArrowLeft, ArrowRight, ChevronsUpDown, ListFilter, ListFilterIcon, PlusIcon, SearchIcon, TrashIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ChevronsUpDown,
+  ListFilter,
+  ListFilterIcon,
+  PlusIcon,
+  SearchIcon,
+  TrashIcon,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -21,14 +30,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-  } from "@/components/ui/pagination"
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { apiService } from "@/utils/apiService";
 import { useAuth } from "@/context/UserContext";
 import {
@@ -39,7 +48,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { LoadingSpinner } from "@/components/loadingSpinner";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -55,69 +64,73 @@ import {
 } from "@/components/ui/alert-dialog";
 
 type Opportunity = {
-  "companyName": string,
-  "id": number
-"description": string,
-"organizationId": string,
-action: string,
-stage: string,
-amount: string
-}
+  companyName: string;
+  id: number;
+  description: string;
+  organizationId: string;
+  action: string;
+  stage: string;
+  amount: string;
+};
 const Opportunity = () => {
-  const [opportunities, setOpportunities] = useState<Opportunity[]>([])
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [params, setParams] = useState({
-    total: 0
-  })
-  
-  const [isLoading, setisLoading] = useState(false)
-  const [tableLoading, setTableLoading] = useState(false)
+    total: 0,
+  });
+
+  const [isLoading, setisLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
   const [expandLoading, setExpandLoading] = useState<number | null>(null);
-  const [currentPage, setCurrentPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const {token, loading } = useAuth()
-  const [pageSize, setPageSize] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const { token, loading } = useAuth();
+  const [pageSize, setPageSize] = useState(10);
   const [inputs, setInputs] = useState<Opportunity>({} as Opportunity);
-const [open, setOpen] = useState(false)
-  
+  const [open, setOpen] = useState(false);
+
   const handleChange = (name: string, value: string) => {
     setInputs((values) => ({ ...values, [name]: value }));
   };
   useEffect(() => {
     const fetchOpportunities = async () => {
-      setTableLoading(true)
+      setTableLoading(true);
       try {
-
-        const response = await apiService.get(`/api/Opportunity/GetAllOpportunities?page=1&pageSize=10`, {'Authorization' : `Bearer ${token}`})
-        console.log(response)
-        if(response.succeeded !== false) {
-          setOpportunities(response.opportunities)
+        const response = await apiService.get(
+          `/api/Opportunity/GetAllOpportunities?search=""&page=${currentPage}&pageSize=${pageSize}`,
+          { Authorization: `Bearer ${token}` }
+        );
+        if (response.succeeded !== false) {
+          setOpportunities(response.opportunities);
         } else {
           setParams({
-            total: response.total
-          })
-          console.log(response.responseMessage)
+            total: response.total,
+          });
+          console.log(response.responseMessage);
         }
-        setTableLoading(false)
+        setTableLoading(false);
       } catch (error) {
-        console.log(error)
-        setTableLoading(false)
+        console.log(error);
+        setTableLoading(false);
       }
+    };
+    if (loading === false) {
+      fetchOpportunities();
     }
-    if(loading === false) {
-
-      fetchOpportunities()
-    }
-  }, [ currentPage, token])
+  }, [currentPage, token]);
   const handleSubmit = async () => {
     setisLoading(true);
     try {
-      const resp = await apiService.post("/api/Opportunity/CreateOpportunity", inputs, {
-        Authorization: `Bearer ${token}`,
-      });
+      const resp = await apiService.post(
+        "/api/Opportunity/CreateOpportunity",
+        inputs,
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
       console.log(resp);
       if (resp.succeeded === true) {
         setOpportunities([...opportunities, resp.opportunity]);
-        setOpen(false)
+        setOpen(false);
       }
       setisLoading(false);
     } catch (error) {
@@ -125,7 +138,7 @@ const [open, setOpen] = useState(false)
     }
   };
   const handleUpdate = async () => {
-    setisLoading(true)
+    setisLoading(true);
     try {
       const resp = await apiService.put(
         `/api/Opportunity/UpdateOpportunity/${expandLoading}`,
@@ -134,14 +147,24 @@ const [open, setOpen] = useState(false)
           Authorization: `Bearer ${token}`,
         }
       );
-      console.log(`/api/Opportunity/UpdateOpportunity/${expandLoading}`)
+      console.log(`/api/Opportunity/UpdateOpportunity/${expandLoading}`);
       console.log(resp);
       if (resp.succeeded === true) {
         setOpen(false);
         setExpandLoading(null);
-        setisLoading(false);
         console.log(resp);
+        const updatedOpportunity = resp.opportunity;
+        const index = opportunities.findIndex(
+          (opportunity) => opportunity.id === expandLoading
+        );
+        if (index !== -1) {
+          const updatedOppotunities = [...opportunities];
+          updatedOppotunities[index] = updatedOpportunity;
+          setOpportunities(updatedOppotunities);
+        }
       }
+      setisLoading(false);
+
     } catch (error) {
       setisLoading(false);
     }
@@ -150,23 +173,28 @@ const [open, setOpen] = useState(false)
     let query = search.toLowerCase();
     const comm = opportunities.filter((opportunity) => {
       const searchableProperties = [
-        opportunity.companyName,
-        opportunity.description,
-        opportunity.action,
-        opportunity.stage,
+        opportunity?.companyName,
+        opportunity?.description,
+        opportunity?.action,
+        opportunity?.stage,
       ].map((prop) => prop.toLowerCase());
-      return searchableProperties.some((prop) => prop.includes(query));
+      return searchableProperties?.some((prop) => prop?.includes(query));
     });
     return comm;
   }
   const handleDelete = async (id: number) => {
     try {
-      const resp = await apiService.delete(`/api/Opportunity/DeleteOpportunity/${id}`, {
-        Authorization: `Bearer ${token}`,
-      });
+      const resp = await apiService.delete(
+        `/api/Opportunity/DeleteOpportunity/${id}`,
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
       console.log(resp);
       if (resp.succeeded === true) {
-        setOpportunities((prev) => prev.filter((opportunity) => opportunity.id !== id));
+        setOpportunities((prev) =>
+          prev.filter((opportunity) => opportunity.id !== id)
+        );
         console.log(resp);
       }
     } catch (error) {
@@ -177,9 +205,12 @@ const [open, setOpen] = useState(false)
     setExpandLoading(id);
     console.log(id);
     try {
-      const resp = await apiService.get(`/api/Opportunity/GetOpportunityById/${id}`, {
-        Authorization: `Bearer ${token}`,
-      });
+      const resp = await apiService.get(
+        `/api/Opportunity/GetOpportunityById/${id}`,
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
       if (resp.succeeded === true) {
         setInputs(resp.opportunity);
         setOpen(true);
@@ -189,29 +220,27 @@ const [open, setOpen] = useState(false)
     }
   };
   const onSubmit = () => {
-    if(expandLoading){
-      handleUpdate()
+    if (expandLoading) {
+      handleUpdate();
     } else {
-      handleSubmit()
+      handleSubmit();
     }
-  }
-  const maxPage = Math.ceil(params.total / pageSize)
+  };
+  const maxPage = Math.ceil(params.total / pageSize);
 
   const handleNavigation = (dir: "next" | "prev") => {
-    if(dir === 'next') {
-      if(maxPage === currentPage) return
-      setCurrentPage(prev => prev + 1)
+    if (dir === "next") {
+      if (maxPage === currentPage) return;
+      setCurrentPage((prev) => prev + 1);
     } else {
-      if(currentPage === 1) return
-      setCurrentPage(prev => prev - 1)
+      if (currentPage === 1) return;
+      setCurrentPage((prev) => prev - 1);
     }
-  }
+  };
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
-        <div className=" grow">
-
-        </div>
+        <div className=" grow"></div>
         {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Last 15 days" />
@@ -222,96 +251,87 @@ const [open, setOpen] = useState(false)
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
         </Select> */}
-        <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
+        <Dialog open={open} onOpenChange={(open) =>{ setOpen(open); if(!open) setInputs({} as Opportunity); setExpandLoading(null)} }>
           <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">
             {" "}
             <span className=" font-bold text-sm">Create opportunity</span>
             <PlusIcon className=" w-4 h-4 text-white" />
           </DialogTrigger>
-            <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
-              <p>Opportunity</p>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
-                <input
-                  type="text"
-                  value={inputs.companyName}
-                  onChange={(e) => handleChange("companyName", e.target.value)}
-                  placeholder="Company name"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">Description</p>
-                <input
-                  type="text"
-                  value={inputs.description}
-                  onChange={(e) => handleChange("description", e.target.value)}
-                  placeholder="Description"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">
-                  Action
-                </p>
-                <input
-                  type="text"
-                  value={inputs.action}
-                  onChange={(e) =>
-                    handleChange("action", e.target.value)
-                  }
-                  placeholder="Action"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">
-                  Amount
-                </p>
-                <input
-                  type="number"
-                  value={inputs.amount}
-                  onChange={(e) =>
-                    handleChange("amount", e.target.value)
-                  }
-                  placeholder="amount"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">
-                  Stage
-                </p>
-                <input
-                  type="text"
-                  value={inputs.stage}
-                  onChange={(e) =>
-                    handleChange("stage", e.target.value)
-                  }
-                  placeholder="Stage"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
+          <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+            <p>Opportunity</p>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
+              <input
+                type="text"
+                value={inputs.companyName}
+                onChange={(e) => handleChange("companyName", e.target.value)}
+                placeholder="Company name"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Description</p>
+              <input
+                type="text"
+                value={inputs.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                placeholder="Description"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Action</p>
+              <input
+                type="text"
+                value={inputs.action}
+                onChange={(e) => handleChange("action", e.target.value)}
+                placeholder="Action"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Amount</p>
+              <input
+                type="number"
+                value={inputs.amount}
+                onChange={(e) => handleChange("amount", e.target.value)}
+                placeholder="amount"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Stage</p>
+              <input
+                type="text"
+                value={inputs.stage}
+                onChange={(e) => handleChange("stage", e.target.value)}
+                placeholder="Stage"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
 
-
-
-              <div className=" w-full">
-                <button
-                  onClick={onSubmit}
-                  className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
-                >
-                  {isLoading ? (
-                    <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                  ) : (
-                   expandLoading ? 'Edit Opportunity' : "Add Opportunity"
-                  )}
-                </button>
-              </div>
-              <div className=" w-full">
-                <DialogClose onClick={() => setExpandLoading(null)} className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
-                  Cancel
-                </DialogClose>
-              </div>
+            <div className=" w-full">
+              <button
+                onClick={onSubmit}
+                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+              >
+                {isLoading ? (
+                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                ) : expandLoading ? (
+                  "Edit Opportunity"
+                ) : (
+                  "Add Opportunity"
+                )}
+              </button>
+            </div>
+            <div className=" w-full">
+              <DialogClose
+                onClick={() => setExpandLoading(null)}
+                className=" w-full  text-[#8D8D91]  text-sm border-none py-3"
+              >
+                Cancel
+              </DialogClose>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
@@ -321,7 +341,7 @@ const [open, setOpen] = useState(false)
           <input
             type="text"
             className=" shadow-none outline-none w-full h-full bg-transparent"
-            placeholder="Search for Customer"
+            placeholder="Search opportunity"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
@@ -389,49 +409,45 @@ const [open, setOpen] = useState(false)
               <TableHead className=" bg-transparent">Company Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Action</TableHead>
-              <TableHead >Amount</TableHead>
-              <TableHead >Stage</TableHead>
-
-
+              <TableHead>Amount</TableHead>
+              <TableHead>Stage</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
+            {tableLoading ? (
+              <TableRow>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className=" w-[100px] h-[20px]" />
+                </TableCell>
+              </TableRow>
+            ) : (
+              searchOpportunities().map((opportunity, id) => {
+                return (
+                  <TableRow
+                    key={id}
+                    className=" border-b border-b-[rgb(234,236,240)] py-4"
+                  >
+                    <TableCell className="font-medium text-sm text-[#101828]">
+                      {opportunity.companyName}
+                    </TableCell>
+                    <TableCell>{opportunity.description}</TableCell>
 
-              {tableLoading ? <TableRow>
-                <TableCell>
-                  <Skeleton className=" w-[100px] h-[20px]" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className=" w-[100px] h-[20px]" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className=" w-[100px] h-[20px]" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className=" w-[100px] h-[20px]" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className=" w-[100px] h-[20px]" />
-                </TableCell>
-              </TableRow> :  searchOpportunities().map((opportunity, id) => {
-                return <TableRow key={id} className=" border-b border-b-[rgb(234,236,240)] py-4">
-                     <TableCell className="font-medium text-sm text-[#101828]">
-                {opportunity.companyName}
-              </TableCell>
-              <TableCell>
-                {opportunity.description}
-              </TableCell>
-
-              <TableCell>
-                {opportunity.action}
-              </TableCell>
-              <TableCell>
-                {opportunity.amount}
-              </TableCell>
-              <TableCell>
-                {opportunity.stage}
-              </TableCell>
-              <TableCell>
+                    <TableCell>{opportunity.action}</TableCell>
+                    <TableCell>{opportunity.amount}</TableCell>
+                    <TableCell>{opportunity.stage}</TableCell>
+                    <TableCell>
                       {
                         <AlertDialog>
                           <AlertDialogTrigger className=" bg-red-600 rounded-[7px] cursor-pointer w-fit h-fit p-2">
@@ -471,13 +487,15 @@ const [open, setOpen] = useState(false)
                         />
                       )}
                     </TableCell>
-                </TableRow>
-              })}
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
         <Pagination className=" px-4 pb-7 pt-2">
-  <PaginationContent className=" w-full flex items-center justify-between ">
-    <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
+          <PaginationContent className=" w-full flex items-center justify-between ">
+            <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
               <button
                 disabled={currentPage === 1}
                 className=" disabled:cursor-not-allowed  px-4 py-2 rounded-[8px] flex items-center justify-center gap-2 text-[#344054] border-[#D0D5DD] border "
@@ -485,21 +503,20 @@ const [open, setOpen] = useState(false)
               >
                 <ArrowLeft className=" w-4 h-4" /> <span>Previous</span>{" "}
               </button>
-    </PaginationItem>
- 
-    
-    <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
-    <button
+            </PaginationItem>
+
+            <PaginationItem className=" border rounded-[8px] border-[rgb(208,213,221)]">
+              <button
                 disabled={maxPage === currentPage}
                 className=" disabled:cursor-not-allowed  px-4 py-2 rounded-[8px] flex items-center justify-center gap-2 text-[#344054] border-[#D0D5DD] border "
                 onClick={() => handleNavigation("next")}
               >
-                 <span>Next</span><ArrowRight className=" w-4 h-4" />
+                <span>Next</span>
+                <ArrowRight className=" w-4 h-4" />
               </button>
-    </PaginationItem>
-  </PaginationContent>
-</Pagination>
-
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </main>
   );

@@ -143,7 +143,7 @@ const {user} = useAuth()
                 )}
               </Link>
               <Link
-                href={"/document"}
+                href={"/document/document"}
                 className={`${
                   pathSplit === "document"
                     ? "text-[#000103]  bg-[#f3f4f6]  rounded-sm"

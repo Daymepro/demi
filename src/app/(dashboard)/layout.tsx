@@ -119,6 +119,13 @@ const nav: Nav = {
 
     ],
   },
+  "invoice": {
+    pathname: "Invoice",
+    paths: [
+
+    ],
+  },
+
 };
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {

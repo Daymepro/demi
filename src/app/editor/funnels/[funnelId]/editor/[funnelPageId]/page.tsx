@@ -1,11 +1,13 @@
 "use client"
 import EditorProvider, { useEditor } from '@/providers/editor-provider'
 import { redirect } from 'next/navigation'
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import FunnelEditorNavigation from './_components/funnel-editor-navigation'
 import FunnelEditorSidebar from './_components/funnel-editor-sidebar'
 import FunnelEditor from './_components/funnel-editor'
 import ProtectedRoute from '@/components/protectedRoute'
+import { apiService } from '@/utils/apiService'
+import { useAuth } from '@/context/UserContext'
 
 
 type props = {
@@ -15,10 +17,26 @@ type props = {
 }
 const Page = async(props: props) => {
     const {funnelPageId} = props.params
+    const {token} = useAuth()
     const {state} = useEditor()
-    console.log(state)
-
-    //fetch funnelId
+    const [pageDetails, setPageDetails] = useState(null)
+    console.log(funnelPageId)
+    useEffect(() => {
+        console.log('firing')
+        const getWebsite = async () => {
+            try {
+                const response = await apiService.get(`api/Website/page/${funnelPageId}`, {
+                    Authorization: `Bearer ${token}`
+                })
+                console.log(response)  
+            } catch (error) {
+                console.log(error)
+                
+            }
+    
+        }
+        getWebsite()
+    }, [])
     const funnelPageDetails = {
         updatedAt: '2022-10-18T12:50:22.000Z',
         pathName: 'about',

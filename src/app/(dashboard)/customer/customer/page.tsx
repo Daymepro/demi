@@ -419,10 +419,10 @@ const Customer = () => {
       </div>
       <div className=" bg-white border overflow-hidden max-w-[1107px] w-full rounded-lg">
         <Table className=" ">
-          <TableCaption>
+          {/* <TableCaption>
             {" "}
             {customers.length < 1 ? "No customers found" : ""}
-          </TableCaption>
+          </TableCaption> */}
           <TableHeader className=" bg-[rgb(250,251,251)]">
             <TableRow>
               <TableHead className=" bg-transparent">Company name</TableHead>
