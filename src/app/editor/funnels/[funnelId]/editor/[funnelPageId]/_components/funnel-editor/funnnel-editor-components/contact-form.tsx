@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 
 import React from 'react'
 import { z } from 'zod'
+import TextComponent from './textComponent'
 
 type Props = {
   element: EditorElement
@@ -80,6 +81,7 @@ const ContactFormComponent = (props: Props) => {
       })
     }
   }
+  console.log(props.element)
 
   return (
     <div
@@ -104,11 +106,12 @@ const ContactFormComponent = (props: Props) => {
             {state.editor.selectedElement.name}
           </Badge>
         )}
-      <ContactForm
+        <TextComponent element={{name: 'text', styles:{}, id: 'jgvhg', type: 'text', content:{innerText: 'example'}}} />
+      {/* <ContactForm
         subTitle="Contact Us"
         title=""
         apiCall={onFormSubmit}
-      />
+      /> */}
       {state.editor.selectedElement.id === props.element.id &&
         !state.editor.liveMode && (
           <div className="absolute bg-primary px-2.5 py-1 text-xs font-bold  -top-[25px] -right-[1px] rounded-none rounded-t-lg !text-white">

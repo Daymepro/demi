@@ -272,6 +272,28 @@ const SettingsTab = (props: Props) => {
                   </div>
                 </div>
               </div>
+              <div className="flex gap-4 flex-col">
+                <div className="flex gap-4">
+                  <div>
+                    <Label className="text-muted-foreground">Max Height</Label>
+                    <Input
+                      id="maxHeight"
+                      placeholder="px"
+                      onChange={handleOnChanges}
+                      value={state.editor.selectedElement.styles.maxHeight}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Max Width</Label>
+                    <Input
+                      placeholder="px"
+                      id="maxWidth"
+                      onChange={handleOnChanges}
+                      value={state.editor.selectedElement.styles.maxWidth}
+                    />
+                  </div>
+                </div>
+              </div>
               <p>Margin px</p>
               <div className="flex gap-4 flex-col">
                 <div className="flex gap-4">
@@ -447,6 +469,44 @@ const SettingsTab = (props: Props) => {
               step={1}
             />
           </div>
+          {/* <div>
+            <Label className="text-muted-foreground">Border Thickness</Label>
+            <div className="flex items-center justify-end">
+              <small className="">
+                {typeof state.editor.selectedElement.styles?.borderWidth ===
+                'number'
+                  ? state.editor.selectedElement.styles?.borderWidth
+                  : parseFloat(
+                      (
+                        state.editor.selectedElement.styles?.borderWidth || '0'
+                      ).replace('px', '')
+                    ) || 0}
+                px
+              </small>
+            </div>
+            <Slider
+              onValueChange={(e) => {
+                handleOnChanges({
+                  target: {
+                    id: 'borderWidth',
+                    value: `${e[0]}px`,
+                  },
+                })
+              }}
+              defaultValue={[
+                typeof state.editor.selectedElement.styles?.borderWidth ===
+                'number'
+                  ? state.editor.selectedElement.styles?.borderWidth
+                  : parseFloat(
+                      (
+                        state.editor.selectedElement.styles?.borderWidth || '0'
+                      ).replace('%', '')
+                    ) || 0,
+              ]}
+              max={25}
+              step={1}
+            />
+          </div> */}
           <div className="flex flex-col gap-2">
             <Label className="text-muted-foreground">Background Color</Label>
             <div className="flex  border-[1px] rounded-md overflow-clip">
@@ -603,9 +663,9 @@ const SettingsTab = (props: Props) => {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          <div className="flex items-center gap-2">
+          <div className="flex space-y-4 items-center gap-2">
             <Input
-              className="h-4 w-4"
+              className="h-4 w-4 mt-4"
               placeholder="px"
               type="checkbox"
               id="display"
@@ -620,7 +680,24 @@ const SettingsTab = (props: Props) => {
             />
             <Label className="text-muted-foreground">Flex</Label>
           </div>
-          <div>
+          <div className="flex space-y-4 items-center gap-2">
+            <Input
+              className="h-4 w-4 mt-4"
+              placeholder="px"
+              type="checkbox"
+              id="flexWrap"
+              onChange={(va) => {
+                handleOnChanges({
+                  target: {
+                    id: 'flexWrap',
+                    value: va.target.checked ? 'wrap' : 'nowrap',
+                  },
+                })
+              }}
+            />
+            <Label className="text-muted-foreground">Flex Wrap</Label>
+          </div>
+          <div className='mt-4 '>
             <Label className="text-muted-foreground"> Direction</Label>
             <Input
               placeholder="px"
@@ -629,6 +706,27 @@ const SettingsTab = (props: Props) => {
               value={state.editor.selectedElement.styles.flexDirection}
             />
           </div>
+          <div className="flex gap-4">
+            <div>
+              <Label className="text-muted-foreground">Column Gap</Label>
+              <Input
+                id="columnGap"
+                placeholder="px"
+                onChange={handleOnChanges}
+                value={state.editor.selectedElement.styles.columnGap}
+              />
+            </div>
+            <div>
+              <Label className="text-muted-foreground">Row Gap</Label>
+              <Input
+                placeholder="px"
+                id="rowGap"
+                onChange={handleOnChanges}
+                value={state.editor.selectedElement.styles.rowGap}
+              />
+            </div>
+          </div>
+          
         </AccordionContent>
       </AccordionItem>
     </Accordion>

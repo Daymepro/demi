@@ -3,12 +3,16 @@ export type EditorBtns =
   | 'container'
   | 'section'
   | 'contactForm'
+  | 'contactFormNew'
+  | 'input'
   | 'paymentForm'
   | 'link'
   | '2Col'
   | 'video'
   | '__body'
   | 'image'
+  | 'services'
+  | 'button'
   | null
   | '3Col'
 

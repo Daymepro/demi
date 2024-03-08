@@ -83,13 +83,14 @@ const FunnelEditorNavigation = (props: Props) => {
           },
           funnelId
         )
+        localStorage.setItem('site Content', content)
         // await saveActivityLogsNotification({
         //   agencyId: undefined,
         //   description: `Updated a funnel page | ${response?.name}`,
         //   subaccountId: subaccountId,
         // })
         toast('Success', {
-          description: 'Saved Editor',
+          description: 'Saved Editors',
         })
       } catch (error) {
         toast('Oppse!', {
