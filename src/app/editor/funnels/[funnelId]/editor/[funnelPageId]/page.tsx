@@ -18,7 +18,7 @@ type props = {
 const Page = async(props: props) => {
     const {funnelPageId} = props.params
     const {token} = useAuth()
-    const {state} = useEditor()
+    // const {state} = useEditor()
     const [pageDetails, setPageDetails] = useState(null)
     console.log(funnelPageId)
     useEffect(() => {
@@ -37,6 +37,12 @@ const Page = async(props: props) => {
         }
         getWebsite()
     }, [])
+    // const {state} = useEditor()
+    // console.log(state)
+    const {state, dispatch} = useEditor()
+    console.log(funnelPageId)
+
+    //fetch funnelId
     const funnelPageDetails = {
         updatedAt: '2022-10-18T12:50:22.000Z',
         pathName: 'about',
