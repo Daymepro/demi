@@ -31,7 +31,6 @@ const TextComponent = (props: Props) => {
     })
   }
   //WE ARE NOT ADDING DRAG DROP
-  console.log(props.element)
   return (
     <div
       style={styles}
@@ -55,6 +54,7 @@ const TextComponent = (props: Props) => {
         )}
       <span
         contentEditable={!state.editor.liveMode}
+        suppressContentEditableWarning={true}
         onBlur={(e) => {
           const spanElement = e.target as HTMLSpanElement
           dispatch({

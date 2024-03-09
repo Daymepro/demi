@@ -125,6 +125,12 @@ const nav: Nav = {
 
     ],
   },
+  "user": {
+    pathname: "User",
+    paths: [
+
+    ],
+  },
 
 };
 

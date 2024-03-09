@@ -902,7 +902,6 @@ const Container = ({ element }: Props) => {
       },
     });
   };
-  console.log(element);
 
   return (
     <div

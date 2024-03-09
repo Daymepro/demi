@@ -56,7 +56,7 @@ import { toast } from "sonner";
 
 
 
-type Stakeholder = {
+type User = {
     "organizationId": string,
     "id": number,
     "userId": string,
@@ -64,18 +64,13 @@ type Stakeholder = {
     "projectId": number
     name: string
 }
-type Props = {
-  params: {
-    projectId: string
-  }
-}
-const ProjectStakeholders = (props: Props) => {
-  const {projectId} = props.params
-  const [projectStakeholders, setProjectStakeholders] = useState<Stakeholder[]>([])
+
+const User = () => {
+  const [user, setuser] = useState<User[]>([])
   const [isLoading, setisLoading] = useState(false)
   const [search, setSearch] = useState('')
   const {token, loading } = useAuth()
-  const [inputs, setInputs] = useState<Stakeholder>({
+  const [inputs, setInputs] = useState<User>({
     organizationId: "",
     userId: "",
     role: "",
@@ -95,11 +90,12 @@ const ProjectStakeholders = (props: Props) => {
     setInputs((values) => ({ ...values, [name]: value }));
   };
   useEffect(() => {
-    const fetchStakeholders = async () => {
+    const fetchUser = async () => {
       try {
-        const response = await apiService.get(`/api/ProjectStakeHolders/GetAllProjectStakeHolders/${projectId}?id=${projectId}&search=""&page=${currentPage}&pageSize=${pageSize}`, {'Authorization' : `Bearer ${token}`})
+        const response = await apiService.get(`/api/Business/GetUser`, {'Authorization' : `Bearer ${token}`})
+        console.log(response)
         if(response.succeeded !== false) {
-            setProjectStakeholders(response.projectStakeHolders)
+            setuser(response.users)
         } else {
           console.log(response.responseMessage)
         }
@@ -119,7 +115,7 @@ const ProjectStakeholders = (props: Props) => {
     }
     if(loading === false) {
 
-      fetchStakeholders()
+      fetchUser()
     }
   }, [ token, loading, currentPage, pageSize])
   const maxPage = Math.ceil(params.total / pageSize);
@@ -133,13 +129,13 @@ const ProjectStakeholders = (props: Props) => {
       setCurrentPage(currentPage - 1);
     }
   };
-  function searchStakeholders() {
+  function searchUser() {
     let query = search.toLowerCase();
-    const comm = projectStakeholders?.filter((project) => {
+    const comm = user?.filter((user) => {
       const searchableProperties = [
-        project?.name,
-        project?.role,
-        project?.userId,
+        user?.name,
+        user?.role,
+        user?.userId,
       ].map((prop) => prop?.toLowerCase());
       return searchableProperties?.some((prop) => prop?.includes(query));
     });
@@ -148,11 +144,11 @@ const ProjectStakeholders = (props: Props) => {
   const handleSubmitProject = async () => {
     setisLoading(true);
     try {
-      const resp = await apiService.post("/api/ProjectStakeHolders/AddProjectStakeHolder", {...inputs, projectId}, {
+      const resp = await apiService.post("/api/Business/AddUser", inputs, {
         Authorization: `Bearer ${token}`,
       });
       if (resp.succeeded === true) {
-        setProjectStakeholders([...projectStakeholders, resp.projectStakeHolder]);
+        setuser([...user, resp.user]);
         setOpen(false)
       }
       setisLoading(false);
@@ -162,12 +158,12 @@ const ProjectStakeholders = (props: Props) => {
   };
   const handleDelete = async (id: number) => {
     try {
-      const resp = await apiService.delete(`/api/ProjectStakeHolders/DeleteProjectStakeHolder/${id}`, {
+      const resp = await apiService.delete(`/api/user/DeleteUser/${id}`, {
         Authorization: `Bearer ${token}`,
       });
       console.log(resp);
       if (resp.succeeded === true) {
-        setProjectStakeholders((prev) => prev.filter((project) => project.id !== id));
+        setuser((prev) => prev.filter((project) => project.id !== id));
         console.log(resp);
         toast("success", {
           description: "Task deleted successfully",
@@ -182,7 +178,7 @@ const ProjectStakeholders = (props: Props) => {
     console.log(id);
     setExpandLoading(id);
     try {
-      const resp = await apiService.get(`/api/ProjectStakeHolders/GetProjectStakeHolderById/${id}`, {
+      const resp = await apiService.get(`/api/user/GetUserById/${id}`, {
         Authorization: `Bearer ${token}`,
       });
       console.log(resp);
@@ -200,11 +196,9 @@ const ProjectStakeholders = (props: Props) => {
     setisLoading(true);
     try {
       const resp = await apiService.put(
-        `/api/ProjectStakeHolders/UpdateProjectStakeHolder/${expandLoading}`,
-        {
-          ...inputs,
-          projectId
-        },
+        `/api/user/UpdateUser/${expandLoading}`,
+       inputs
+        ,
         {
           Authorization: `Bearer ${token}`,
         }
@@ -214,13 +208,13 @@ const ProjectStakeholders = (props: Props) => {
         setExpandLoading(null);
         setisLoading(false);
         const updatedproject = resp.projectStakeHolder;
-        const index = projectStakeholders.findIndex(
+        const index = user.findIndex(
           (project) => project.id === expandLoading
         );
         if (index !== -1) {
-          const updatedprojects = [...projectStakeholders];
+          const updatedprojects = [...user];
           updatedprojects[index] = updatedproject;
-          setProjectStakeholders(updatedprojects);
+          setuser(updatedprojects);
         }
       } else {
         toast("error", {
@@ -239,7 +233,6 @@ const ProjectStakeholders = (props: Props) => {
       handleSubmitProject();
     }
   };
-  console.log(projectStakeholders)
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
@@ -266,14 +259,14 @@ const ProjectStakeholders = (props: Props) => {
           <input
             type="text"
             className=" shadow-none outline-none w-full h-full bg-transparent"
-            placeholder="Search for stakeholders"
+            placeholder="Search user"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
         </div>
         <div className=" flex items-center gap-3">
         <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
-  <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">     <span className=" font-bold text-sm">Add stakeholder</span>
+  <DialogTrigger className=" bg-[#0330AE] rounded-lg cursor-pointer items-center justify-center p-2 gap-2 w-fit flex text-white">     <span className=" font-bold text-sm">Add user</span>
           <PlusIcon className=" w-4 h-4 text-white" /></DialogTrigger>
   <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
             <p>Project stakeholder</p>
@@ -363,7 +356,7 @@ const ProjectStakeholders = (props: Props) => {
           </TableHeader>
           <TableBody>
 
-              {searchStakeholders()?.map((project) => {
+              {searchUser()?.map((project) => {
                 return <TableRow key={project.id} className=" border-b border-b-[rgb(234,236,240)] py-4">
                      <TableCell className="font-medium text-sm text-[#101828]">
                 {project.userId}
@@ -452,4 +445,4 @@ const ProjectStakeholders = (props: Props) => {
   );
 };
 
-export default ProjectStakeholders;
+export default User;
