@@ -7,6 +7,7 @@ import { apiService } from '@/utils/apiService'
 import { useAuth } from '@/context/UserContext'
 import { Metadata } from 'next'
 import axios from 'axios'
+import { headers } from 'next/headers'
 
 
 
@@ -18,17 +19,17 @@ type WebData = {
  path: string, 
  name: string
 }
-const Page =  async ( {params} : {params: {domain: string}}) => {
-
-
-  const website = await apiService.get(`/api/Website/Website/soniodentalservices.aiwebhero.com`,{
+const Page =  async (context: any) => {
+  const headerList  = headers()
+  const hostname = headerList.get('x-forwarded-host');
+  const website = await apiService.get(`/api/Website/Website/${hostname}`,{
   
   })
 
 
-// console.log(website)
-
+if(!website) return notFound()
 const getWebsite = website.pages.find((web: WebData) => web.path === '/')
+if(!getWebsite) return notFound()
 
 
 
