@@ -1,4 +1,3 @@
-"use client"
 
 import EditorProvider from '@/providers/editor-provider'
 import React, { useEffect, useState } from 'react'
@@ -6,47 +5,37 @@ import FunnelEditor from '../editor/funnels/[funnelId]/editor/[funnelPageId]/_co
 import { notFound, usePathname } from 'next/navigation'
 import { apiService } from '@/utils/apiService'
 import { useAuth } from '@/context/UserContext'
+import { Metadata } from 'next'
+import axios from 'axios'
 
 
 
-const Page =  ( {params} : {params: {domain: string}}) => {
-const {token, loading} = useAuth()
+ const metadata: Metadata = {
+  title: "AI Web Hero",
+  description: "AI web builder",
+};
+type WebData = {
+ path: string, 
+ name: string
+}
+const Page =  async ( {params} : {params: {domain: string}}) => {
 
-  useEffect(() => {
-    const getWebsite = async () => {
-      console.log('firing')
-      console.log(token)
-      try {
-        const url = window.location.host
-        const websiteData = await apiService.get(`/api/Website/Website/deji.aiwebhero.com
-        `, {
-        Authorization: `Bearer ${token}`,
-        })
-        console.log(websiteData)
-      } catch (error) {
-        
-      }
-   
-      
-    }
-    if(loading === false) {
 
-      getWebsite()
-    }
-  }, [token, loading])
+  const website = await apiService.get(`/api/Website/Website/soniodentalservices.aiwebhero.com`,{
+  
+  })
 
-  // console.log(websiteData)
-  // if(!websiteData) return notFound()
 
-  // const pageDetails = websiteData.pages.find((page: any) => page.path === params.domain)
-  // //fetch domain data, then find the specific page in the pages array if the page is not found return a not found error and if the page exists then find the page content and increment the number of visits
-  // if(!pageDetails) return notFound()
+// console.log(website)
+
+const getWebsite = website.pages.find((web: WebData) => web.path === '/')
+
+
 
   return (
-    <></>
-    // <EditorProvider pageDetails={pageDetails} funnelId={websiteData.websiteID}>
-    //   <FunnelEditor funnelPageId={pageDetails.id} liveMode={true} />
-    // </EditorProvider>
+    <EditorProvider pageDetails={getWebsite} funnelId={website.websiteID}>
+      <FunnelEditor funnelPageId={getWebsite.id} liveMode={true} />
+    </EditorProvider>
   )
 }
 

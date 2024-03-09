@@ -1750,10 +1750,11 @@ const FunnelEditor = ({ funnelPageId, liveMode }: Props) => {
   
 useEffect(() => {
   const fetchData = async () => {
-    const response = await apiService.get(`/api/Mywebsite/ViewPage/${funnelPageId}`, {Authorization: `Bearer ${token}`})
+
     // const localData = JSON.parse(localStorage.getItem('site Content') as string);
     // console.log('fullSite: ', localData);
   try {
+    const response = await apiService.get(`/api/Website/ViewPage/${funnelPageId}`, {})
   dispatch({
     type: 'LOAD_DATA',
     payload: {

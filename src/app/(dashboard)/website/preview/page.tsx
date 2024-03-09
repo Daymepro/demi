@@ -5,7 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Cog, PlusIcon } from "lucide-react";
+import { Cog, EditIcon, PlusIcon } from "lucide-react";
 import clsx from "clsx";
 import { LoadingSpinner } from "@/components/loadingSpinner";
 import {
@@ -277,7 +277,7 @@ const [websites, setWebsites] = useState<Website[]>([])
                   <Cog className=" w-4 h-4" />
                   <span>Settings</span>
                 </PopoverTrigger>
-                <PopoverContent className=" py-2 px-4 h-fit w-fit  rounded-md shadow-md">
+                <PopoverContent className=" py-3 px-4 h-fit w-fit  rounded-md shadow-md">
                  <Dialog>
                   <DialogTrigger className=" w-fit text-sm bg-ai-button-blue px-3 py-2 rounded-[8px] text-white">Add new page</DialogTrigger>
                   <DialogContent className=" w-fit">
@@ -297,9 +297,13 @@ const [websites, setWebsites] = useState<Website[]>([])
                   </DialogContent>
                  </Dialog>
                  <div className=" flex mt-4 items-center justify-between">
-                  <Button onClick={() => handlePublish(website.websiteID)} className=" px-6 py-2 rounded-[8px] flex items-center bg-[#12151C] justify-center border-[2px] border-[#1455FF] text-white font-semibold  text-sm">{publishLoading ? <LoadingSpinner divClassName=" w-[20px] h-[20px]" /> : "Publish"}</Button>
+                  <Button onClick={() => handlePublish(website.websiteID)} className=" w-full px-6 py-2 rounded-[8px] flex items-center bg-[#12151C] justify-center border-[2px] border-[#1455FF] text-white font-semibold  text-sm">{publishLoading ? <LoadingSpinner divClassName=" w-[20px] h-[20px]" /> : "Publish"}</Button>
  
                  </div>
+                 <Button onClick={() => router.push(`/editor/funnels/${website.websiteID}/editor/10`)} className=" w-full flex mt-3 items-center justify-between">
+                  <span>Edit</span>
+                  <EditIcon className=" w-4 h-4" />
+                 </Button>
                 </PopoverContent>
               </Popover>
             </div>
