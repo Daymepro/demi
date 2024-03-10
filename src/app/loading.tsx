@@ -3,7 +3,7 @@ import React from 'react'
 
 const loading = () => {
   return (
-    <div className=' w-screen h-screen'>
+    <div className=' w-screen absolute z-[4000000] h-screen'>
         <PageLoader />
     </div>
   )

@@ -1,20 +1,41 @@
-import EditorProvider from '@/providers/editor-provider'
-import React, { useEffect } from 'react'
-import FunnelEditor from '../editor/funnels/[funnelId]/editor/[funnelPageId]/_components/funnel-editor'
-import { notFound } from 'next/navigation'
 
-const Page =  async( {params} : {params: {domain: string}}) => {
-  const pageDetails = {
-    updatedAt: '2022-10-18T12:50:22.000Z',
-    pathName: 'about',
-    name: 'About'
-  }
-  // if(!pageDetails) return notFound()
-  //fetch domain data, then find the specific page in the pages array if the page is not found return a not found error and if the page exists then find the page content and increment the number of visits
+import EditorProvider from '@/providers/editor-provider'
+import React, { useEffect, useState } from 'react'
+import FunnelEditor from '../editor/funnels/[funnelId]/editor/[funnelPageId]/_components/funnel-editor'
+import { notFound, usePathname } from 'next/navigation'
+import { apiService } from '@/utils/apiService'
+import { useAuth } from '@/context/UserContext'
+import { Metadata } from 'next'
+import axios from 'axios'
+import { headers } from 'next/headers'
+
+
+
+ const metadata: Metadata = {
+  title: "AI Web Hero",
+  description: "AI web builder",
+};
+type WebData = {
+ path: string, 
+ name: string
+}
+const Page =  async (context: any) => {
+  const headerList  = headers()
+  const hostname = headerList.get('x-forwarded-host');
+  const website = await apiService.get(`/api/Website/Website/${hostname}`,{
+  
+  })
+
+
+if(!website) return notFound()
+const getWebsite = website.pages.find((web: WebData) => web.path === '/')
+if(!getWebsite) return notFound()
+
+
 
   return (
-    <EditorProvider pageDetails={pageDetails} funnelId='kjskjd'>
-      <FunnelEditor funnelPageId='76676ds' liveMode={true} />
+    <EditorProvider pageDetails={getWebsite} funnelId={website.websiteID}>
+      <FunnelEditor funnelPageId={getWebsite.id} liveMode={true} />
     </EditorProvider>
   )
 }
