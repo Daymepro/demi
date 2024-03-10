@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -22,6 +23,7 @@ import {
   AlignVerticalJustifyStart,
   ChevronsLeftRightIcon,
   LucideImageDown,
+  Target,
 } from 'lucide-react'
 import { Tabs, TabsTrigger, TabsList } from '@/components/ui/tabs'
 import {
@@ -44,9 +46,11 @@ const SettingsTab = (props: Props) => {
   const handleOnChanges = (e: any) => {
     const styleSettings = e.target.id
     let value = e.target.value
+    console.log('hello',styleSettings, value)
     const styleObject = {
       [styleSettings]: value,
     }
+    console.log('hello',styleObject)
 
     dispatch({
       type: 'UPDATE_ELEMENT',
@@ -729,6 +733,86 @@ const SettingsTab = (props: Props) => {
           
         </AccordionContent>
       </AccordionItem>
+      { state.editor.selectedElement.type === 'text' && <AccordionItem
+        value="Animation"
+        className="px-6 py-0  "
+      >
+        <AccordionTrigger className="!no-underline">Animation</AccordionTrigger>
+        <AccordionContent>
+          <Label className="text-muted-foreground">Animation speed</Label>
+          <Tabs
+          className='mb-2'
+            onValueChange={(e) => {
+              handleOnChanges({
+                target: {
+                  id: 'animationDuration',
+                  value: e,
+                },
+              });
+
+            }
+            }
+            value={state.editor.selectedElement.styles.animationDuration}
+          >
+            <TabsList className="flex items-center flex-row justify-around border-[1px] rounded-md bg-transparent h-fit gap-4">
+              <TabsTrigger
+                value="500ms"
+                className="w-fit h-10 p-2 data-[state=active]:bg-black data-[state=active]:text-white text-muted-foreground "
+              >
+                <span className=" ">Slow</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="400ms"
+                className="w-fit h-10 p-2 data-[state=active]:bg-black data-[state=active]:text-white text-muted-foreground"
+              >
+                <span className=" ">Medium</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="300ms"
+                className="w-fit h-10 p-2 data-[state=active]:bg-black data-[state=active]:text-white text-muted-foreground"
+              >
+                <span className=" ">Fast</span>
+              </TabsTrigger>
+             
+            </TabsList>
+          </Tabs>
+          <div className="flex gap-4">
+            <div className='w-full'>
+              <Label className="text-muted-foreground">Animation Style</Label>
+              <Select
+                onValueChange={(e) =>
+                  handleOnChanges({
+                    target: {
+                      id: 'animationName',
+                      value: e,
+                    },
+                    
+                  })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select an animation style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Styles</SelectLabel>
+                    <SelectItem value="zoom-in-mine">Zoom in</SelectItem>
+                    <SelectItem value="zoom-out-mine">Zoom out</SelectItem>
+                    <SelectItem value="slide-up">Slide up</SelectItem>
+                    <SelectItem value="slide-down">Slide down</SelectItem>
+                    <SelectItem value="slide-left">Slide left</SelectItem>
+                    <SelectItem value="slide-right">Slide right</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          
+          
+          
+        </AccordionContent>
+      </AccordionItem>}
     </Accordion>
   )
 }

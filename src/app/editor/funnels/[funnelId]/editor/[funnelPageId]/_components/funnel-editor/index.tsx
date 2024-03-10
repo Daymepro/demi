@@ -11,8 +11,28 @@ type Props = {
   liveMode?: boolean;
 };
 
+
 const FunnelEditor = ({ funnelPageId, liveMode }: Props) => {
   const { dispatch, state } = useEditor();
+  useEffect(() => {
+    const elements = document?.querySelectorAll('.animation-mine');
+  const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.6
+  }
+  const callbacks = (entries:any) => {
+    entries.forEach((entry:any) => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('active');
+      }
+    });
+  }
+  let observer = new IntersectionObserver(callbacks, options);
+  elements.forEach(element => {
+    observer.observe(element);
+  });
+  })
   useEffect(() => {
     if (!liveMode) {
       dispatch({

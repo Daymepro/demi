@@ -32,6 +32,8 @@ const Container = ({ element }: Props) => {
               styles: {
                 color: "black",
                 ...defaultStyles,
+                animationName: "slide-up",
+                animationDuration: "500ms"
               },
               type: "text",
             },
