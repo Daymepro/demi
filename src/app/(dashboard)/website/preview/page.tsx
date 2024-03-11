@@ -32,6 +32,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PageDetails } from "@/app/editor/funnels/[funnelId]/editor/[funnelPageId]/page";
+import { v4 } from "uuid";
 
 type Website = {
   dateCreated: Date;
@@ -121,9 +122,7 @@ const Preview = () => {
     }
   };
   useEffect(() => {
-    if (loading === false && isAuthenticated) {
       get();
-    }
   }, [loading]);
 
   const handlePublish = async (id: string) => {
@@ -173,7 +172,14 @@ const Preview = () => {
         {
           ...pageInputs,
           websiteID: websiteId,
-          content: "",
+          content: JSON.stringify( [{
+            "id": v4(),
+            "styles": {
+            },
+            "name": "Body",
+            "type": "__body",
+            "content": []
+          }]),
         },
         {
           Authorization: `Bearer ${token}`,
