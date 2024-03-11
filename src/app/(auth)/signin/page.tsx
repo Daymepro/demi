@@ -30,7 +30,7 @@ const Signin = () => {
         if(next) {
           router.push(next);
         } else {
-          router.push("/website");
+          router.push("/website/preview");
         }
       }
       );
