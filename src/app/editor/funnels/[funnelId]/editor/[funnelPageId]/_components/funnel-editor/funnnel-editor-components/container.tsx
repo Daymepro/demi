@@ -120,7 +120,7 @@ const Container = ({ element }: Props) => {
             containerId: id,
             elementDetails: {
               content: {
-                content: "New button",
+                innerText: "New button",
               },
               id: v4(),
               name: "button",
@@ -911,20 +911,20 @@ const Container = ({ element }: Props) => {
       className={clsx("relative p-4 transition-all  group", {
         "max-w-full w-full": type === "container" || type === "2Col",
         "h-fit": type === "container",
-        "h-full  border": type === "__body",
+        "h-full  outline": type === "__body",
         "overflow-scroll remove-scrollbar": type === "__body",
         "flex flex-col md:!flex-row": type === "2Col",
-        "!border-blue-500":
+        "!outline-blue-500":
           state.editor.selectedElement.id === id &&
           !state.editor.liveMode &&
           state.editor.selectedElement.type !== "__body",
-        "!border-yellow-400 !border-4":
+        "!outline-yellow-400 !outline-4":
           state.editor.selectedElement.id === id &&
           !state.editor.liveMode &&
           state.editor.selectedElement.type === "__body",
-        "!border-solid":
+        "!outline outline-2":
           state.editor.selectedElement.id === id && !state.editor.liveMode,
-        "border-dashed border-[1px] border-slate-300": !state.editor.liveMode,
+        "outline-dashed outline-[2px] outline-slate-300": !state.editor.liveMode,
         "h-[500px]": type === "section",
       })}
       onDrop={(e) => handleOnDrop(e, id)}
@@ -935,7 +935,7 @@ const Container = ({ element }: Props) => {
     >
       <Badge
         className={clsx(
-          "absolute -top-[23px] -left-[1px] rounded-none rounded-t-lg hidden",
+          "absolute -top-[23px] z-50 -left-[1px] rounded-none rounded-t-lg hidden",
           {
             block:
               state.editor.selectedElement.id === element.id &&
@@ -956,7 +956,7 @@ const Container = ({ element }: Props) => {
           !state.editor.liveMode &&
           state.editor.selectedElement.type !== "__body" && (
             <div className=" bg-primary px-2.5 py-1 text-xs font-bold text-white cursor-pointer  rounded-none rounded-t-lg ">
-              <Trash size={16} onClick={handleDeleteElement} />
+              <Trash size={16} onClick={handleDeleteElement} className=" z-50" />
             </div>
           )}
         {/* {state.editor.selectedElement.type === "container" && <TextComponent element={element}/> } */}

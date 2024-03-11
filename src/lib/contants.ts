@@ -23,4 +23,6 @@ export const defaultStyles: React.CSSProperties = {
   backgroundRepeat: 'no-repeat',
   textAlign: 'left',
   opacity: '100%',
+  // animationName:'slide-up',
+  // animationDuration: '0.5s',
 }

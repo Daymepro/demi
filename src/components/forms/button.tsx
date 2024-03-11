@@ -1,6 +1,7 @@
 import React from 'react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { useEditor } from '@/providers/editor-provider'
 
 
 interface EditorInputProps{
@@ -9,10 +10,29 @@ interface EditorInputProps{
 }
 
 const ButtonMain: React.FC<EditorInputProps> = (props: EditorInputProps) => {
+  const { dispatch, state } = useEditor()
 
   return (
     <div>
-      <Button>{props.content}</Button>
+      <Button>
+        <span contentEditable
+        onBlur={(e) => {
+          const spanElement = e.target as HTMLSpanElement
+          dispatch({
+            type: 'UPDATE_ELEMENT',
+            payload: {
+              elementDetails: {
+                ...props.element,
+                content: {
+                  innerText: spanElement.innerText,
+                },
+              },
+            },
+          })
+        }}>
+          {props.content}
+        </span>
+      </Button>
     </div>
   )
 }

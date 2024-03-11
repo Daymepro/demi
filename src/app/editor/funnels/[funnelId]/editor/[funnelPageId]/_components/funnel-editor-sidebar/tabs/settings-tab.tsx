@@ -473,7 +473,7 @@ const SettingsTab = (props: Props) => {
               step={1}
             />
           </div>
-          {/* <div>
+          <div>
             <Label className="text-muted-foreground">Border Thickness</Label>
             <div className="flex items-center justify-end">
               <small className="">
@@ -510,7 +510,26 @@ const SettingsTab = (props: Props) => {
               max={25}
               step={1}
             />
-          </div> */}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label className="text-muted-foreground">Border Color</Label>
+            <div className="flex  border-[1px] rounded-md overflow-clip">
+              <div
+                className="w-12 "
+                style={{
+                  borderColor:
+                    state.editor.selectedElement.styles.borderColor,
+                }}
+              />
+              <Input
+                placeholder="#HFI245"
+                className="!border-y-0 rounded-none !border-r-0 mr-2"
+                id="borderColor"
+                onChange={handleOnChanges}
+                value={state.editor.selectedElement.styles.borderColor}
+              />
+            </div>
+          </div>
           <div className="flex flex-col gap-2">
             <Label className="text-muted-foreground">Background Color</Label>
             <div className="flex  border-[1px] rounded-md overflow-clip">
@@ -780,6 +799,7 @@ const SettingsTab = (props: Props) => {
             <div className='w-full'>
               <Label className="text-muted-foreground">Animation Style</Label>
               <Select
+              defaultValue={state.editor.selectedElement.styles.animationName}
                 onValueChange={(e) =>
                   handleOnChanges({
                     target: {
