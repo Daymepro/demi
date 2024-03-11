@@ -17,6 +17,7 @@ import ContactFormComponentPlaceholderNew from './ContactFormComponentPlaceholde
 import ServicesPlaceHolder from './servicesPlaceHolder'
 import ButtonPlaceHolder from './buttonPlaceholder'
 import PricingPlaceholder from './PricingPlaceholder'
+import SectionPlaceholder from './sectionPlaceholder'
   
   type Props = {}
   
@@ -37,6 +38,12 @@ import PricingPlaceholder from './PricingPlaceholder'
         Component: <ContainerPlaceholder />,
         label: 'Container',
         id: 'container',
+        group: 'layout',
+      },
+      {
+        Component: <SectionPlaceholder />,
+        label: 'Section',
+        id: 'section',
         group: 'layout',
       },
       {
@@ -87,6 +94,7 @@ import PricingPlaceholder from './PricingPlaceholder'
         id: 'pricing',
         group: 'layout',
       },
+
 
     //   {
     //     Component: <CheckoutPlaceholder />,
