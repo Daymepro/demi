@@ -8,7 +8,7 @@ import { v4 } from "uuid";
 import Recursive from "./recursive";
 import { ArrowDown, ArrowUp, Trash } from "lucide-react";
 import TextComponent from "./textComponent";
-
+import {motion}  from 'framer-motion'
 type Props = { element: EditorElement };
 
 const Container = ({ element }: Props) => {
@@ -905,6 +905,8 @@ const Container = ({ element }: Props) => {
 
   return (
     <div
+
+      
       style={styles}
       className={clsx("relative p-4 transition-all  group", {
         "max-w-full w-full": type === "container" || type === "2Col",

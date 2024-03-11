@@ -49,7 +49,6 @@ const UserContext = ({children}: {children: React.ReactNode}) => {
 const [loading, setLoading] = useState<boolean>(true)
 const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
-const router = useRouter()
   async function loadUser(token: string) {
     if(token) {
       try {
@@ -83,7 +82,7 @@ loadUser(token)
 } else {
   logout()
 }
-}, [ ])
+}, [])
 const logout =() => {
   setUser(null)
   setToken('')

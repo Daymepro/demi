@@ -53,7 +53,7 @@ const Page =  (props: props) => {
         }
       } catch (error) {
         console.log(error);
-        redirect("/website/preview");
+        router.push("/website/preview");
 
       }
     };
