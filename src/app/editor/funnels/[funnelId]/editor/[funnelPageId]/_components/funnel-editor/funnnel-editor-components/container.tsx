@@ -920,7 +920,7 @@ const Container = ({ element }: Props) => {
           state.editor.selectedElement.id === id &&
           !state.editor.liveMode &&
           state.editor.selectedElement.type !== "__body",
-        "!outline-yellow-400 !outline-4":
+        "!border-yellow-400 !border-4":
           state.editor.selectedElement.id === id &&
           !state.editor.liveMode &&
           state.editor.selectedElement.type === "__body",
