@@ -17,9 +17,10 @@ const page = () => {
   }
   //get domain and find the page data
   return (
-    <EditorProvider pageDetails={pageDetails} funnelId='kjskjd'>
-      <FunnelEditor funnelPageId='76676ds' liveMode={true} />
-    </EditorProvider>
+    <></>
+    // <EditorProvider pageDetails={pageDetails} funnelId='kjskjd'>
+    //   <FunnelEditor funnelPageId='76676ds' liveMode={true} />
+    // </EditorProvider>
   )
 }
 
