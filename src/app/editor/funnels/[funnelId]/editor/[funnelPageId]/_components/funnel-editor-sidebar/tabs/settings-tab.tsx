@@ -436,7 +436,7 @@ const SettingsTab = (props: Props) => {
             />
           </div>
           
-          {state.editor.selectedElement.type !== '__body' && <div>
+          {state.editor.selectedElement.type !== '__body' && state.editor.selectedElement.type !== 'section'  && <div>
             <Label className="text-muted-foreground">Border Radius</Label>
             <div className="flex items-center justify-end">
               <small className="">
@@ -474,7 +474,7 @@ const SettingsTab = (props: Props) => {
               step={1}
             />
           </div>}
-           {state.editor.selectedElement.type !== '__body' && <div>
+           {state.editor.selectedElement.type !== '__body' && state.editor.selectedElement.type !== 'section' && <div>
             <Label className="text-muted-foreground">Border Thickness</Label>
             <div className="flex items-center justify-end">
               <small className="">
@@ -513,7 +513,7 @@ const SettingsTab = (props: Props) => {
             />
           </div>}
           
-          { state.editor.selectedElement.type !== '__body' && <div className="flex flex-col gap-2">
+          { state.editor.selectedElement.type !== '__body' && state.editor.selectedElement.type !== 'section' && <div className="flex flex-col gap-2">
             <Label className="text-muted-foreground">Border Color</Label>
             <div className="flex  border-[1px] rounded-md overflow-clip">
               <div

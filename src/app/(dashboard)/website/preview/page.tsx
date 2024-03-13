@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/accordion";
 import { PageDetails } from "@/app/editor/funnels/[funnelId]/editor/[funnelPageId]/page";
 import { v4 } from "uuid";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Website = {
   dateCreated: Date;
@@ -58,14 +59,14 @@ const Preview = () => {
   const [isLoading, setisLoading] = useState(false);
   const [generateLoading, setGenerateLoading] = useState(false);
   const [websites, setWebsites] = useState<Website[]>([]);
-  const { token, loading, isAuthenticated } = useAuth();
+  const { token, loading } = useAuth();
   const [publishLoading, setPublishLoading] = useState(false);
   const [pageInputs, setPageInputs] = useState({
     name: "",
     path: "",
-
-  })
-  const [pageLoading, setPageLoading] = useState(false)
+  });
+  const [webLoading, setWebLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
   const handleSubmit = async () => {
     setisLoading(true);
     try {
@@ -112,17 +113,22 @@ const Preview = () => {
   };
   const get = async () => {
     try {
+      setWebLoading(true);
       const resp = await apiService.get("/api/MyWebsite/Websites", {
         Authorization: `Bearer ${token}`,
       });
-      setWebsites(resp.websites);
+      if (resp.succeeded === true) {
+        setWebsites(resp.websites);
+      }
+      setWebLoading(false);
       console.log(resp);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
+  const handleEditWebsite = (id: string) => {
+
+  }
   useEffect(() => {
-      get();
+    get();
   }, [loading]);
 
   const handlePublish = async (id: string) => {
@@ -172,41 +178,39 @@ const Preview = () => {
         {
           ...pageInputs,
           websiteID: websiteId,
-          content: JSON.stringify( [{
-            "id": v4(),
-            "styles": {
+          content: JSON.stringify([
+            {
+              id: v4(),
+              styles: {},
+              name: "Body",
+              type: "__body",
+              content: [],
             },
-            "name": "Body",
-            "type": "__body",
-            "content": []
-          }]),
+          ]),
         },
         {
           Authorization: `Bearer ${token}`,
         }
       );
       console.log(response);
-  
-      if (response.succeeded === true) {
-        router.push(
-          `/editor/funnels/${websiteId}/editor/${response.page.id}`
-        );
-      }
 
+      if (response.succeeded === true) {
+        router.push(`/editor/funnels/${websiteId}/editor/${response.page.id}`);
+      }
     } catch (error) {
       toast("Opps", {
-        description: "Something went wrong"
-      })
+        description: "Something went wrong",
+      });
     }
 
-  setGenerateLoading(false);
-  setisLoading(false);
-} 
+    setGenerateLoading(false);
+    setisLoading(false);
+  };
 
-  
-const handlePageInputs = (name: string, value: string) => {
-  setPageInputs((values) => ({ ...values, [name]: value }));
-}
+  const handlePageInputs = (name: string, value: string) => {
+    setPageInputs((values) => ({ ...values, [name]: value }));
+  };
+
   return (
     <>
       {generateLoading ? (
@@ -302,170 +306,184 @@ const handlePageInputs = (name: string, value: string) => {
             </button> */}
           </div>
           <div className=" flex items-center gap-3 flex-wrap mt-9">
-            {websites.map((website) => {
-              return (
-                <div className=" rounded-lg w-fit px-3 bg-white">
-                  <div className=" flex items-center justify-between px-1 py-3 border-b">
-                    <span className=" text-sm">{website.url}</span>
-                    <div>
-                      {website.published ? (
-                        <div className=" w-fit h-fit text-xs text-[#0A6555] bg-[#D6FFF8] px-2 py-2 rounded-[16px] ">
-                          published
-                        </div>
-                      ) : (
-                        <div className=" w-fit rounded-[16px] h-fit text-xs text-[#F28A10] bg-[#F8F1E4] px-2 py-2 ">
-                          unpublished
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {/* <iframe src={`http://dhds.${process.env.NEXT_PUBLIC_DOMAIN}`} className='w-[500px] aspect-square rounded-lg' frameBorder="0"></iframe> */}
+            {webLoading ? (
+              Array.from({length: 5}).map(() =>     <div className="rounded-lg w-fit px-3 py-3 bg-white">
+              <div className=" flex items-center gap-2 justify-between ">
+                <Skeleton className=" w-[100px] h-[20px]" />
+                <Skeleton className=" w-[100px] h-[20px]" />
+              </div>
+              <div className="w-[500px] mt-9 aspect-square rounded-lg">
+                <Skeleton className=" w-full h-[300px]" />
+              </div>
 
-                  <Popover>
-                    <PopoverTrigger className=" flex items-center gap-1 text-[12px] text-[#abac9d] font-bold mt-3">
-                      <Cog className=" w-4 h-4" />
-                      <span>Settings</span>
-                    </PopoverTrigger>
-                    <PopoverContent className=" py-3 gap-3 px-4 flex flex-col h-fit w-fit  rounded-md shadow-md">
-                      <div className=" flex mt-4 items-center justify-between">
-                        <Button
-                          onClick={() => handlePublish(website.websiteID)}
-                          className=" w-full px-6 py-2 rounded-[8px] flex items-center bg-[#12151C] justify-center border-[2px] border-[#1455FF] text-white font-semibold  text-sm"
-                        >
-                          {publishLoading ? (
-                            <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                          ) : (
-                            "Publish"
-                          )}
-                        </Button>
+            </div> ) 
+          
+
+            ) : (
+              websites.map((website) => {
+                return (
+                  <div className=" rounded-lg w-fit px-3 bg-white">
+                    <div className=" flex items-center justify-between gap-3 px-1 py-3 border-b">
+                      <span className=" text-sm">{website.url}</span>
+                      <div>
+                        {website.published ? (
+                          <div className=" w-fit h-fit text-xs text-[#0A6555] bg-[#D6FFF8] px-2 py-2 rounded-[16px] ">
+                            published
+                          </div>
+                        ) : (
+                          <div className=" w-fit rounded-[16px] h-fit text-xs text-[#F28A10] bg-[#F8F1E4] px-2 py-2 ">
+                            unpublished
+                          </div>
+                        )}
                       </div>
-                      <Accordion type="multiple" className="w-full">
-                        <AccordionItem value="Pages">
-                          <AccordionTrigger>Pages</AccordionTrigger>
-                          <AccordionContent>
-                            {website.pages.map((page) => {
-                              return (
-                                <div className=" flex justify-between">
-                                  <span>{page.name}</span>
-                                  <Popover>
-                                    <PopoverTrigger>
-                                      <MoreVertical className=" w-4 h-4" />
-                                    </PopoverTrigger>
-                                    <PopoverContent className=" w-fit">
-                                      <Button
-                                        onClick={() =>
-                                          router.push(
-                                            `/editor/funnels/${website.websiteID}/editor/${page.id}`
-                                          )
-                                        }
-                                        className=" w-full flex mt-3 items-center justify-between"
-                                      >
-                                        <span>Edit page</span>
-                                        <EditIcon className=" w-4 h-4" />
-                                      </Button>
-                                    </PopoverContent>
-                                  </Popover>
-                                </div>
-                              );
-                            })}
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-                      <Dialog>
-                        <DialogTrigger
-                          className=" w-fit
-                         flex items-center gap text-sm bg-ai-button-blue px-3 py-2 rounded-[8px] text-white"
-                        >
-                          <span>Edit website</span>
-                          <EditIcon className=" w-4 h-4" />
-                        </DialogTrigger>
-                        <DialogContent className=" w-fit">
-                          <div>
-                            <p>Website name</p>
-                            <input
-                              type="text"
-                              className=" rounded-[8px] py-2 pl-2 border "
-                              placeholder="Page name"
-                            />
-                          </div>
-                          <div>
-                            <p>Description</p>
-                            <input
-                              type="text"
-                              className=" rounded-[8px] py-2 pl-2 border "
-                              placeholder="path"
-                            />
-                          </div>
-                          <div>
-                            <p>Page name</p>
-                            <input
-                              type="text"
-                              className=" rounded-[8px] py-2 pl-2 border "
-                              placeholder="Page name"
-                            />
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                      <Dialog>
-                        <DialogTrigger className=" w-fit text-sm bg-ai-button-blue px-3 py-2 rounded-[8px] text-white">
-                          Add new page
-                        </DialogTrigger>
-        
-                        <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
-                <p>Page</p>
-                <div className=" w-full ">
-                  <p className=" text-[13px] mb-2 text-[#677189]">
-                     Page name
-                  </p>
-                  <input
-                    type="text"
-                    value={pageInputs.name}
-                    onChange={(e) => handlePageInputs("name", e.target.value)}
-                    placeholder="Page name"
-                    className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
-                  />
-                </div>
-                <div className=" w-full ">
-                  <p className=" text-[13px] mb-2 text-[#677189]">
-                    Path
-                  </p>
-                  <input
-                    type="text"
-                    value={pageInputs.path}
-                    onChange={(e) =>
-                      handlePageInputs("path", e.target.value)
-                    }
-                    placeholder="Path"
-                    className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                  />
-                </div>
+                    </div>
+                    {/* <iframe
+                      src={`http://${website.url}`}
+                      className="w-[500px] aspect-square rounded-lg"
+                      frameBorder="0"
+                    ></iframe> */}
 
-                <div className=" w-full">
-                  <button
-                    onClick={() => handleSubmitPage(website.websiteID)}
-                    className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
-                  >
-                    {pageLoading ? (
-                      <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                    ) : (
-                      "Create page"
-                    )}
-                  </button>
-                </div>
-                <div className=" w-full">
-                  <DialogClose
-                    className=" w-full  text-[#8D8D91]  text-sm border-none py-3"
-                  >
-                    Cancel
-                  </DialogClose>
-                </div>
-              </DialogContent>
-                      </Dialog>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              );
-            })}
+                    <Popover>
+                      <PopoverTrigger className=" flex items-center gap-1 text-[12px] text-[#abac9d] font-bold mt-3">
+                        <Cog className=" w-4 h-4" />
+                        <span>Settings</span>
+                      </PopoverTrigger>
+                      <PopoverContent className=" py-3 gap-3 px-4 flex flex-col h-fit w-fit  rounded-md shadow-md">
+                        <div className=" flex mt-4 items-center justify-between">
+                          <Button
+                            onClick={() => handlePublish(website.websiteID)}
+                            className=" w-full px-6 py-2 rounded-[8px] flex items-center bg-[#12151C] justify-center border-[2px] border-[#1455FF] text-white font-semibold  text-sm"
+                          >
+                            {publishLoading ? (
+                              <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                            ) : (
+                              "Publish"
+                            )}
+                          </Button>
+                        </div>
+                        <Accordion type="multiple" className="w-full">
+                          <AccordionItem value="Pages">
+                            <AccordionTrigger>Pages</AccordionTrigger>
+                            <AccordionContent>
+                              {website.pages.map((page) => {
+                                return (
+                                  <div className=" flex justify-between">
+                                    <span>{page.name}</span>
+                                    <Popover>
+                                      <PopoverTrigger>
+                                        <MoreVertical className=" w-4 h-4" />
+                                      </PopoverTrigger>
+                                      <PopoverContent className=" w-fit">
+                                        <Button
+                                          onClick={() =>
+                                            router.push(
+                                              `/editor/funnels/${website.websiteID}/editor/${page.id}`
+                                            )
+                                          }
+                                          className=" w-full flex mt-3 items-center justify-between"
+                                        >
+                                          <span>Edit page</span>
+                                          <EditIcon className=" w-4 h-4" />
+                                        </Button>
+                                      </PopoverContent>
+                                    </Popover>
+                                  </div>
+                                );
+                              })}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                        <Dialog>
+                          <DialogTrigger
+                            className=" w-fit
+                         flex items-center gap text-sm bg-ai-button-blue px-3 py-2 rounded-[8px] text-white"
+                          >
+                            <span>Edit website</span>
+                            <EditIcon className=" w-4 h-4" />
+                          </DialogTrigger>
+                          <DialogContent className=" max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+                            <div className=" w-full">
+                              <p className=" text-[13px] mb-2 text-[#677189]">Website name</p>
+                              <input
+                                type="text"
+                                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+                                placeholder="website name"
+                              />
+                            </div>
+                            <div className=" w-full">
+                              <p className=" text-[13px] mb-2 text-[#677189]">Description</p>
+                              <input
+                                type="text"
+                                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+                                placeholder="Description"
+                              />
+                            </div>
+                           
+                          </DialogContent>
+                        </Dialog>
+                        <Dialog>
+                          <DialogTrigger className=" w-fit text-sm bg-ai-button-blue px-3 py-2 rounded-[8px] text-white">
+                            Add new page
+                          </DialogTrigger>
+
+                          <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+                            <p>Page</p>
+                            <div className=" w-full ">
+                              <p className=" text-[13px] mb-2 text-[#677189]">
+                                Page name
+                              </p>
+                              <input
+                                type="text"
+                                value={pageInputs.name}
+                                onChange={(e) =>
+                                  handlePageInputs("name", e.target.value)
+                                }
+                                placeholder="Page name"
+                                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+                              />
+                            </div>
+                            <div className=" w-full ">
+                              <p className=" text-[13px] mb-2 text-[#677189]">
+                                Path
+                              </p>
+                              <input
+                                type="text"
+                                value={pageInputs.path}
+                                onChange={(e) =>
+                                  handlePageInputs("path", e.target.value)
+                                }
+                                placeholder="Path"
+                                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+                              />
+                            </div>
+
+                            <div className=" w-full">
+                              <button
+                                onClick={() =>
+                                  handleSubmitPage(website.websiteID)
+                                }
+                                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+                              >
+                                {pageLoading ? (
+                                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                                ) : (
+                                  "Create page"
+                                )}
+                              </button>
+                            </div>
+                            <div className=" w-full">
+                              <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
+                                Cancel
+                              </DialogClose>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       )}

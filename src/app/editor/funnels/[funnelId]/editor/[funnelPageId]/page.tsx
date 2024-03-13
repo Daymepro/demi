@@ -57,10 +57,8 @@ const Page =  (props: props) => {
 
       }
     };
-    if(loading === false) {
       getWebsite();
 
-    }
 
   }, [token, loading]);
 

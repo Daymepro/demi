@@ -1,5 +1,4 @@
 'use client'
-import ButtonMain from '@/components/forms/button'
 import EditorTextArea from '@/components/forms/editorTextArea'
 import { Badge } from '@/components/ui/badge'
 import { EditorElement, useEditor } from '@/providers/editor-provider'
