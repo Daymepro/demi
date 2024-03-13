@@ -8,11 +8,28 @@ import { v4 } from "uuid";
 import Recursive from "./recursive";
 import { ArrowDown, ArrowUp, Trash } from "lucide-react";
 import TextComponent from "./textComponent";
+import { colorObj } from "@/utils/pallete";
+import { string } from "zod";
 type Props = { element: EditorElement };
+
+
+export const getColorFromPallete = (type: string, pallete: string) => {
+  switch(type) {
+    case "container":
+      return  colorObj[pallete as keyof typeof colorObj].foreground;
+    case "body": 
+    return  colorObj[pallete as keyof typeof colorObj].background;
+    case "text":
+      return colorObj[pallete as keyof typeof colorObj].text;
+    case "section": 
+    return colorObj[pallete as keyof typeof colorObj].a;
+  }
+   
+  }
 
 const Container = ({ element }: Props) => {
   const { id, content, name, styles, type } = element;
-  const { dispatch, state } = useEditor();
+  const { dispatch, state, pallete } = useEditor();
 
   const handleOnDrop = (e: React.DragEvent, type: string) => {
     e.stopPropagation();
@@ -920,12 +937,14 @@ const Container = ({ element }: Props) => {
     });
   };
 
+
+  
   return (
     <div
 
       
       style={styles}
-      className={clsx("relative p-4 transition-all  group", {
+      className={clsx(`relative p-4 transition-all  group `, {
         "max-w-full w-full": type === "container" || type === "2Col",
         "h-fit": type === "container",
         "h-full  border": type === "__body",
@@ -943,6 +962,11 @@ const Container = ({ element }: Props) => {
           state.editor.selectedElement.id === id && !state.editor.liveMode,
         "border-dashed border-[1px] border-slate-300": !state.editor.liveMode,
         "h-[500px]": type === "section",
+        [getColorFromPallete("body", pallete) as string]: type === "__body",
+        [getColorFromPallete("container", pallete) as string]: type === "container",
+        [getColorFromPallete("section", pallete) as string]: type === "section",
+
+
       })}
       onDrop={(e) => handleOnDrop(e, type as string)}
       onDragOver={handleDragOver}

@@ -5,13 +5,14 @@ import { EditorElement, useEditor } from '@/providers/editor-provider'
 import clsx from 'clsx'
 import { Trash } from 'lucide-react'
 import React from 'react'
+import { getColorFromPallete } from './container'
 
 type Props = {
   element: EditorElement
 }
 
 const TextComponent = (props: Props) => {
-  const { dispatch, state } = useEditor()
+  const { dispatch, state, pallete } = useEditor()
 
   const handleDeleteElement = () => {
     dispatch({
@@ -35,7 +36,7 @@ const TextComponent = (props: Props) => {
     <div
       style={styles}
       className={clsx(
-        'p-[2px] w-full m-[5px] relative text-[16px] transition-all',
+        `p-[2px] w-full m-[5px] relative text-[16px] transition-all `,
         {
           '!border-blue-500':
             state.editor.selectedElement.id === props.element.id,
@@ -55,6 +56,7 @@ const TextComponent = (props: Props) => {
       <span
         contentEditable={!state.editor.liveMode}
         suppressContentEditableWarning={true}
+        className={`${getColorFromPallete("text", pallete)}`}
         onBlur={(e) => {
           const spanElement = e.target as HTMLSpanElement
           dispatch({

@@ -1,6 +1,9 @@
 "use client";
-import React, { Dispatch, useContext, useReducer, createContext } from "react";
+import React, { Dispatch, useContext, useReducer, createContext, useState } from "react";
 import { EditorAction } from "./editor-actions";
+import { PageDetails } from "@/app/editor/funnels/[funnelId]/editor/[funnelPageId]/page";
+import { apiService } from "@/utils/apiService";
+import { useAuth } from "@/context/UserContext";
 
 export type DeviceTypes = "Desktop" | "Tablet" | "Mobile";
 
@@ -363,6 +366,7 @@ const editorReducer = (
       );
       if (dataFromStorage) return JSON.parse(dataFromStorage);
       else return state;
+        
     default:
       return state;
   }
@@ -380,22 +384,42 @@ export const EditorContext = createContext<{
   dispatch: Dispatch<EditorAction>;
   funnelId: string;
   pageDetails: any;
+  pallete: string
+  setPallete: any
+  handlePalleteChange: (key: string) => void
 }>({
   state: initialState,
   dispatch: () => undefined,
   funnelId: "",
   pageDetails: null,
+  pallete: "",
+  setPallete: () => {},
+  handlePalleteChange: () => {}
 });
 
 type EditorProps = {
   children: React.ReactNode;
   funnelId: string;
-  pageDetails: any;
+  pageDetails: PageDetails;
 };
 
 const EditorProvider = (props: EditorProps) => {
   const [state, dispatch] = useReducer(editorReducer, initialState);
+  const [pallete, setPallete] = useState("first")
+  const {token} = useAuth()
 
+  const handlePalleteChange = async (key: string) => {
+    const response = await apiService.post(
+      `/api/MyWebsite/updatepage/${props.pageDetails.id}`,
+      { pallete: key },
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+    console.log(response)
+    setPallete(key)
+
+  }
   return (
     <EditorContext.Provider
       value={{
@@ -403,6 +427,9 @@ const EditorProvider = (props: EditorProps) => {
         dispatch,
         funnelId: props.funnelId,
         pageDetails: props.pageDetails,
+        pallete,
+        setPallete,
+        handlePalleteChange
       }}
     >
       {props.children}
