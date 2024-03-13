@@ -9,6 +9,14 @@ export type EditorAction =
       };
     }
   | {
+    type: "ADD_SECTION";
+    payload: {
+      containerId: string;
+      elementDetails: EditorElement;
+      position: 'top' | 'bottom';
+    };
+  }
+  | {
       type: "UPDATE_ELEMENT";
       payload: {
         elementDetails: EditorElement;

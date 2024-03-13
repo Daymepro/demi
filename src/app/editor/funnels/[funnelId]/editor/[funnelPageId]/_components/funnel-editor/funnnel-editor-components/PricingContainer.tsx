@@ -281,10 +281,10 @@ const PricingComponent = ({ element }: Props) => {
       className={clsx("relative p-4 transition-all remove-scrollbar group", {
         "max-w-full w-full": type === "container" || type === "2Col",
         "h-fit": type === "container",
-        "h-full border": type === "__body",
+        "h-full outline": type === "__body",
         "overflow-scroll ": type === "__body",
         "flex flex-col md:!flex-row": type === "2Col",
-        "!border-blue-500":
+        "!outline-blue-500":
           state.editor.selectedElement.id === id &&
           !state.editor.liveMode &&
           state.editor.selectedElement.type !== "__body",
@@ -292,9 +292,9 @@ const PricingComponent = ({ element }: Props) => {
           state.editor.selectedElement.id === id &&
           !state.editor.liveMode &&
           state.editor.selectedElement.type === "__body",
-        "!border-solid":
+        "!outline":
           state.editor.selectedElement.id === id && !state.editor.liveMode,
-        "border-dashed border-[1px] border-slate-300": !state.editor.liveMode,
+        "outline-dashed outline-[1px] outline-slate-300": !state.editor.liveMode,
         "h-[500px]": type === 'section',
       })}
       onDrop={(e) => handleOnDrop(e, id)}

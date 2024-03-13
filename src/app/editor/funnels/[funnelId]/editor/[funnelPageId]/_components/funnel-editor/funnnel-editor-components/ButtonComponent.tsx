@@ -1,8 +1,9 @@
 'use client'
-import ButtonMain from '@/components/forms/button'
 import EditorTextArea from '@/components/forms/editorTextArea'
 import { Badge } from '@/components/ui/badge'
 import { EditorElement, useEditor } from '@/providers/editor-provider'
+import { Button } from '@/components/ui/button'
+
 
 import clsx from 'clsx'
 import { Trash } from 'lucide-react'
@@ -42,11 +43,11 @@ const ButtonComponent = (props: Props) => {
       className={clsx(
         'p-[2px] w-full m-[5px] relative text-[16px] transition-all',
         {
-          '!border-blue-500':
+          '!outline-blue-500':
             state.editor.selectedElement.id === props.element.id,
 
-          '!border-solid': state.editor.selectedElement.id === props.element.id,
-          'border-dashed border-[1px] border-slate-300': !state.editor.liveMode,
+          '!outline': state.editor.selectedElement.id === props.element.id,
+          'outline-dashed outline-[1px] outline-slate-300': !state.editor.liveMode,
         }
       )}
       onClick={handleOnClickBody}
@@ -57,7 +58,29 @@ const ButtonComponent = (props: Props) => {
             {state.editor.selectedElement.name}
           </Badge>
         )}
-            {!Array.isArray(props.element.content) && <ButtonMain content={props.element.content.content} />}
+            {!Array.isArray(props.element.content) && 
+            <div>
+            <Button>
+              <span contentEditable
+              onBlur={(e) => {
+                const spanElement = e.target as HTMLSpanElement
+                dispatch({
+                  type: 'UPDATE_ELEMENT',
+                  payload: {
+                    elementDetails: {
+                      ...props.element,
+                      content: {
+                        innerText: spanElement.innerText,
+                      },
+                    },
+                  },
+                })
+              }}>
+                {props.element.content.innerText}
+              </span>
+            </Button>
+          </div>
+            }
         
       {state.editor.selectedElement.id === props.element.id &&
         !state.editor.liveMode && (

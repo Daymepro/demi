@@ -107,6 +107,7 @@ const FunnelEditorNavigation = (props: Props) => {
   };
 
   const handleOnSave = async () => {
+    console.log(state.editor.elements);
     const content = JSON.stringify(state.editor.elements);
     setSaveLoading(true)
     try {

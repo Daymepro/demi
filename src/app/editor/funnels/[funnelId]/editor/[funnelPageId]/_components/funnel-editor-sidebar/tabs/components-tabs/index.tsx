@@ -73,7 +73,7 @@ import SectionPlaceholder from './sectionPlaceholder'
       {
         Component: <ContactFormComponentPlaceholderNew />,
         label: 'Contact New',
-        id: 'contactForm',
+        id: 'contactFormNew',
         group: 'elements',
       },
       {

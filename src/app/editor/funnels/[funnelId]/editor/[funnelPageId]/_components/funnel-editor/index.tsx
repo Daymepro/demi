@@ -1735,9 +1735,29 @@ export  const hardCodeDefault = [{
   ]
 }]
 
+
 const FunnelEditor = ({ funnelPageId, liveMode }: Props) => {
   const { dispatch, state } = useEditor();
   const { token } = useAuth();
+  useEffect(() => {
+    const elements = document?.querySelectorAll('.animation-mine');
+  const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.6
+  }
+  const callbacks = (entries:any) => {
+    entries.forEach((entry:any) => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('active');
+      }
+    });
+  }
+  let observer = new IntersectionObserver(callbacks, options);
+  elements.forEach(element => {
+    observer.observe(element);
+  });
+  })
   useEffect(() => {
     if (!liveMode) {
       dispatch({
@@ -1755,6 +1775,7 @@ useEffect(() => {
     // console.log('fullSite: ', localData);
   try {
     const response = await apiService.get(`/api/Website/ViewPage/${funnelPageId}`, {})
+    console.log(response)
   dispatch({
     type: 'LOAD_DATA',
     payload: {
@@ -1784,7 +1805,7 @@ const handleOnPreview = () => {
   })
 }
 
-  return <div className={clsx(' use-automation-zoom  h-screen overflow-y-scroll mr-[385px] bg-background transition-all rounded-md', {
+  return <div className={clsx(' use-automation-zoom pb-[97px]  h-screen overflow-y-scroll mr-[385px] bg-background transition-all rounded-md', {
     ' !p-0 !mr-0': state.editor.previewMode === true || state.editor.liveMode === true,
     " !w-[850px]" : state.editor.device === 'Tablet',
     " !w-[420px]" : state.editor.device === 'Mobile',

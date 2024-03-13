@@ -451,7 +451,8 @@ const SettingsTab = (props: Props) => {
               step={1}
             />
           </div>
-          <div>
+          
+          {state.editor.selectedElement.type !== '__body' && state.editor.selectedElement.type !== 'section'  && <div>
             <Label className="text-muted-foreground">Border Radius</Label>
             <div className="flex items-center justify-end">
               <small className="">
@@ -488,8 +489,8 @@ const SettingsTab = (props: Props) => {
               max={100}
               step={1}
             />
-          </div>
-          {/* <div>
+          </div>}
+           {state.editor.selectedElement.type !== '__body' && state.editor.selectedElement.type !== 'section' && <div>
             <Label className="text-muted-foreground">Border Thickness</Label>
             <div className="flex items-center justify-end">
               <small className="">
@@ -526,7 +527,28 @@ const SettingsTab = (props: Props) => {
               max={25}
               step={1}
             />
-          </div> */}
+          </div>}
+          
+          { state.editor.selectedElement.type !== '__body' && state.editor.selectedElement.type !== 'section' && <div className="flex flex-col gap-2">
+            <Label className="text-muted-foreground">Border Color</Label>
+            <div className="flex  border-[1px] rounded-md overflow-clip">
+              <div
+                className="w-12 "
+                style={{
+                  borderColor:
+                    state.editor.selectedElement.styles.borderColor,
+                }}
+              />
+              <Input
+                placeholder="#HFI245"
+                className="!border-y-0 rounded-none !border-r-0 mr-2"
+                id="borderColor"
+                onChange={handleOnChanges}
+                value={state.editor.selectedElement.styles.borderColor}
+              />
+            </div>
+
+          </div>}
           <div className="flex flex-col gap-2">
             <Label className="text-muted-foreground">Background Color</Label>
             <div className="flex  border-[1px] rounded-md overflow-clip">
@@ -745,6 +767,87 @@ const SettingsTab = (props: Props) => {
           </div>
         </AccordionContent>
       </AccordionItem>
+      { state.editor.selectedElement.type === 'text' && <AccordionItem
+        value="Animation"
+        className="px-6 py-0  "
+      >
+        <AccordionTrigger className="!no-underline">Animation</AccordionTrigger>
+        <AccordionContent>
+          <Label className="text-muted-foreground">Animation speed</Label>
+          <Tabs
+          className='mb-2'
+            onValueChange={(e) => {
+              handleOnChanges({
+                target: {
+                  id: 'animationDuration',
+                  value: e,
+                },
+              });
+
+            }
+            }
+            value={state.editor.selectedElement.styles.animationDuration}
+          >
+            <TabsList className="flex items-center flex-row justify-around border-[1px] rounded-md bg-transparent h-fit gap-4">
+              <TabsTrigger
+                value="500ms"
+                className="w-fit h-10 p-2 data-[state=active]:bg-black data-[state=active]:text-white text-muted-foreground "
+              >
+                <span className=" ">Slow</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="400ms"
+                className="w-fit h-10 p-2 data-[state=active]:bg-black data-[state=active]:text-white text-muted-foreground"
+              >
+                <span className=" ">Medium</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="300ms"
+                className="w-fit h-10 p-2 data-[state=active]:bg-black data-[state=active]:text-white text-muted-foreground"
+              >
+                <span className=" ">Fast</span>
+              </TabsTrigger>
+             
+            </TabsList>
+          </Tabs>
+          <div className="flex gap-4">
+            <div className='w-full'>
+              <Label className="text-muted-foreground">Animation Style</Label>
+              <Select
+              defaultValue={state.editor.selectedElement.styles.animationName}
+                onValueChange={(e) =>
+                  handleOnChanges({
+                    target: {
+                      id: 'animationName',
+                      value: e,
+                    },
+                    
+                  })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select an animation style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Styles</SelectLabel>
+                    <SelectItem value="zoom-in-mine">Zoom in</SelectItem>
+                    <SelectItem value="zoom-out-mine">Zoom out</SelectItem>
+                    <SelectItem value="slide-up">Slide up</SelectItem>
+                    <SelectItem value="slide-down">Slide down</SelectItem>
+                    <SelectItem value="slide-left">Slide left</SelectItem>
+                    <SelectItem value="slide-right">Slide right</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          
+          
+          
+        </AccordionContent>
+      </AccordionItem>}
     </Accordion>
   );
 };

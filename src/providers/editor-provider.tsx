@@ -115,6 +115,58 @@ const addAnElement = (
   });
 };
 
+const addASection = (
+  editorArray: EditorElement[],
+  action: EditorAction,
+  position: "top" | "bottom"
+): EditorElement[] => {
+  if (action.type !== "ADD_SECTION")
+    throw Error(
+      "You sent the wrong action type to the Add Section editor State"
+    );
+    
+  return editorArray.map((item) => {
+    if (item.type === "__body") {
+      if (position === "top") {
+        const indexToAdd =
+          (Array.isArray(item.content) &&
+            item.content.findIndex(
+              (element: EditorElement) =>
+                element.id === action.payload.containerId
+            )) ||
+          0;
+        console.log("payload", indexToAdd);
+        const newBody =
+          Array.isArray(item.content) &&
+          [...item.content.slice(0, indexToAdd), action.payload.elementDetails, ...item.content.slice(indexToAdd)]
+        console.log("newBody", item.content);
+        return {
+          ...item,
+          content: newBody ? newBody : item.content,
+        };
+      } else if (position === "bottom") {
+        const indexToAdd =
+          (Array.isArray(item.content) &&
+            item.content.findIndex(
+              (element: EditorElement) =>
+                element.id === action.payload.containerId
+            )) ||
+          0;
+        console.log("payload", indexToAdd);
+        const newBody =
+          Array.isArray(item.content) &&
+          [...item.content.slice(0, indexToAdd+1), action.payload.elementDetails, ...item.content.slice(indexToAdd+1)]
+        console.log("newBody", item.content);
+        return {
+          ...item,
+          content: newBody ? newBody : item.content,
+        };
+      }
+    }
+    return item;
+  });
+};
+
 const deleteAnElement = (
   editorArray: EditorElement[],
   action: EditorAction
@@ -157,6 +209,7 @@ const editorReducer = (
   state: EditorState = initialState,
   action: EditorAction
 ): EditorState => {
+  console.log(action);
   switch (action.type) {
     case "ADD_ELEMENT":
       const updatedEditorState = {
@@ -169,6 +222,7 @@ const editorReducer = (
           ...updatedEditorState,
         },
       ];
+      console.log(updatedEditorState);
       const newEditorState = {
         ...state,
         editor: updatedEditorState,
@@ -179,6 +233,35 @@ const editorReducer = (
         },
       };
       return newEditorState;
+
+    case "ADD_SECTION":
+
+      const updatedEditorStateWithSection = {
+        ...state.editor,
+        elements: addASection(
+          state.editor.elements,
+          action,
+          action.payload.position
+        ),
+      };
+      const updatedHistoryWithSection = [
+        ...state.history.history.slice(0, state.history.currentIndex + 1),
+        {
+          ...updatedEditorStateWithSection,
+        },
+      ];
+      const updatedEditorSection = {
+        ...state,
+        editor: updatedEditorStateWithSection,
+        history: {
+          ...state.history,
+          history: updatedHistoryWithSection,
+          currentIndex: updatedHistoryWithSection.length - 1,
+        },
+      };
+ 
+      return updatedEditorSection;
+
     case "UPDATE_ELEMENT":
       // Perform your logic to update the element in the state
       const updatedElements = updateAnElement(state.editor.elements, action);
@@ -447,4 +530,4 @@ export const useEditor = () => {
 
 export default EditorProvider;
 
-const man = ''
+const man = "";

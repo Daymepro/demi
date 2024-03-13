@@ -20,7 +20,7 @@ const TextComponent = (props: Props) => {
       payload: { elementDetails: props.element },
     })
   }
-  const styles = props.element.styles
+  const styles = {...props.element.styles }
 
   const handleOnClickBody = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -32,17 +32,19 @@ const TextComponent = (props: Props) => {
     })
   }
   //WE ARE NOT ADDING DRAG DROP
+  // console.log(props.element)
   return (
     <div
       style={styles}
       className={clsx(
+        'p-[2px] w-fit m-[5px] relative text-[16px] transition-all animation-mine',
         `p-[2px] w-full m-[5px] relative text-[16px] transition-all `,
         {
-          '!border-blue-500':
+          '!outline-blue-500':
             state.editor.selectedElement.id === props.element.id,
 
-          '!border-solid': state.editor.selectedElement.id === props.element.id,
-          'border-dashed border-[1px] border-slate-300': !state.editor.liveMode,
+          '!outline': state.editor.selectedElement.id === props.element.id,
+          'outline-dashed outline-[1px] outline-slate-300': !state.editor.liveMode,
         }
       )}
       onClick={handleOnClickBody}

@@ -28,8 +28,8 @@ const recursive = (props: Props) => {
         return <Container element={element} />
     case 'video':
       return <VideoComponent element={element} />
-    case 'contactForm':
-      return <ContactFormComponent element={element} />
+    // case 'contactForm':
+    //   return <ContactFormComponent element={element} />
     case 'contactFormNew':
       return <ContactFormComponentNew element={element} />
     // case 'paymentForm':
