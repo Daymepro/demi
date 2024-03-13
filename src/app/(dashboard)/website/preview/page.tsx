@@ -388,8 +388,8 @@ const Preview = () => {
           </div>
           <div className=" flex items-center gap-3 flex-wrap mt-9">
             {webLoading
-              ? Array.from({ length: 5 }).map(() => (
-                  <div className="rounded-lg w-fit px-3 py-3 bg-white">
+              ? Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className="rounded-lg w-fit px-3 py-3 bg-white">
                     <div className=" flex items-center gap-2 justify-between ">
                       <Skeleton className=" w-[100px] h-[20px]" />
                       <Skeleton className=" w-[100px] h-[20px]" />
@@ -401,7 +401,7 @@ const Preview = () => {
                 ))
               : websites.map((website) => {
                   return (
-                    <div className=" rounded-lg w-fit px-3 bg-white">
+                    <div key={website.websiteID} className=" rounded-lg w-fit px-3 bg-white">
                       <div className=" flex items-center justify-between gap-3 px-1 py-3 border-b">
                         <span className=" text-sm">{website.url}</span>
                         <div>
@@ -446,7 +446,7 @@ const Preview = () => {
                               <AccordionContent>
                                 {website.pages.map((page) => {
                                   return (
-                                    <div className=" flex justify-between">
+                                    <div key={page.id} className=" flex justify-between">
                                       <span>{page.name}</span>
                                       <Popover>
                                         <PopoverTrigger>
