@@ -44,7 +44,7 @@ const aileron = localFont({
       style: 'normal',
     },
     {
-      path: './aileron/Aileron-thin.otf',
+      path: './aileron/Aileron-Thin.otf',
       weight: '200',
       style: 'normal',
     },
