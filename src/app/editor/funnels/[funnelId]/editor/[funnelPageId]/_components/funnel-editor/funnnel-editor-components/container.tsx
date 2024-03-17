@@ -41,10 +41,10 @@ const Container = ({ element }: Props) => {
   const { id, content, name, styles, type } = element;
   const [modalOpener, setModalOpener] = useState<null | string>(null);
   const { dispatch, state, pallete } = useEditor();
+  const [open, setOpen] = useState(false)
 
   const handleOnDrop = (e: React.DragEvent, type: string) => {
     e.stopPropagation();
-    console.log(type);
     const componentType = e.dataTransfer.getData("componentType") as EditorBtns;
     if (type === "__body" && componentType === "section") {
       dispatch({
@@ -947,7 +947,6 @@ const Container = ({ element }: Props) => {
       },
     });
   };
-  console.log(element.type)
 
 
   
@@ -988,7 +987,7 @@ const Container = ({ element }: Props) => {
       onClick={handleOnClickBody}
       onDragStart={(e) => handleDragStart(e, "container")}
     >
-      <Dialog>
+      <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
         <DialogTrigger className="m-0 p-0 z-50 absolute -top-[17px] left-1/2 -translate-x-1/2">
           <Badge
             className={clsx(
@@ -1039,7 +1038,7 @@ const Container = ({ element }: Props) => {
                 key={key}
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log(modalOpener);
+                  setOpen(false)
                   dispatch({
                     type: "ADD_SECTION",
                     payload: {

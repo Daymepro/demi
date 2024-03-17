@@ -45,14 +45,12 @@ const Page =  (props: props) => {
             Authorization: `Bearer ${token}`,
           }
         );
-        console.log(pageResp);
         if (pageResp.succeeded === true) {
           setPageDetails(pageResp.page);
         } else {
           router.push("/website/preview");
         }
       } catch (error) {
-        console.log(error);
         router.push("/website/preview");
 
       }

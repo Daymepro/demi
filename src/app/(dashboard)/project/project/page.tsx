@@ -139,10 +139,8 @@ const Project = () => {
         setTableLoading(false);
       }
     };
-    if (loading === false) {
       fetchProjects();
-    }
-  }, [token, loading, currentPage]);
+  }, [token, currentPage]);
   const createProject = async () => {
     try {
       const resp = await apiService.post(

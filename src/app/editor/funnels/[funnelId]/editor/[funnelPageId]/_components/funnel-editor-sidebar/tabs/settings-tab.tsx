@@ -38,6 +38,7 @@ import { useEditor } from "@/providers/editor-provider";
 import { colorObj } from "@/utils/pallete";
 import { apiService } from "@/utils/apiService";
 import { useAuth } from "@/context/UserContext";
+import clsx from "clsx";
 
 type Props = {
 
@@ -100,8 +101,10 @@ const SettingsTab = (props: Props) => {
         <AccordionContent>
           <div className=" flex gap-2 flex-col ">
             {Object.entries(colorObj).map(([key, value]) => (
-              <div onClick={() => handlePalleteChange(key)} key={key} className=" cursor-pointer h-[90px] rounded-lg min-w-[200px] w-full border flex flex-col">
-                  <div className=" flex  rounded-lg h-full">
+              <div onClick={() => handlePalleteChange(key)} key={key} className={clsx(" overflow-hidden cursor-pointer h-[90px] rounded-lg min-w-[200px] w-full border flex flex-col")}>
+                  <div className={clsx(" flex overflow-hidden  rounded-lg h-full", {
+                    " border-2 border-black" : pallete === key
+                  })}>
                   <div className={` w-full relative h-full ${value.background}`}>
                     <span className=" font-bold text-[20px] bottom-0 absolute">Aa</span>
                   </div>

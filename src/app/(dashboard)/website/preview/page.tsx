@@ -100,12 +100,19 @@ const Preview = () => {
             `/editor/funnels/${resp.website.websiteID}/editor/${response.page.id}`
           );
         }
+      } else {
+        toast("Opps",  {
+          description: "Something went wrong"
+        })
       }
       setGenerateLoading(false);
       setisLoading(false);
     } catch (error) {
       setisLoading(false);
       console.log(error);
+      toast("Opps",  {
+        description: "Something went wrong"
+      })
     }
   };
   const handleChange = (name: string, value: string) => {
@@ -394,9 +401,9 @@ const Preview = () => {
                       <Skeleton className=" w-[100px] h-[20px]" />
                       <Skeleton className=" w-[100px] h-[20px]" />
                     </div>
-                    <div className="w-[500px] mt-9 aspect-square rounded-lg">
+                    {/* <div className="w-[500px] mt-9 aspect-square rounded-lg">
                       <Skeleton className=" w-full h-[300px]" />
-                    </div>
+                    </div> */}
                   </div>
                 ))
               : websites.map((website) => {

@@ -1,15 +1,14 @@
 import { useAuth } from '@/context/UserContext'
-import { redirect, usePathname } from 'next/navigation'
-import React, { useEffect } from 'react'
+import { redirect, usePathname, useRouter } from 'next/navigation'
+import React, { useEffect, useLayoutEffect } from 'react'
 import { getCookie } from 'cookies-next'
 const ProtectedRoute = ({children} : {children: React.ReactNode}) => {
-    const {isAuthenticated, loading, user, logout} = useAuth()
+    const {isAuthenticated, loading, user, logout, token} = useAuth()
 
 
 const pathName = usePathname()
-
+const router = useRouter()
 useEffect(() => {
-  const token = getCookie('token')
   const parseJwt = () => {
     try {
       if(!token) return
@@ -19,21 +18,21 @@ useEffect(() => {
     }
   };
     if(loading === false && !isAuthenticated ) {
-        return redirect(`/signin?next=${pathName}`)
+        return router.replace(`/signin?next=${pathName}`)
       } 
       const decodedJWT = parseJwt()
       if(decodedJWT) {
   
         if(decodedJWT.exp * 1000 < Date.now()) {
           logout()
-          redirect(`/signin?next=${pathName}`)
+          router.replace(`/signin?next=${pathName}`)
         }
 
       }
 }, [loading])
  return (
     <>
-      {children}  
+      {loading ? <></> : children}  
     </>
   )
 }
