@@ -1,6 +1,8 @@
-import axios from "axios";
+import axios, { Axios, AxiosHeaders } from "axios";
+import { error } from "console";
+import { redirect } from "next/navigation";
 
-const BASE_URL = 'https://pickerworkers.azurewebsites.net';
+export const BASE_URL = 'https://pickerworkers.azurewebsites.net';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

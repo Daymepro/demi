@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 
-const page = () => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -65,4 +65,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ForgotPassword;

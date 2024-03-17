@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 
-const page = () => {
+const BusinessSuggestion = () => {
     const [business, setBusiness] = useState('')
     const bizName = ['Business Consultant', 'Make-up artist', 'Coffee Shop', 'Grant Writing', 'Landscaping', 'Church', 'Fashion', 'cloth & Accessories', 'Agency']
 
@@ -41,4 +41,4 @@ const page = () => {
   )
 }
 
-export default page
+export default BusinessSuggestion

@@ -1,0 +1,119 @@
+
+  {
+    "id": "landingPage",
+    "styles": {
+      "textAlign": "center"
+    },
+    "name": "Dog Haven - Find Your Perfect Companion",
+    "type": "container",
+    "content": [
+      {
+        "id": "header",
+        "styles": {
+          "backgroundColor": "#333",
+          "color": "#fff",
+          "padding": "20px 0"
+        },
+        "name": "header",
+        "type": "container",
+        "content": [
+          {
+            "id": "pageTitle",
+            "styles": {},
+            "name": "h1",
+            "type": "text",
+            "content": "Welcome to Dog Haven"
+          },
+          {
+            "id": "subtitle",
+            "styles": {},
+            "name": "p",
+            "type": "text",
+            "content": "Find Your Perfect Companion"
+          }
+        ]
+      },
+      {
+        "id": "mainContent",
+        "styles": {
+          "maxWidth": "1200px",
+          "margin": "20px auto",
+          "padding": "0 20px"
+        },
+        "name": "container",
+        "type": "container",
+        "content": [
+          {
+            "id": "sectionTitle",
+            "styles": {},
+            "name": "h2",
+            "type": "text",
+            "content": "Meet Our Dogs"
+          },
+          {
+            "id": "description",
+            "styles": {},
+            "name": "p",
+            "type": "text",
+            "content": "We have a variety of breeds available for adoption. Take a look at our furry friends!"
+          },
+          {
+            "id": "dogImage",
+            "styles": {
+              "maxWidth": "100%",
+              "height": "auto"
+            },
+            "name": "image",
+            "type": "image",
+            "content": {
+              "src": "dog_image.jpg"
+            }
+          },
+          {
+            "id": "ctaButton",
+            "styles": {
+              "display": "inline-block",
+              "backgroundColor": "#4CAF50",
+              "color": "white",
+              "padding": "14px 40px",
+              "textAlign": "center",
+              "textDecoration": "none",
+              "fontSize": "18px",
+              "marginTop": "20px",
+              "cursor": "pointer",
+              "borderRadius": "5px"
+            },
+            "name": "a",
+            "type": "link",
+            "content": {
+              "innerText": "Contact Us",
+              "href": "contact.html"
+            }
+          }
+        ]
+      },
+      {
+        "id": "footer",
+        "styles": {
+          "backgroundColor": "#333",
+          "color": "#fff",
+          "padding": "20px 0",
+          "position": "fixed",
+          "bottom": "0",
+          "width": "100%"
+        },
+        "name": "footer",
+        "type": "container",
+        "content": [
+          {
+            "id": "copyright",
+            "styles": {},
+            "name": "p",
+            "type": "text",
+            "content": "© 2024 Dog Haven. All rights reserved."
+          }
+        ]
+      }
+    ]
+  }
+  

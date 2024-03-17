@@ -1,8 +1,10 @@
-import Image from "next/image";
+"use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Monitor } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+
+import { motion } from "framer-motion";
 
 function SectionOne() {
   const styles = {
@@ -12,7 +14,12 @@ function SectionOne() {
     backgroundRepeat: "no-repeat",
   };
   return (
-    <div className="xl:px-[140px] md:px-10 px-5 flex flex-col h-11/12 lg:min-h-[900px] lg:flex-row items-center lg:pt-0 pt-[72px]">
+    <motion.div
+    initial={{ opacity: 0, y: -100 }} 
+    animate={{ opacity: 1, y: 0 }} 
+    transition={{ duration: 1 }} 
+      className="xl:px-[140px] md:px-10 px-5 flex flex-col h-11/12 lg:min-h-[900px] lg:flex-row items-center lg:pt-0 pt-[72px]"
+    >
       <div className="flex-1 flex flex-col gap-6 h-full justify-between lg:pt-0 md:pt-20 py-4 max-h-[500px]">
         <div className="">
           <div className=" text-center lg:text-left">
@@ -48,7 +55,11 @@ function SectionOne() {
             BUSINESS <br /> INSIDER
           </div>
           <div>
-            <img src="/images/forbes-logo.svg" className=" md:w-20 w-16" alt="forbes logo" />
+            <img
+              src="/images/forbes-logo.svg"
+              className=" md:w-20 w-16"
+              alt="forbes logo"
+            />
           </div>
         </div>
       </div>
@@ -58,7 +69,7 @@ function SectionOne() {
       >
         <img src="/images/vector-3.png" alt="landing page image" className="" />
       </div>
-    </div>
+    </motion.div>
   );
 }
 

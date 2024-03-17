@@ -206,7 +206,7 @@ const PageLoader = (props: LoaderProps) => {
               gradientUnits="userSpaceOnUse"
             >
               <stop stop-color="white" />
-              <stop offset="0.671806" stop-color="white" stop-opacity="0" />
+              <stop offset="0.671806" stopColor="white" stopOpacity="0" />
             </linearGradient>
           </defs>
         </svg>

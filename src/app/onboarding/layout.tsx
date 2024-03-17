@@ -1,20 +1,33 @@
 "use client";
+import ProtectedRoute from "@/components/protectedRoute";
+import UserContext, { useAuth } from "@/context/UserContext";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
-const layout = ({ children }: { children: React.ReactNode }) => {
+import { redirect, usePathname } from "next/navigation";
+import React, { useEffect } from "react";
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const pathSplit = pathname.split("/")[2];
   const excludedLayouts = ['business-suggestions', 'language', 'name-suggestions']
+const {user, isLoaded} = useAuth()
+
+
+useEffect(() => {
+  if(!isLoaded) return
+  if(!user) {
+    redirect('/signin')
+  }
+
+},[])
   return (
+<ProtectedRoute>
+
     <div style={{
       backgroundImage: "url('/grid.svg')",
       backgroundPosition: "bottom",
       backgroundRepeat: "no-repeat",
     }} className=" bg-[#0030AD] w-full relative min-h-[100vh] flex flex-col gap-4 justify-center items-center">
      {excludedLayouts.includes(pathSplit) ? null : <div className=" flex items-center z-30  justify-between gap-3">
-        <Link
-          href="/onboarding/industry"
+        <div
           className=" flex text-white gap-3 items-center"
         >
           <div className=" flex items-center gap-[2px]">
@@ -42,9 +55,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
               <div className=" w-[18px] bg-white h-[2px] opacity-[0.4]"></div>
             )}
           </div>
-        </Link>
-        <Link
-          href="/onboarding/location"
+        </div>
+        <div
           className=" flex text-white gap-3 items-center"
         >
           <div className=" flex items-center gap-[2px]">
@@ -72,10 +84,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
        {pathSplit === 'business' &&   <div className=" w-[18px] bg-white h-[2px] opacity-[0.4]"></div>}
 
           </div>
-        </Link>
+        </div>
 
-        <Link
-          href="/onboarding/business"
+        <div
           className=" flex text-white gap-3 items-center"
         >
           <div className=" flex items-center gap-[2px]">
@@ -102,7 +113,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
           {pathSplit === "business" && (
             <span className=" text-sm font-bold">Biz.name</span>
           )}
-        </Link>
+        </div>
       </div>}
       <div className=" flex relative items-center">
       <div className="absolute max-w-[863px] w-full h-[410px] bg-[#5F8CFF] blur-3xl">
@@ -114,7 +125,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 </div>
         </div>
     </div>
+</ProtectedRoute>
+
   );
 };
 
-export default layout;
+export default Layout;
