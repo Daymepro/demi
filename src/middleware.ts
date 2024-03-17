@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     searchParams.length > 0 ? `${searchParams}` : ""
   }`;
 
-  const host = process.env.NEXT_PUBLIC_DOMAIN || "fluttersuite.com";
+  const host =  "fluttersuite.com";
   
   const PUBLIC_FILE = /\.(.*)$/;
   const customSubDomain = hostname
