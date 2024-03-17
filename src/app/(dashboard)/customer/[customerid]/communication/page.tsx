@@ -68,6 +68,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 type Communication = {
   organizationId: string;
@@ -77,7 +78,13 @@ type Communication = {
   notes: string;
   customerId: string;
 };
-const Communication = () => {
+type Props = {
+  params: {
+    customerid: string
+  }
+}
+const Communication = (props: Props) => {
+  const {customerid} = props.params
   const [communication, setCommunication] = useState<Communication[]>([]);
 
   const [params, setParams] = useState({
@@ -113,25 +120,29 @@ const Communication = () => {
     setTableLoading(true);
     try {
       const response = await apiService.get(
-        `api/Communication/GetAllCommunications?&page=${currentPage}&pageSize=${pagination}`,
+        `api/Communication/GetAllCommunications/${customerid}?search=""&page=${currentPage}&pageSize=${pagination}`,
         { Authorization: `Bearer ${token}` }
       );
       console.log(response)
       if (response.succeeded !== false) {
         setCommunication(response.communications);
       } else {
-        console.log(response.responseMessage);
+        toast("Opps", {
+          description: "Something went wrong"
+        })
       }
       setTableLoading(false);
     } catch (error) {
-      console.log(error);
+      toast("Opps", {
+        description: "Something went wrong"
+      })
       setTableLoading(false);
+      
+
     }
   };
   useEffect(() => {
-    if (loading === false) {
       fetchCommunication();
-    }
   }, [loading]);
   const handleSubmit = async () => {
     setisLoading(true);

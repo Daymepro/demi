@@ -20,6 +20,13 @@ export const colorObj = {
         a: "bg-[#67C6E3]",
         b: "bg-[#DFF5FF]",
         text: "text-white"
+    },
+    "fourth": {
+        background: "bg-[#4F6F52]",
+        foreground: "bg-[#739072]",
+        a: "bg-[#86A789]",
+        b: "bg-[#D2E3C8]",
+        text: "text-white"
     }
 
 }

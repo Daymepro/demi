@@ -117,11 +117,9 @@ const ProjectStakeholders = (props: Props) => {
         
       }
     }
-    if(loading === false) {
 
       fetchStakeholders()
-    }
-  }, [ token, loading, currentPage, pageSize])
+  }, [ token, currentPage, pageSize])
   const maxPage = Math.ceil(params.total / pageSize);
 
   const handlePageNavigation = (directon: "next" | "previous") => {

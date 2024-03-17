@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -10,7 +10,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListBulletIcon, PaintBrushIcon } from "@heroicons/react/16/solid";
-import { ChevronsUpDown, ListFilter, ListFilterIcon, PlusIcon, SearchIcon, TrashIcon } from "lucide-react";
+import {
+  ChevronsUpDown,
+  ListFilter,
+  ListFilterIcon,
+  PlusIcon,
+  SearchIcon,
+  TrashIcon,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -21,14 +28,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-  } from "@/components/ui/pagination"
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { apiService } from "@/utils/apiService";
 import { useAuth } from "@/context/UserContext";
 import {
@@ -39,7 +46,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { LoadingSpinner } from "@/components/loadingSpinner";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -52,42 +59,47 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 type Contact = {
-  "organizationId": string,
-  "id": number,
-  "firstName": string,
-  "lastName": string,
-  "email": string,
-  "mobileNumber": string,
-  "customer": string,
-  "customerId": number
+  organizationId: string;
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobileNumber: string;
+  customer: string;
+  customerId: number;
+};
+type Props = {
+  params: {
+    customerid: string
+  }
 }
-const Contact = () => {
-  const [contacts, setContacts] = useState<Contact[]>([])
+const Contact = (props: Props) => {
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [params, setParams] = useState({
-    total: 0
-  })
-  const [isLoading, setisLoading] = useState(false)
-  const [tableLoading, setTableLoading] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const {token, loading } = useAuth()
-  const [expandID, setExpandId] = useState<number | null>(null)
+    total: 0,
+  });
+  const {customerid} = props.params
+  const [isLoading, setisLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const { token, loading } = useAuth();
+  const [expandID, setExpandId] = useState<number | null>(null);
   const [inputs, setInputs] = useState({
     lastName: "",
     firstName: "",
     email: "",
     category: "",
-    customer: '',
-    mobileNumber: '',
-    organizationId: ''
+    customer: "",
+    mobileNumber: "",
+    organizationId: "",
   });
 
-  
   const handleChange = (name: string, value: string) => {
     setInputs((values) => ({ ...values, [name]: value }));
   };
@@ -95,12 +107,9 @@ const Contact = () => {
     setExpandId(id);
     console.log(id);
     try {
-      const resp = await apiService.get(
-        `/api/Contact/GetContactById/${id}`,
-        {
-          Authorization: `Bearer ${token}`,
-        }
-      );
+      const resp = await apiService.get(`/api/Contact/GetContactById/${id}`, {
+        Authorization: `Bearer ${token}`,
+      });
       if (resp.succeeded === true) {
         setInputs(resp.contact);
         setOpen(true);
@@ -109,76 +118,76 @@ const Contact = () => {
       setExpandId(null);
     }
   };
-  
-  const handleUpdate = async() => {
-    setisLoading(true)
+
+  const handleUpdate = async () => {
+    setisLoading(true);
     try {
-      const resp = await apiService.put(`/api/Contact/UpdateContact/${expandID}`, inputs, {
-        Authorization: `Bearer ${token}`,
-      }) 
-      console.log(resp)
-      if(resp.succeeded === true) {
-        setOpen(false)
-        setExpandId(null)
-        setisLoading(false)
-       console.log(resp)
-      }  else {
-        setisLoading(false)
-      }   
+      const resp = await apiService.put(
+        `/api/Contact/UpdateContact/${expandID}`,
+        inputs,
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
+      console.log(resp);
+      if (resp.succeeded === true) {
+        setOpen(false);
+        setExpandId(null);
+        setisLoading(false);
+        console.log(resp);
+      } else {
+        setisLoading(false);
+      }
     } catch (error) {
-      setisLoading(false)
-
+      setisLoading(false);
     }
- 
-
-  }
-  console.log(expandID)
+  };
+  console.log(expandID);
   useEffect(() => {
     const fetchContacts = async () => {
-      setTableLoading(true)
+      setTableLoading(true);
       try {
-        const response = await apiService.get(`/api/Contact/GetAllContacts?&page=${currentPage}&pageSize=10`, {'Authorization' : `Bearer ${token}`})
-        console.log(response)
-        if(response.succeeded !== false) {
-          setContacts(response.contacts)
+        const response = await apiService.get(
+          `/api/Contact/GetAllContacts/${customerid}?search=""&page=${currentPage}&pageSize=10`,
+          { Authorization: `Bearer ${token}` }
+        );
+        console.log(response);
+        if (response.succeeded !== false) {
+          setContacts(response.contacts);
         } else {
-          console.log(response.responseMessage)
+          console.log(response.responseMessage);
         }
-        setTableLoading(false)
+        setTableLoading(false);
       } catch (error) {
-        console.log(error)
-        setTableLoading(false)
-
+        console.log(error);
+        setTableLoading(false);
       }
+    };
+    if (loading === false) {
+      fetchContacts();
     }
-    if(loading === false) {
-
-      fetchContacts()
-    }
-  }, [ currentPage, token, loading])
+  }, [currentPage, token, loading]);
   const handleNavigation = (direction: "next" | "prev") => {
-    if(direction === 'next') {
-      setCurrentPage(Number(currentPage + 1))
+    if (direction === "next") {
+      setCurrentPage(Number(currentPage + 1));
     } else {
-      setCurrentPage(Number(currentPage - 1))
-
+      setCurrentPage(Number(currentPage - 1));
     }
-  }
-  function serachContact( ){
+  };
+  function serachContact() {
     let query = search.toLowerCase();
-     const comm = contacts.filter(contact => {
-       const searchableProperties = [
-         contact.firstName,
-         contact.lastName,
-         contact.email,
+    const comm = contacts.filter((contact) => {
+      const searchableProperties = [
+        contact.firstName,
+        contact.lastName,
+        contact.email,
         //  contact.mobileNumber,
-         contact.customer,
-
-       ].map(prop => prop?.toLowerCase());
-         return searchableProperties.some(prop => prop?.includes(query));
-     });
-  return comm
-   }
+        contact.customer,
+      ].map((prop) => prop?.toLowerCase());
+      return searchableProperties.some((prop) => prop?.includes(query));
+    });
+    return comm;
+  }
   const handleSubmit = async () => {
     setisLoading(true);
     try {
@@ -188,7 +197,7 @@ const Contact = () => {
       console.log(resp);
       if (resp.succeeded === true) {
         setContacts([...contacts, resp.contact]);
-        setOpen(false)
+        setOpen(false);
       }
       setisLoading(false);
     } catch (error) {
@@ -196,36 +205,36 @@ const Contact = () => {
     }
   };
   const onSubmit = () => {
-    if(expandID) {
-      handleUpdate()
+    if (expandID) {
+      handleUpdate();
     } else {
-      handleSubmit()
+      handleSubmit();
     }
-  }
-  const handleDelete = async(id: number) => {
+  };
+  const handleDelete = async (id: number) => {
     try {
-      const response = await apiService.delete(`/api/Contact/DeleteContact/${id}`, {
-        Authorization: `Bearer ${token}`,
-      })
-      if(response.succeeded === true) {
-
-        setContacts(contacts.filter(contact => contact.id !== id))
+      const response = await apiService.delete(
+        `/api/Contact/DeleteContact/${id}`,
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
+      if (response.succeeded === true) {
+        setContacts(contacts.filter((contact) => contact.id !== id));
       }
-      toast('success',{
+      toast("success", {
         description: response.responseMessage,
-      })
+      });
     } catch (error) {
-      toast('failed',{
-        description: 'Something went wrong',
-      })
+      toast("failed", {
+        description: "Something went wrong",
+      });
     }
-  }
+  };
   return (
     <main className=" flex gap-10 remove-scrollbar h-screen pb-[120px]  overflow-y-scroll  flex-col">
       <div className=" flex justify-between">
-        <div className=" grow">
-
-        </div>
+        <div className=" grow"></div>
         {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Last 15 days" />
@@ -242,103 +251,90 @@ const Contact = () => {
             <span className=" font-bold text-sm">Create customer</span>
             <PlusIcon className=" w-4 h-4 text-white" />
           </DialogTrigger>
-            <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
-              <p>Customer</p>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
-                <input
-                  type="text"
-                  value={inputs.firstName}
-                  onChange={(e) => handleChange("firstName", e.target.value)}
-                  placeholder="First name"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">lastName</p>
-                <input
-                  type="text"
-                  value={inputs.lastName}
-                  onChange={(e) => handleChange("lastName", e.target.value)}
-                  placeholder="Last Name"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">
-                  Email
-                </p>
-                <input
-                  type="email"
-                  value={inputs.email}
-                  onChange={(e) =>
-                    handleChange("email", e.target.value)
-                  }
-                  placeholder="Email"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">
-                  Customer
-                </p>
-                <input
-                  type="text"
-                  value={inputs.customer}
-                  onChange={(e) =>
-                    handleChange("customer", e.target.value)
-                  }
-                  placeholder="Customer"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">
-                  Phone Number
-                </p>
-                <input
-                  type="text"
-                  value={inputs.mobileNumber}
-                  onChange={(e) =>
-                    handleChange("mobileNumber", e.target.value)
-                  }
-                  placeholder="Phone number"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
-              <div className=" w-full ">
-                <p className=" text-[13px] mb-2 text-[#677189]">
-                 Organization Id
-                </p>
-                <input
-                  type="text"
-                  value={inputs.organizationId}
-                  onChange={(e) =>
-                    handleChange("organizationId", e.target.value)
-                  }
-                  placeholder="Organization Id"
-                  className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
-                />
-              </div>
+          <DialogContent className="  max-w-[408px] w-full rounded-[8px] bg-white  shadow-lg flex flex-col gap-[10px] border p-6 items-center">
+            <p>Customer</p>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Company Name</p>
+              <input
+                type="text"
+                value={inputs.firstName}
+                onChange={(e) => handleChange("firstName", e.target.value)}
+                placeholder="First name"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]  w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">lastName</p>
+              <input
+                type="text"
+                value={inputs.lastName}
+                onChange={(e) => handleChange("lastName", e.target.value)}
+                placeholder="Last Name"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Email</p>
+              <input
+                type="email"
+                value={inputs.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                placeholder="Email"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Customer</p>
+              <input
+                type="text"
+                value={inputs.customer}
+                onChange={(e) => handleChange("customer", e.target.value)}
+                placeholder="Customer"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">Phone Number</p>
+              <input
+                type="text"
+                value={inputs.mobileNumber}
+                onChange={(e) => handleChange("mobileNumber", e.target.value)}
+                placeholder="Phone number"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
+            <div className=" w-full ">
+              <p className=" text-[13px] mb-2 text-[#677189]">
+                Organization Id
+              </p>
+              <input
+                type="text"
+                value={inputs.organizationId}
+                onChange={(e) => handleChange("organizationId", e.target.value)}
+                placeholder="Organization Id"
+                className=" bg-[#F3F4F6] px-2 text-[#B3B3B6]   w-full py-2 rounded-[4px]"
+              />
+            </div>
 
-
-              <div className=" w-full">
-                <button
-                  onClick={onSubmit}
-                  className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
-                >
-                  {isLoading ? (
-                    <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
-                  ) : (
-                   expandID ? "Update Customer" : "Add Customer"
-                  )}
-                </button>
-              </div>
-              <div className=" w-full">
-                <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
-                  Cancel
-                </DialogClose>
-              </div>
+            <div className=" w-full">
+              <button
+                onClick={onSubmit}
+                className="grid place-items-center items-center justify-center w-full bg-ai-button-blue text-white text-sm rounded-[4px] py-3"
+              >
+                {isLoading ? (
+                  <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
+                ) : expandID ? (
+                  "Update Customer"
+                ) : (
+                  "Add Customer"
+                )}
+              </button>
+            </div>
+            <div className=" w-full">
+              <DialogClose className=" w-full  text-[#8D8D91]  text-sm border-none py-3">
+                Cancel
+              </DialogClose>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
@@ -416,15 +412,13 @@ const Contact = () => {
               <TableHead className=" bg-transparent">First name</TableHead>
               <TableHead>Last Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead >Phone Number</TableHead>
-              <TableHead >Customer</TableHead>
-
+              <TableHead>Phone Number</TableHead>
+              <TableHead>Customer</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-
-              {tableLoading ? <TableRow>
-
+            {tableLoading ? (
+              <TableRow>
                 <TableCell>
                   <Skeleton className=" w-[100px] h-[30px]" />
                 </TableCell>
@@ -443,44 +437,56 @@ const Contact = () => {
                 <TableCell>
                   <Skeleton className=" w-[100px] h-[30px]" />
                 </TableCell>
-              </TableRow> :   serachContact().map((contact) => {
-                return <TableRow key={contact.id} className=" border-b border-b-[rgb(234,236,240)] py-4">
-                     <TableCell className="font-medium text-sm text-[#101828]">
-                {contact.firstName}
-              </TableCell>
-              <TableCell>
-                {contact.lastName}
-              </TableCell>
-              <TableCell className="text-sm text-[#42526D]">
-                
-                <div className="bg-[#ECFDF3] rounded-[16px] w-fit  px-2 py-2 text-xs font-medium ">
-                  {contact.email}
-                </div>
-              </TableCell>
-              <TableCell>
-                {contact.mobileNumber}
-              </TableCell>
-              <TableCell>
-                {contact.customer}
-              </TableCell>
-              <TableCell>{ <AlertDialog>
-  <AlertDialogTrigger className=" bg-red-600 rounded-[7px] cursor-pointer w-fit h-fit p-2"><TrashIcon className=" w-4 h-4 text-white" /></AlertDialogTrigger>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-      <AlertDialogDescription>
-        This action cannot be undone. This will permanently delete this entry
-        and remove your data from the servers.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel>Cancel</AlertDialogCancel>
-      <AlertDialogAction className=" bg-ai-button-blue" onClick={() => handleDelete(contact.id)} >Continue</AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
- }</TableCell>
-                     <TableCell>
+              </TableRow>
+            ) : (
+              serachContact().map((contact) => {
+                return (
+                  <TableRow
+                    key={contact.id}
+                    className=" border-b border-b-[rgb(234,236,240)] py-4"
+                  >
+                    <TableCell className="font-medium text-sm text-[#101828]">
+                      {contact.firstName}
+                    </TableCell>
+                    <TableCell>{contact.lastName}</TableCell>
+                    <TableCell className="text-sm text-[#42526D]">
+                      <div className="bg-[#ECFDF3] rounded-[16px] w-fit  px-2 py-2 text-xs font-medium ">
+                        {contact.email}
+                      </div>
+                    </TableCell>
+                    <TableCell>{contact.mobileNumber}</TableCell>
+                    <TableCell>{contact.customer}</TableCell>
+                    <TableCell>
+                      {
+                        <AlertDialog>
+                          <AlertDialogTrigger className=" bg-red-600 rounded-[7px] cursor-pointer w-fit h-fit p-2">
+                            <TrashIcon className=" w-4 h-4 text-white" />
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete this entry and remove your
+                                data from the servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className=" bg-ai-button-blue"
+                                onClick={() => handleDelete(contact.id)}
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      }
+                    </TableCell>
+                    <TableCell>
                       {expandID === contact.id ? (
                         <LoadingSpinner divClassName=" w-[20px] h-[20px]" />
                       ) : (
@@ -490,23 +496,29 @@ const Contact = () => {
                         />
                       )}
                     </TableCell>
-                </TableRow>
-              })}
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
         <Pagination className=" px-4 pb-7 pt-2">
-  <PaginationContent className=" w-full flex items-center justify-between ">
-    <PaginationItem onClick={() => handleNavigation('prev')} className=" border rounded-[8px] border-[rgb(208,213,221)]">
-      <PaginationPrevious href="#" />
-    </PaginationItem>
+          <PaginationContent className=" w-full flex items-center justify-between ">
+            <PaginationItem
+              onClick={() => handleNavigation("prev")}
+              className=" border rounded-[8px] border-[rgb(208,213,221)]"
+            >
+              <PaginationPrevious href="#" />
+            </PaginationItem>
 
-    
-    <PaginationItem onClick={() => handleNavigation('next')} className=" border rounded-[8px] border-[rgb(208,213,221)]">
-      <PaginationNext href="#" />
-    </PaginationItem>
-  </PaginationContent>
-</Pagination>
-
+            <PaginationItem
+              onClick={() => handleNavigation("next")}
+              className=" border rounded-[8px] border-[rgb(208,213,221)]"
+            >
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </main>
   );

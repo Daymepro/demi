@@ -113,9 +113,7 @@ const Opportunity = () => {
         setTableLoading(false);
       }
     };
-    if (loading === false) {
       fetchOpportunities();
-    }
   }, [currentPage, token]);
   const handleSubmit = async () => {
     setisLoading(true);

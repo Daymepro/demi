@@ -91,11 +91,9 @@ const Contact = () => {
 
       }
     }
-    if(loading === false) {
 
       fetchLeads()
-    }
-  }, [search, currentPage, token, loading])
+  }, [ currentPage, token, loading])
   const handleSubmit = async () => {
     setisLoading(true);
     try {

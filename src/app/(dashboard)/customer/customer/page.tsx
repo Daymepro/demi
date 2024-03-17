@@ -152,9 +152,7 @@ const Customer = () => {
         setGetCustomers(false);
       }
     };
-    if (loading === false) {
-      getCustomers();
-    }
+          getCustomers();
   }, [loading, token]);
 
 

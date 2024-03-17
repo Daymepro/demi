@@ -234,9 +234,7 @@ const Tasks = (props: Props) => {
 
       }
     };
-    if (loading === false) {
       fetchTasks();
-    }
   }, [token, page, pageSize]);
   const maxPage = Math.ceil(params.total / pageSize);
   const handlePageNavigation = (directon: "next" | "previous") => {
