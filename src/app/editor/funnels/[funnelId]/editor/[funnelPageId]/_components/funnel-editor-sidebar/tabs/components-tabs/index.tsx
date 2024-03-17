@@ -12,7 +12,12 @@ import {
   import TwoColumnsPlaceholder from './two-columns-placeholder'
   import LinkPlaceholder from './link-placeholder'
   import ContactFormComponentPlaceholder from './contact-form-placeholder'
-  import CheckoutPlaceholder from './checkout-placeholder'
+import ImagePlaceholder from './image-placeholder'
+import ContactFormComponentPlaceholderNew from './ContactFormComponentPlaceholderNew'
+import ServicesPlaceHolder from './servicesPlaceHolder'
+import ButtonPlaceHolder from './buttonPlaceholder'
+import PricingPlaceholder from './PricingPlaceholder'
+import SectionPlaceholder from './sectionPlaceholder'
   
   type Props = {}
   
@@ -36,6 +41,12 @@ import {
         group: 'layout',
       },
       {
+        Component: <SectionPlaceholder />,
+        label: 'Section',
+        id: 'section',
+        group: 'layout',
+      },
+      {
         Component: <TwoColumnsPlaceholder />,
         label: '2 Columns',
         id: '2Col',
@@ -47,12 +58,44 @@ import {
         id: 'video',
         group: 'elements',
       },
-    //   {
-    //     Component: <ContactFormComponentPlaceholder />,
-    //     label: 'Contact',
-    //     id: 'contactForm',
-    //     group: 'elements',
-    //   },
+      {
+        Component: <ImagePlaceholder />,
+        label: 'image',
+        id: 'image',
+        group: 'elements',
+      },
+      {
+        Component: <ContactFormComponentPlaceholder />,
+        label: 'Contact',
+        id: 'contactForm',
+        group: 'elements',
+      },
+      {
+        Component: <ContactFormComponentPlaceholderNew />,
+        label: 'Contact New',
+        id: 'contactFormNew',
+        group: 'elements',
+      },
+      {
+        Component: <ServicesPlaceHolder />,
+        label: 'Services',
+        id: 'services',
+        group: 'layout',
+      },
+      {
+        Component: <ButtonPlaceHolder />,
+        label: 'Button',
+        id: 'button',
+        group: 'elements',
+      },
+      {
+        Component: <PricingPlaceholder />,
+        label: 'Pricing',
+        id: 'pricing',
+        group: 'layout',
+      },
+
+
     //   {
     //     Component: <CheckoutPlaceholder />,
     //     label: 'Checkout',

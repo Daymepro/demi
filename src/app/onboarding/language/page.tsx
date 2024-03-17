@@ -3,9 +3,8 @@ import { ArrowLeft, MapPinIcon, Search } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import Select from 'react-select'
 
-const page = () => {
+const Language = () => {
     const [business, setBusiness] = useState('')
     const selectStyle = {
         option: (provided: any, state: any) => {
@@ -47,11 +46,11 @@ const page = () => {
     </div>
    
     <div className=" w-[80%] ">
-        <Select styles={selectStyle} options={options} className=' w-full' />
+        {/* <Select styles={selectStyle} options={options} className=' w-full' /> */}
     </div>
 
   </div>
   )
 }
 
-export default page
+export default Language

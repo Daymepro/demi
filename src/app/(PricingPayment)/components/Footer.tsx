@@ -13,7 +13,7 @@ function Footer() {
                     <div className='flex gap-2  lg:max-w-[248px]' >
                         <img src="/images/head-icon.svg" alt="web hero icon"/><h1 className='font-bold'>AIWebHero</h1>
                     </div>
-                    <span className='text-sm md:mt-3 '>Durable make owning a business easier than having a job</span>
+                    <span className='text-sm md:mt-3 '>Ai web hero make owning a business easier than having a job</span>
                 </div>
                 <span className='text-[rgba(0,1,3,0.70)]'>© 2024 AI Web Hero, Inc.</span>
             </div>

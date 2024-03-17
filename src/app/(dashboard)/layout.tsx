@@ -1,6 +1,7 @@
 "use client";
 import DashboardSidebar from "@/components/dashboardSidebar";
 import DashboardTopBar, { PathDetails } from "@/components/dashboardTopBar";
+import ProtectedRoute from "@/components/protectedRoute";
 import UserContext, { useAuth } from "@/context/UserContext";
 import { redirect, usePathname } from "next/navigation";
 import React, { useEffect } from "react";
@@ -27,22 +28,6 @@ const nav: Nav = {
       {
         name: "domain",
         path: "/website/domain",
-      },
-      {
-        name: "customer",
-        path: "/website/customer",
-      },
-      {
-        name: "contact",
-        path: "/website/contact",
-      },
-      {
-        name: "project",
-        path: "/website/project",
-      },
-      {
-        name: "project-stakeholders",
-        path: "/website/project-stakeholder",
       },
       {
         name: "settings",
@@ -76,36 +61,104 @@ const nav: Nav = {
       },
     ],
   },
+  "project": {
+    pathname: "Project",
+    paths: [
+      {
+        name: "project",
+        path: "/project/project",
+      },
+    ],
+  },
+  "customer": {
+    pathname: "Customer",
+    paths: [
+      {
+        name: "customer",
+        path: "/customer/customer",
+      },
+      {
+        name: "lead",
+        path: "/customer/lead",
+      },
+      {
+        name: "opportunity",
+        path: "/customer/opportunity",
+      },
+
+    ],
+  },
+  "document": {
+    pathname: "Document",
+    paths: [
+
+    ],
+  },
+
+  "support": {
+    pathname: "Support Ticket",
+    paths: [
+
+    ],
+  },
   "settings": {
     pathname: "Settings",
     paths: [
 
     ],
   },
+  "task": {
+    pathname: "Task",
+    paths: [
+
+    ],
+  },
+  "project-stakeholder": {
+    pathname: "Project stakeholder",
+    paths: [
+
+    ],
+  },
+  "invoice": {
+    pathname: "Invoice",
+    paths: [
+
+    ],
+  },
+  "user": {
+    pathname: "User",
+    paths: [
+
+    ],
+  },
+
 };
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
 
-const {user} = useAuth()
   const pathname = usePathname();
-  const pathSplit = pathname.split("/")[1];
-  const findPath = nav[pathSplit];
-  useEffect(() => {
-    if(!user) {
-      redirect('/signin')
+  // const pathSplit = pathname.split("/")[1];
+  const getPath = () => {
+    const splitPath =  pathname.split("/")
+    if(splitPath.length === 3){
+      return splitPath[1]
+    } else if(splitPath.length === 4){
+      return splitPath[3]
     }
+  }
+  
+  const findPath = nav[getPath() as keyof typeof nav];
 
-  }, [])
   useEffect(() => {
     const original = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-
     return () => {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = original
     } 
 
   }, [])
   return (
+    <ProtectedRoute>
     <div className=" flex relative overflow-hidden bg-[#F9FAFB] font-sans">
       <div className=" sticky z-20 bg-white h-screen left-0">
         <DashboardSidebar />
@@ -121,6 +174,7 @@ const {user} = useAuth()
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

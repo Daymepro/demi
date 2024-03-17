@@ -1,12 +1,12 @@
 'use client'
 import { getUser } from '@/utils/getUser';
 import { jwtDecode } from 'jwt-decode';
-import { User } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { Router, User } from 'lucide-react';
+import { redirect, useRouter } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { createContext } from 'react';
-
-
+import {setCookie, getCookie,deleteCookie } from 'cookies-next'
+import { apiService } from '@/utils/apiService';
 interface userJWT {
   exp: number
 }
@@ -14,23 +14,28 @@ interface AuthContextProps {
     user: User | null;
     token: string | null;
     error: string | null;
-    // isAuthenticated: () => boolean;
-    initializeUser: (
-      userData: User,
-      callback: () => void
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    login: (
+    email: string,
+    password: string,
+    callBack: () => void
     ) => void;
     // removeUser: () => void;
-    // isLoading: boolean;
     // isReady: boolean;
-    // isLoaded: boolean;
-    // logout: () => void;
-    userJWT: userJWT | null
+    loading: boolean
+    isLoaded: boolean;
+    logout: () => void;
+    userJWT: userJWT | null,
+    setUser: React.Dispatch<React.SetStateAction<User | null>>
   }
   
 export interface User {
-    name: string,
+    firstName: string,
+    lastName: string,
     token: string
-    exp: number
+    twoFactorEnabled: boolean,
+    email: string
 }
 export const AuthContext = createContext<AuthContextProps | undefined>(
     undefined
@@ -39,58 +44,103 @@ const UserContext = ({children}: {children: React.ReactNode}) => {
 
 
     const [user, setUser] = useState<User | null>( null);
-    const [token, setToken] = useState<string>('' );
+    const [token, setToken] = useState<string>('');
     const [userJWT, setUserJWT] = useState<userJWT | null>( null);
-
+const [loading, setLoading] = useState<boolean>(true)
+const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
-
-
-  const getUser = async (token: string) => {
-    const user = jwtDecode(token) as userJWT;
-    setUserJWT(user)
-    localStorage.setItem('userJWT', JSON.stringify(user))
-
-
+  async function loadUser(token: string) {
+    if(token) {
+      try {
+        const resp = await apiService.get('/api/Auth/AccountView', {
+          Authorization: `Bearer ${token}`
+        })
+        if(resp.succeeded === true) {
+          setUser(resp.account)
+          setToken(token)
+          console.log(resp)
+        } else {
+          logout()
+        }
+        
+      } catch (error) {
+        
+        logout()
+      }
+setLoading(false)
+    } else {
+      logout()
+      setLoading(false)
+    }
   }
-  useEffect(() => {
-setUser(JSON.parse(localStorage.getItem('user') as string) as unknown as User)
-setToken(JSON.parse(localStorage.getItem('token') as string) as string)
-setUserJWT(JSON.parse(localStorage.getItem('userJWT') as string) as unknown as userJWT )
-  }, [])
-
-  function calculateTimeRemaining() {
-    const now = Math.floor(Date.now() / 1000);
-    if(userJWT)
-    return Math.max(0, userJWT.exp - now); 
-}
 useEffect(() => {
-  const remainingTime = calculateTimeRemaining();
-  if(remainingTime)
-  setTimeout(() => setUser(null), remainingTime * 1000);
+  const token = getCookie('token')
+  setLoading(false)
+if(token) {
+  setLoading(true)
+loadUser(token)
+} else {
+  logout()
+}
 }, [])
+const logout =() => {
+  setUser(null)
+  setToken('')
+  setUserJWT(null)
+  deleteCookie('token')
+  
+}
+  const login = async (email: string, password: string, callback: () => void) => {
+    setLoading(true)
+    setIsLoading(true)
+    try {
+     const resp = await apiService.post('/api/Auth/Signin', {email, password})
+     if(resp.succeeded === true) {
+        const decodeJwt = jwtDecode(resp.token)
+        if(!decodeJwt.exp) return
+        try {
+          const user = await apiService.get('/api/Auth/AccountView', {
+            Authorization: `Bearer ${resp.token}`
+          })
+          if(resp.succeeded === true) {
+            setUser(user.account)
+            setIsLoading(false)
+          } else {
+            setIsLoading(false)
+            
+          }
+          
+        } catch (error) {
+          setIsLoading(false)
+          
+        }
+        setCookie('token', resp.token, {expires: new Date(decodeJwt.exp * 1000) })
+        setToken(resp.token);
+       return callback()
+     } else {
+    setIsLoading(false)
 
+      setError(resp.responseMessage)
+     }
+    } catch (error) {
+      setIsLoading(false)
 
-  const initializeUser = async (
-    userData: User,
-    callback: () => void
-  ) => {
-    setUser(userData)
-    setToken(userData.token);
-    getUser(userData.token)
-    localStorage.setItem('user', JSON.stringify(userData))
-    localStorage.setItem('token', JSON.stringify(userData.token))
-
-
-    callback()
+    }
   };
 
 
       const authContextValue: AuthContextProps = {
         user,
         token,
-        initializeUser,
+        login,
+        loading,
         error,
-        userJWT
+        setUser,
+        logout,
+        isLoading,
+        isAuthenticated: !!user,
+        userJWT,
+        isLoaded: !!(user || token)
       };
       return (
         <AuthContext.Provider value={authContextValue}>

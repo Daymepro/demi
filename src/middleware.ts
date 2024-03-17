@@ -5,10 +5,12 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const searchParams = url.searchParams.toString();
   let hostname = request.headers;
+  const token = request.cookies.get('token')?.value
 
   const pathWithSearchParams = `${url.pathname}${
     searchParams.length > 0 ? `${searchParams}` : ""
   }`;
+  
   const PUBLIC_FILE = /\.(.*)$/;
   const customSubDomain = hostname
     .get("host")
@@ -35,4 +37,5 @@ export function middleware(request: NextRequest) {
       new URL(`${pathWithSearchParams}`, request.url)
     );
   }
+
 }

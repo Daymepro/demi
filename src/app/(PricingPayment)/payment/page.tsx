@@ -35,7 +35,7 @@ const cardFormSchema = z.object({
     recurringPayment: z.boolean()
 })
 
-function page() {
+function Payment() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -282,4 +282,4 @@ function page() {
   )
 }
 
-export default page
+export default Payment
