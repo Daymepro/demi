@@ -12,17 +12,14 @@ export function middleware(request: NextRequest) {
   }`;
   
   const PUBLIC_FILE = /\.(.*)$/;
-  const customSubDomain = hostname
+  const hostName = hostname
     .get("host")
-    ?.split(`${process.env.NEXT_PUBLIC_DOMAIN}`)
-    .filter(Boolean)[0];
- 
+    const hasSub = hostName?.includes('.')
     if(PUBLIC_FILE.test(url.pathname) || url.pathname.includes('_next')) return
-    console.log(hostname
-      .get("host"))
-  if (customSubDomain) {
+
+  if (hasSub) {
     return NextResponse.rewrite(
-      new URL(`/${customSubDomain}${pathWithSearchParams}`, request.url)
+      new URL(`/${hostName}${pathWithSearchParams}`, request.url)
     );
   }
 
@@ -30,7 +27,7 @@ export function middleware(request: NextRequest) {
     url.pathname.startsWith("/website") ||
     url.pathname.startsWith("/content-generator") ||
     url.pathname.startsWith("/ai") ||
-    url.pathname.startsWith("/editor") ||
+    url.pathname.startsWith("/editor") || 
     url.pathname.startsWith("/api")
 
 
