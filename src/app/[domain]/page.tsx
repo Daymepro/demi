@@ -32,7 +32,6 @@ if(!getWebsite) return notFound()
 
 metadata.title = website.name
 metadata.description = website.description
-console.log("meta", 'sonio')
 
   return (
     <EditorProvider pageDetails={getWebsite} funnelId={website.websiteID}>
@@ -40,7 +39,6 @@ console.log("meta", 'sonio')
     </EditorProvider>
   )
   } catch (error) {
-    console.log(error)
     return notFound()
   }
 

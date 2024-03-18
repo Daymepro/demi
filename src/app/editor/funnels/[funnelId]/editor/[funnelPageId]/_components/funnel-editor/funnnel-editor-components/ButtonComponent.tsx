@@ -36,7 +36,6 @@ const ButtonComponent = (props: Props) => {
     })
   }
   //WE ARE NOT ADDING DRAG DROP
-  console.log(props.element)
   return (
     <div
       style={styles}
@@ -62,6 +61,7 @@ const ButtonComponent = (props: Props) => {
             <div>
             <Button>
               <span contentEditable
+              suppressContentEditableWarning
               onBlur={(e) => {
                 const spanElement = e.target as HTMLSpanElement
                 dispatch({

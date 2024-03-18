@@ -20,6 +20,7 @@ import MediaBucketTab from './tabs/media-bucket-tab'
 // import SettingsTab from './tabs/settings-tab'
 // import MediaBucketTab from './tabs/media-bucket-tab'
 // import ComponentsTab from './tabs/components-tab'
+import ComponentTree from './tabs/componentTree'
 
 type Props = {
   subaccountId: string
@@ -76,6 +77,9 @@ const FunnelEditorSidebar = () => {
           </TabsContent>
           <TabsContent value="Media">
             <MediaBucketTab subaccountId={''} />
+          </TabsContent>
+          <TabsContent value="Layers">
+            <ComponentTree  />
           </TabsContent>
           <TabsContent value="Components">
             <SheetHeader className="text-left p-6 ">
