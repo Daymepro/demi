@@ -12,6 +12,7 @@ export function middleware(request: NextRequest) {
   }`;
   const Host = process.env.NEXT_PUBLIC_DOMAIN || "fluttersuite.com";
   const PUBLIC_FILE = /\.(.*)$/;
+  console.log("host here"; )
   console.log(Host); 
   const customSubDomain = hostname
     .get("host")
