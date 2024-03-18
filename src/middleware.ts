@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   const pathWithSearchParams = `${url.pathname}${
     searchParams.length > 0 ? `${searchParams}` : ""
   }`;
-  
+  const Host = process.env.NEXT_PUBLIC_DOMAIN || "fluttersuite.com";
   const PUBLIC_FILE = /\.(.*)$/;
   const hostName = hostname
     .get("host")
