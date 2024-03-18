@@ -19,6 +19,7 @@ const ComponentTree = () => {
       },
     });
   };
+  
   const loadComponent = (content: EditorElement[]) => {
     return (
       <div>
