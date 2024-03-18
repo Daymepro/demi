@@ -10,11 +10,12 @@ export function middleware(request: NextRequest) {
   const pathWithSearchParams = `${url.pathname}${
     searchParams.length > 0 ? `${searchParams}` : ""
   }`;
-  
+  const Host = process.env.NEXT_PUBLIC_DOMAIN || "fluttersuite.com";
   const PUBLIC_FILE = /\.(.*)$/;
+  console.log(Host); 
   const customSubDomain = hostname
     .get("host")
-    ?.split(`${process.env.NEXT_PUBLIC_DOMAIN}`)
+    ?.split(Host)
     .filter(Boolean)[0];
  
     if(PUBLIC_FILE.test(url.pathname) || url.pathname.includes('_next')) return
