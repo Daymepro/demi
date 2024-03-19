@@ -2,26 +2,28 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl;
+  const url = new URL(request.url);
   const searchParams = url.searchParams.toString();
-  let hostname = request.headers;
+  let hostname =  request.headers.get('host');
   const token = request.cookies.get('token')?.value
 
   const pathWithSearchParams = `${url.pathname}${
     searchParams.length > 0 ? `${searchParams}` : ""
   }`;
-  const Host = process.env.NEXT_PUBLIC_DOMAIN || "fluttersuite.com";
+  const Host = "fluttersuite.com";
   const PUBLIC_FILE = /\.(.*)$/;
-  const hostName = hostname
-    .get("host")
-    const hasSub = hostName?.includes('.')
-    if(PUBLIC_FILE.test(url.pathname) || url.pathname.includes('_next')) return
-
-  if (hasSub) {
+   
+  const hostName = url.hostname;
+  console.log(hostName);
+  const hasSub = hostName.includes('.');
+  if (PUBLIC_FILE.test(url.pathname) || url.pathname.includes('_next')) return;
+  
+  if (hasSub || hostName !== Host) {
     return NextResponse.rewrite(
       new URL(`/${hostName}${pathWithSearchParams}`, request.url)
     );
   }
+    
 
   if (
     url.pathname.startsWith("/website") ||
