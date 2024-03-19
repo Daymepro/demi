@@ -18,7 +18,7 @@ export function middleware(request: NextRequest) {
   const hasSub = hostName.split('.').length > 2 ? true : false;
   if (PUBLIC_FILE.test(url.pathname) || url.pathname.includes('_next')) return;
   
-  if (hasSub || hostName !== Host) {
+  if (hasSub || !Host.includes(hostName)) {
     return NextResponse.rewrite(
       new URL(`/${hostName}${pathWithSearchParams}`, request.url)
     );
