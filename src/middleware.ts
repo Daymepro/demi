@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
    
   const hostName = url.hostname;
   console.log(hostName);
-  const hasSub = hostName.includes('.');
+  const hasSub = hostName.split('.').length > 2 ? true : false;
   if (PUBLIC_FILE.test(url.pathname) || url.pathname.includes('_next')) return;
   
   if (hasSub || hostName !== Host) {
