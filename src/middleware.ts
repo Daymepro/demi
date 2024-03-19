@@ -21,9 +21,10 @@ export function middleware(request: NextRequest) {
   console.log(hasSub);
   if (PUBLIC_FILE.test(url.pathname) || url.pathname.includes('_next')) return;
   
-  if (hasSub && hostname !== Host) {
+  if (hasSub && hostname !== Host && hostname !== "azurewebsites.net") {
     console.log(Host);
     return NextResponse.rewrite(
+      
       new URL(`/${hostName}${pathWithSearchParams}`, request.url)
     );
   }
@@ -36,7 +37,7 @@ export function middleware(request: NextRequest) {
     url.pathname.startsWith("/api")
   ) {
     return NextResponse.rewrite(
-      new URL(`${pathWithSearchParams}`, request.url)
+      new URL(`${pathWithSearchParams}`, hostName)
     );
   }
 }
